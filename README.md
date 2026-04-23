@@ -5,7 +5,7 @@
 
 ## 📋 Fitur Utama
 
-- **👤 Autentikasi & Role** — Login, Register, 3 role: Admin, Guru, Siswa
+- **👤 Autentikasi & Role** — Login (username/email), Register, 3 role: Admin, Guru, Siswa
 - **📚 Manajemen Kelas** — Buat kelas, modul bertingkat, upload materi (file/video/teks/link)
 - **📝 Tugas & Penilaian** — Buat tugas, upload jawaban, nilai + feedback dari guru
 - **🧠 Kuis/Ujian Online** — Pilihan ganda, benar/salah, esai, timer, batas percobaan
@@ -13,6 +13,7 @@
 - **📢 Pengumuman** — Guru bisa buat pengumuman di tiap kelas
 - **🔐 Kode Pendaftaran** — Kelas bisa dikunci dengan enrollment key
 - **⚙️ Panel Admin** — Kelola semua user, kelas, dan data via dashboard admin
+- **🤖 AI Chat** — Gemini API-powered asisten belajar
 
 ---
 
@@ -32,21 +33,13 @@
 2. Klik **New** → beri nama: `sora_lms`
 3. Collation: `utf8mb4_unicode_ci` → klik **Create**
 
-### Langkah 2 — Konfigurasi Database (opsional)
+### Langkah 2 — Konfigurasi Environment
 
-Edit file `sora_lms/settings.py` jika username/password MySQL Anda berbeda:
+Buat file `.env` di root folder:
 
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sora_lms',
-        'USER': 'root',       # ganti jika perlu
-        'PASSWORD': '',       # isi jika ada password
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+SECRET_KEY=your_secret_key_here
 ```
 
 ### Langkah 3 — Install & Migrasi
@@ -75,14 +68,6 @@ Buka browser: **http://127.0.0.1:8000**
 
 ---
 
-## 👤 Akun Default (jika pakai setup.py)
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | admin | admin123 |
-
----
-
 ## 🗂️ Struktur Project
 
 ```
@@ -90,6 +75,7 @@ sora_lms/
 ├── manage.py
 ├── requirements.txt
 ├── setup.py
+├── .env.example
 ├── sora_lms/              # Konfigurasi Django utama
 │   ├── settings.py
 │   ├── urls.py
@@ -97,43 +83,15 @@ sora_lms/
 ├── apps/
 │   ├── accounts/          # User, Login, Register
 │   ├── courses/           # Kelas, Modul, Materi
-│   ├── assignments/       # Tugas & Penilaian
-│   ├── quizzes/           # Kuis & Ujian
-│   └── dashboard/         # Dashboard & Progress
+│   ├── assignments/      # Tugas & Penilaian
+│   ├── quizzes/          # Kuis & Ujian
+│   ├── dashboard/        # Dashboard & Progress
+│   ├── ai_chat/          # AI Chat Gemini
+│   └── komunitas         # Komunitas Chat
 ├── templates/             # HTML Templates
-│   ├── base.html
-│   ├── accounts/
-│   ├── courses/
-│   ├── assignments/
-│   ├── quizzes/
-│   └── dashboard/
 ├── static/                # CSS, JS, Gambar
 └── media/                 # File upload
 ```
-
----
-
-## 🎨 Alur Penggunaan
-
-### Admin
-1. Login → Dashboard admin dengan statistik
-2. Kelola pengguna: tambah/edit/hapus guru & siswa
-3. Monitor semua kelas dan aktivitas
-
-### Guru
-1. Buat kelas baru → tambah modul → upload materi
-2. Buat tugas dengan deadline dan nilai maks
-3. Buat kuis/ujian dengan berbagai tipe soal
-4. Nilai pengumpulan tugas siswa
-5. Pantau progress siswa di tiap kelas
-
-### Siswa
-1. Daftar akun → login
-2. Jelajahi dan daftar ke kelas
-3. Belajar materi per modul (progress otomatis tercatat)
-4. Kumpulkan tugas (upload file atau teks)
-5. Kerjakan kuis online dengan timer
-6. Pantau nilai dan progress belajar
 
 ---
 
@@ -143,27 +101,7 @@ sora_lms/
 Django==4.2.11
 mysqlclient==2.2.4
 Pillow==10.2.0
-```
-
----
-
-## 🔧 Perintah Berguna
-
-```bash
-# Buat migration baru setelah edit models
-python manage.py makemigrations
-
-# Terapkan migration
-python manage.py migrate
-
-# Buat superuser baru
-python manage.py createsuperuser
-
-# Kumpulkan static files (untuk production)
-python manage.py collectstatic
-
-# Shell Django
-python manage.py shell
+python-dotenv
 ```
 
 ---
