@@ -540,7 +540,9 @@ h3 { font-size: 1.25rem; font-weight: 700; }
 .features__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(180px, auto);
   gap: 20px;
+  align-items: stretch;
 }
 .feat-card {
   background: var(--surface-2);
@@ -563,6 +565,24 @@ h3 { font-size: 1.25rem; font-weight: 700; }
 .feat-card:hover::before { opacity: 1; }
 .feat-card--large {
   grid-column: span 2;
+}
+.feat-card--tall {
+  grid-row: span 2;
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.feat-card--tall .feat-card__icon {
+  margin-top: auto;
+}
+
+.feat-card--tall p {
+  margin-bottom: auto;
+}
+
+@media (max-width: 992px) {
+  .feat-card--tall { grid-row: span 1; }
 }
 .feat-card__icon {
   width: 56px;
@@ -810,6 +830,7 @@ h3 { font-size: 1.25rem; font-weight: 700; }
   .hero__sub { max-width: 100%; }
   .features__grid { grid-template-columns: repeat(2, 1fr); }
   .feat-card--large { grid-column: span 2; }
+  .feat-card--tall { grid-row: span 1; }
   .roles__grid { grid-template-columns: 1fr; }
   .steps__grid { grid-template-columns: 1fr; }
   .stats__grid { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
