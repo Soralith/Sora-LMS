@@ -6,7 +6,7 @@ from .models import KomunitasMessage
 
 @login_required
 def index(request):
-    kom_msgs = KomunitasMessage.objects.select_related('user')[:50]
+    kom_msgs = KomunitasMessage.objects.select_related('user').order_by('-created_at')
     return render(request, 'komunitas/index.html', {
         'messages': kom_msgs,
     })
@@ -14,7 +14,7 @@ def index(request):
 
 @login_required
 def message_list(request):
-    kom_msgs = KomunitasMessage.objects.select_related('user')[:50]
+    kom_msgs = KomunitasMessage.objects.select_related('user').order_by('-created_at')
     return render(request, 'komunitas/partials/message_list.html', {
         'messages': kom_msgs,
     })
