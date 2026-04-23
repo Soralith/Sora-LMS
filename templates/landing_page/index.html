@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sora LMS — Platform Belajar Online</title>
+  {% load static %}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo">
+        <img src="{% static 'images/logo.png' %}" alt="Sora LMS" class="logo-img" />
+      </a>
+      <ul class="nav__links">
+        <li><a href="#features">Fitur</a></li>
+        <li><a href="#how-it-works">Cara Kerja</a></li>
+        <li><a href="#testimonials">Testimoni</a></li>
+        <li><a href="#contact">Kontak</a></li>
+      </ul>
+      <div class="nav__cta" id="nav-cta">
+        <a data-dynamic-href="/accounts/login/" class="btn btn--ghost" id="btn-login">Masuk</a>
+        <a data-dynamic-href="/accounts/register/" class="btn btn--primary" id="btn-register">Daftar Gratis</a>
+      </div>
+      <button class="nav__hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero__bg">
+      <div class="orb orb--1"></div>
+      <div class="orb orb--2"></div>
+      <div class="grid-overlay"></div>
+    </div>
+
+    <div class="hero__content">
+      <div class="hero__badge reveal">
+        <i class="bi bi-patch-check-fill"></i>
+        Platform LMS #1 untuk Pendidikan
+      </div>
+      <h1 class="hero__title reveal reveal--delay-1">
+        Wujudkan Potensi<br />
+        <span class="title-gradient">Belajar Tanpa Batas</span>
+      </h1>
+      <p class="hero__sub reveal reveal--delay-2">
+        Sora LMS adalah platform pembelajaran digital terlengkap dengan fitur manajemen kelas, 
+        kuis interaktif, tugas online, dan AI tutor yang membantu guru dan siswa 
+        mencapai tujuan belajar mereka.
+      </p>
+      <div class="hero__actions reveal reveal--delay-3">
+        <a data-dynamic-href="/accounts/register/" class="btn btn--primary btn--lg" id="btn-cta-primary">
+          Mulai Gratis Sekarang
+          <i class="bi bi-arrow-right"></i>
+        </a>
+        <a href="#features" class="btn btn--outline btn--lg">
+          <i class="bi bi-play-circle"></i>
+          Pelajari Lebih Lanjut
+        </a>
+      </div>
+      <div class="hero__trust reveal reveal--delay-4">
+        <div class="trust__avatars">
+          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=1" alt="user" />
+          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=2" alt="user" />
+          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=3" alt="user" />
+          <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=4" alt="user" />
+        </div>
+        <div class="trust__text">
+          <div class="trust__stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <span>Dipercaya oleh <strong>10.000+</strong> pengguna aktif</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__visual reveal reveal--delay-2">
+      <div class="dashboard-card">
+        <div class="dc__header">
+          <span class="dc__dot dc__dot--red"></span>
+          <span class="dc__dot dc__dot--yellow"></span>
+          <span class="dc__dot dc__dot--green"></span>
+          <span class="dc__title">Sora LMS Dashboard</span>
+        </div>
+        <div class="dc__body">
+          <div class="dc__welcome">
+            <div class="dc__welcome-text">Selamat Datang,</div>
+            <div class="dc__welcome-name" id="dashboard-username">Nama Siswa</div>
+          </div>
+          <div class="dc__stats-row">
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-book-half"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">5</div>
+                <div class="dc__stat-label">Kelas Diikuti</div>
+              </div>
+            </div>
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-check2-circle"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">12</div>
+                <div class="dc__stat-label">Tugas Selesai</div>
+              </div>
+            </div>
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-trophy"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">3</div>
+                <div class="dc__stat-label">Sertifikat</div>
+              </div>
+            </div>
+          </div>
+          <div class="dc__course-item dc__course-item--active">
+            <div class="dc__thumb thumb--blue"></div>
+            <div class="dc__info">
+              <div class="dc__name">Pengembangan Web</div>
+              <div class="dc__progress-bar"><span style="width: 72%"></span></div>
+              <div class="dc__meta">72% selesai · 4 modul</div>
+            </div>
+          </div>
+          <div class="dc__course-item">
+            <div class="dc__thumb thumb--green"></div>
+            <div class="dc__info">
+              <div class="dc__name">Data Science Dasar</div>
+              <div class="dc__progress-bar"><span style="width: 45%"></span></div>
+              <div class="dc__meta">45% selesai · 6 modul</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating badges -->
+      <div class="float-badge float-badge--1">
+        <i class="bi bi-award-fill"></i>
+        Sertifikat Resmi
+      </div>
+      <div class="float-badge float-badge--2">
+        <i class="bi bi-robot"></i>
+        AI Tutor 24/7
+      </div>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section class="roles section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-tag">Tiga Peran powerful</div>
+        <h2 class="section-title">Siapa Saja yang<br />Bisa Menggunakan Sora LMS?</h2>
+        <p class="section-sub">Platform yang mendukung tiga peran utama dalam ekosistem pembelajaran.</p>
+      </div>
+      <div class="roles__grid">
+        <div class="role-card reveal">
+          <div class="role-icon role-icon--admin">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h3>Administrator</h3>
+          <p>Kelola seluruh pengguna, kelas, dan konten. Pantau statistik platform dan laporan analytics.</p>
+          <ul class="role-features">
+            <li><i class="bi bi-check-circle-fill"></i> Kelola semua user</li>
+            <li><i class="bi bi-check-circle-fill"></i> Dashboard analytics</li>
+            <li><i class="bi bi-check-circle-fill"></i> Kelola kelas & konten</li>
+          </ul>
+        </div>
+        <div class="role-card reveal reveal--delay-1">
+          <div class="role-icon role-icon--teacher">
+            <i class="bi bi-person-badge"></i>
+          </div>
+          <h3>Guru / Instruktur</h3>
+          <p>Buat dan kelola kelas,upload materi, buat kuis, dan nilai tugas siswa dengan mudah.</p>
+          <ul class="role-features">
+            <li><i class="bi bi-check-circle-fill"></i> Buat kelas & modul</li>
+            <li><i class="bi bi-check-circle-fill"></i> Upload materi & video</li>
+            <li><i class="bi bi-check-circle-fill"></i> Nilai tugas & kuis</li>
+          </ul>
+        </div>
+        <div class="role-card reveal reveal--delay-2">
+          <div class="role-icon role-icon--student">
+            <i class="bi bi-graduation-cap"></i>
+          </div>
+          <h3>Siswa</h3>
+          <p>Ikuti kelas favorit, kerjakan tugas, dan raih sertifikat setelah menyelesaikan kursus.</p>
+          <ul class="role-features">
+            <li><i class="bi bi-check-circle-fill"></i> Daftar kelas online</li>
+            <li><i class="bi bi-check-circle-fill"></i> Kerjakan tugas & kuis</li>
+            <li><i class="bi bi-check-circle-fill"></i> Dapatkan sertifikat</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features section" id="features">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-tag">Fitur Unggulan</div>
+        <h2 class="section-title">Semua yang Kamu<br />Butuhkan untuk Belajar</h2>
+        <p class="section-sub">Fitur lengkap untuk pengalaman belajar yang optimal.</p>
+      </div>
+
+      <div class="features__grid">
+        <div class="feat-card feat-card--large reveal">
+          <div class="feat-card__icon"><i class="bi bi-book-half"></i></div>
+          <h3>Manajemen Kelas</h3>
+          <p>Kelola kelas dengan mudah. Buat modul, upload materi (video, dokumen, presentasi, tautan), dan atur enrollment key.</p>
+        </div>
+
+        <div class="feat-card reveal reveal--delay-1">
+          <div class="feat-card__icon"><i class="bi bi-question-circle"></i></div>
+          <h3>Kuis & Ujian Online</h3>
+          <p>Buat kuis dengan berbagai tipe soal: pilihan ganda, benar/salah, esai, dengan timer dan batas attempt.</p>
+        </div>
+
+        <div class="feat-card reveal reveal--delay-2">
+          <div class="feat-card__icon"><i class="bi bi-file-earmark-text"></i></div>
+          <h3>Tugas & Penilaian</h3>
+          <p>Buat tugas dengan deadline. Siswa upload jawaban, guru nilai dan berikan feedback.</p>
+        </div>
+
+        <div class="feat-card reveal reveal--delay-1">
+          <div class="feat-card__icon"><i class="bi bi-graph-up"></i></div>
+          <h3>Progress Tracking</h3>
+          <p>Pantau progress belajar per materi secara otomatis. Laporan detail untuk guru dan siswa.</p>
+        </div>
+
+        <div class="feat-card feat-card--large reveal reveal--delay-2">
+          <div class="feat-card__icon"><i class="bi bi-robot"></i></div>
+          <h3>AI Tutor Assistant</h3>
+          <p>Fitur AI chat yang membantu siswa memahami materi dengan penjelasan personal.</p>
+          <div class="feat-chat">
+            <div class="chat-bubble chat-bubble--user">Apa itu machine learning?</div>
+            <div class="chat-bubble chat-bubble--ai">Machine learning adalah...</div>
+          </div>
+        </div>
+
+        <div class="feat-card reveal">
+          <div class="feat-card__icon"><i class="bi bi-megaphone"></i></div>
+          <h3>Pengumuman</h3>
+          <p>Guru dapat membuat pengumuman penting untuk seluruh siswa di kelas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works section" id="how-it-works">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-tag">Cara Kerja</div>
+        <h2 class="section-title">Mulai dalam<br />3 Langkah Mudah</h2>
+      </div>
+      <div class="steps__grid">
+        <div class="step-card reveal">
+          <div class="step-num">01</div>
+          <h3>Daftar Akun</h3>
+          <p>Daftar gratis dengan memilih peran: Admin, Guru, atau Siswa. Verifikasi email dan login.</p>
+        </div>
+        <div class="step-card reveal reveal--delay-1">
+          <div class="step-num">02</div>
+          <h3>Mulai Aktivitas</h3>
+          <p>Guru buat kelas, siswa daftar ke kelas. Upload materi, buat kuis, kerjakan tugas.</p>
+        </div>
+        <div class="step-card reveal reveal--delay-2">
+          <div class="step-num">03</div>
+          <h3>Raih Target</h3>
+          <p>Selesaikan kursus, raih sertifikat, dan mulai karier atau tingkatkan skill.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats section" id="stats">
+    <div class="stats__bg">
+      <div class="orb orb--stat-1"></div>
+      <div class="orb orb--stat-2"></div>
+    </div>
+    <div class="container">
+      <div class="stats__grid">
+        <div class="stat-item reveal">
+          <div class="stat-num" data-target="10000">0</div>
+          <div class="stat-plus">+</div>
+          <div class="stat-label">Pengguna Aktif</div>
+        </div>
+        <div class="stat-item reveal reveal--delay-1">
+          <div class="stat-num" data-target="500">0</div>
+          <div class="stat-plus">+</div>
+          <div class="stat-label">Kelas Tersedia</div>
+        </div>
+        <div class="stat-item reveal reveal--delay-2">
+          <div class="stat-num" data-target="98">0</div>
+          <div class="stat-plus">%</div>
+          <div class="stat-label">Tingkat Kepuasan</div>
+        </div>
+        <div class="stat-item reveal reveal--delay-3">
+          <div class="stat-num" data-target="100">0</div>
+          <div class="stat-plus">+</div>
+          <div class="stat-label">Guru Expert</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials section" id="testimonials">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="section-tag">Testimoni</div>
+        <h2 class="section-title">Kata Mereka yang<br />Sudah Merasakan</h2>
+      </div>
+      <div class="testi__grid">
+        <div class="testi-card reveal">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <p>"Sora LMS sangat membantu pembelajaran di kelas kami. Fitur kuis dan tracking progress sangat lengkap."</p>
+          <div class="testi-author">
+            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=budi" alt="Budi" />
+            <div>
+              <strong>Budi Santoso</strong>
+              <span>Guru · SMA Negeri 1</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card testi-card--featured reveal reveal--delay-1">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <p>"Belajar di Sora LMS очень menyenangkan. Materinya lengkap dan bisa akses kapan saja."</p>
+          <div class="testi-author">
+            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=sari" alt="Sari" />
+            <div>
+              <strong>Sari Dewi</strong>
+              <span>Siswa · SMK Teknologi</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal reveal--delay-2">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <p>"Platform terbaik untuk mengelola kelas online. Fitur assignment dan quiz sangat membantu pekerjaan saya."</p>
+          <div class="testi-author">
+            <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=rizky" alt="Rizky" />
+            <div>
+              <strong>Rizky Pratama</strong>
+              <span>Guru · Universitas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="cta-final section">
+    <div class="cta-final__bg">
+      <div class="orb orb--cta-1"></div>
+      <div class="orb orb--cta-2"></div>
+    </div>
+    <div class="container">
+      <div class="cta-final__inner reveal">
+        <h2 id="cta-final-title">Siap Memulai<br />Perjalanan Belajarmu?</h2>
+        <p id="cta-final-text">Bergabunglah dengan ribuan pengguna Sora LMS.<br />Daftar sekarang dan mulai belajar gratis.</p>
+        <div class="cta-final__actions">
+          <a data-dynamic-href="/accounts/register/" class="btn btn--white btn--lg" id="btn-cta-final">Daftar Gratis Sekarang</a>
+          <a href="#features" class="btn btn--ghost-white btn--lg">Pelajari Lebih Lanjut</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a href="#" class="nav__logo">
+            <img src="{% static 'images/logo.png' %}" alt="Sora LMS" class="logo-img" />
+          </a>
+          <p>Platform Learning Management System untuk pendidikan modern Indonesia. Mempermudah pembelajaran digital untuk semua.</p>
+          <div class="footer__social">
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer__links">
+          <div class="footer__col">
+            <h4>Platform</h4>
+            <a href="#features">Fitur</a>
+            <a href="#how-it-works">Cara Kerja</a>
+            <a href="#testimonials">Testimoni</a>
+            <a href="#">Harga</a>
+          </div>
+          <div class="footer__col">
+            <h4>Perusahaan</h4>
+            <a href="#">Tentang Kami</a>
+            <a href="#">Blog</a>
+            <a href="#">Karier</a>
+            <a href="#">Press</a>
+          </div>
+          <div class="footer__col">
+            <h4>Bantuan</h4>
+            <a href="#">Help Center</a>
+            <a href="#">Kontak</a>
+            <a href="#">Status</a>
+            <a href="#">Kebijakan</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© 2025 Sora LMS. Dibuat dengan ❤️ di Indonesia.</p>
+        <div class="footer__bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% block title %}Nilai Tugas - Sora LMS{% endblock %}
+{% block page_title %}Nilai Tugas{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Custom Styles - Dark Mode Support */
+    :root {
+        --sora-purple: #6366f1;
+        --sora-purple-light: #eef2ff;
+        --sora-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    }
+
+    .sora-card {
+        background: var(--sora-card);
+        border: 1px solid var(--sora-border);
+        border-radius: 24px;
+        box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+    
+    [data-bs-theme="dark"] .sora-card {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header-sora {
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+
+    .card-body-sora {
+        padding: 1.5rem;
+    }
+
+.btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+
+    .btn-light {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+    
+    .btn-light:hover {
+        background: var(--sora-border);
+        color: var(--sora-text);
+        transform: translateY(-1px);
+    }
+
+    .form-control-sora {
+        border-radius: 12px;
+        border: 2px solid var(--sora-border);
+        padding: 12px;
+        transition: all 0.3s;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+
+    .form-control-sora:focus {
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        background: var(--sora-card);
+        color: var(--sora-text);
+    }
+
+    .badge-score {
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        font-weight: 700;
+        padding: 0.5rem 1rem;
+        border-radius: 40px;
+        border: 1px solid var(--sora-border);
+    }
+
+    /* Avatar styling */
+    .avatar-large {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        background: var(--sora-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+        overflow: hidden;
+    }
+
+    /* Text colors */
+    .text-dark {
+        color: var(--sora-text) !important;
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    .text-purple {
+        color: var(--sora-primary) !important;
+    }
+
+    .bg-light {
+        background: var(--sora-bg) !important;
+        color: var(--sora-text) !important;
+        border: 1px solid var(--sora-border);
+    }
+
+    hr.opacity-10 {
+        border-color: var(--sora-border);
+        opacity: 0.5;
+    }
+
+    /* Jawaban teks container */
+    .answer-container {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 16px;
+        padding: 1rem;
+    }
+    
+    .answer-container p {
+        color: var(--sora-text);
+    }
+
+    /* Input group */
+    .input-group .input-group-text {
+        background: var(--sora-bg);
+        border: 2px solid var(--sora-border);
+        border-right: none;
+        border-radius: 12px 0 0 12px;
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    
+    .input-group .form-control {
+        border-left: none;
+        border-radius: 0 12px 12px 0;
+    }
+    
+    .form-text {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+        font-size: 0.7rem;
+        margin-top: 0.5rem;
+    }
+    
+    .form-label {
+        color: var(--sora-text);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Breadcrumb */
+    .breadcrumb-item a {
+        color: var(--sora-primary);
+        text-decoration: none;
+    }
+    
+    .breadcrumb-item.active {
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    /* Download button */
+    .btn-outline-primary {
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        border: 2px dashed var(--sora-border);
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+    
+    .btn-outline-primary:hover {
+        background: #4f46e5;
+        color: white;
+        border-color: var(--sora-primary);
+        transform: translateY(-2px);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body-sora {
+            padding: 1rem;
+        }
+        .avatar-large {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h4 class="fw-bold mb-1" style="color: var(--sora-text);">Evaluasi Jawaban</h4>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'assignments:assignment_detail' pk=submission.assignment.pk %}" class="text-decoration-none">Tugas</a></li>
+                            <li class="breadcrumb-item active">Penilaian</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="sora-card h-100">
+                        <div class="card-header-sora d-flex align-items-center">
+                            <i class="bi bi-person-badge-fill me-2 fs-5" style="color: var(--sora-primary);"></i>
+                            <h6 class="fw-bold mb-0" style="color: var(--sora-text);">Profil Pengumpulan</h6>
+                        </div>
+                        <div class="card-body-sora">
+                            <div class="text-center mb-4">
+                                <div class="mx-auto mb-3 avatar-large">
+                                    {% if submission.student.avatar %}
+                                        <img src="{{ submission.student.avatar.url }}" alt="{{ submission.student.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    {% else %}
+                                        {{ submission.student.first_name|first|upper|default:submission.student.username|first|upper }}
+                                    {% endif %}
+                                </div>
+                                <h5 class="fw-bold mb-1" style="color: var(--sora-text);">{{ submission.student.get_full_name|default:submission.student.username }}</h5>
+                                <span class="badge bg-light border" style="font-weight: normal;">{{ submission.student.email }}</span>
+                            </div>
+
+                            <hr class="opacity-10">
+
+                            <div class="mb-4">
+                                <label class="small text-muted text-uppercase fw-bold mb-2 d-block">Waktu Penyerahan</label>
+                                <div class="d-flex align-items-center" style="color: var(--sora-text);">
+                                    <i class="bi bi-clock me-2" style="color: var(--sora-primary);"></i>
+                                    <span>{{ submission.submitted_at|date:"d M Y" }} &bull; <strong>{{ submission.submitted_at|date:"H:i" }}</strong></span>
+                                </div>
+                            </div>
+
+                            {% if submission.file %}
+                            <div class="mb-4">
+                                <label class="small text-muted text-uppercase fw-bold mb-2 d-block">Lampiran File</label>
+                                <a href="{{ submission.file.url }}" download class="btn btn-outline-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-file-earmark-arrow-down fs-5"></i>
+                                    <span>Download Dokumen</span>
+                                </a>
+                            </div>
+                            {% endif %}
+
+                            {% if submission.text_answer %}
+                            <div>
+                                <label class="small text-muted text-uppercase fw-bold mb-2 d-block">Jawaban Teks</label>
+                                <div class="answer-container">
+                                    <p class="small mb-0" style="color: var(--sora-text); line-height: 1.6;">{{ submission.text_answer|linebreaksbr }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="sora-card h-100">
+                        <div class="card-header-sora d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-stars me-2 fs-5" style="color: var(--sora-primary);"></i>
+                                <h6 class="fw-bold mb-0" style="color: var(--sora-text);">Input Nilai & Feedback</h6>
+                            </div>
+                            <span class="badge-score">Maks: {{ submission.assignment.max_score }}</span>
+                        </div>
+                        <div class="card-body-sora">
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <div class="mb-4">
+                                    <label class="form-label fw-600">Skor Mahasiswa</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="bi bi-calculator text-muted"></i>
+                                        </span>
+                                        {{ form.score }}
+                                    </div>
+                                    <div class="form-text mt-2">Berikan nilai objektif berdasarkan kualitas jawaban.</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-600">Catatan Evaluasi</label>
+                                    {{ form.feedback }}
+                                    <div class="form-text">Feedback yang membangun sangat membantu siswa berkembang.</div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                                    <a href="{% url 'assignments:assignment_detail' pk=submission.assignment.pk %}" class="btn btn-light px-4">
+                                        <i class="bi bi-x-lg me-1"></i>Batal
+                                    </a>
+                                    <button type="submit" class="btn btn-sora-primary px-5">
+                                        <i class="bi bi-send-fill me-2"></i>Kirim Nilai
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Menambahkan class bootstrap ke form django secara dinamis agar terlihat cantik
+    document.addEventListener("DOMContentLoaded", function() {
+        const scoreInput = document.querySelector('input[name="score"]');
+        const feedbackInput = document.querySelector('textarea[name="feedback"]');
+        
+        if(scoreInput) {
+            scoreInput.classList.add('form-control', 'form-control-sora', 'border-start-0');
+            scoreInput.placeholder = "0";
+            scoreInput.style.borderLeft = "none";
+        }
+        if(feedbackInput) {
+            feedbackInput.classList.add('form-control', 'form-control-sora');
+            feedbackInput.rows = 6;
+            feedbackInput.placeholder = "Tulis komentar atau saran di sini...";
+        }
+        
+        // Fix input group styling
+        const inputGroupText = document.querySelector('.input-group .input-group-text');
+        if (inputGroupText) {
+            inputGroupText.style.backgroundColor = 'var(--sora-bg)';
+            inputGroupText.style.border = '2px solid var(--sora-border)';
+            inputGroupText.style.borderRight = 'none';
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% for msg in messages reversed %}
+<div class="wa-message {% if msg.user == request.user %}sent{% else %}received{% endif %}">
+    <div class="wa-message-avatar {% if msg.user == request.user %}wa-my-avatar{% endif %}" onclick="showUserProfile({{ msg.user.id }})" style="cursor: pointer;">
+        {% if msg.user.avatar %}
+            <img src="{{ msg.user.avatar.url }}" alt="avatar">
+        {% else %}
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;{% if msg.user == request.user %}background:rgba(255,255,255,0.3);color:white;{% else %}background:var(--sora-primary);color:white;{% endif %}font-size:0.7rem;font-weight:700;">{{ msg.user.username|slice:":1"|upper }}</div>
+        {% endif %}
+    </div>
+    <div class="wa-message-bubble">
+        <div class="wa-message-name">{{ msg.user.username }}</div>
+        {% if msg.content %}
+        <div class="wa-message-content">{{ msg.content }}</div>
+        {% endif %}
+        {% if msg.image %}
+        <img src="{{ msg.image.url }}" alt="image" class="wa-message-image" onclick="window.open(this.src)">
+        {% endif %}
+        <div class="wa-message-time">
+            <span>{{ msg.created_at|time:"H:i" }}</span>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="wa-empty">
+    <i class="bi bi-chat-dots"></i>
+    <p>Belum ada pesan. Kirim sekarang!</p>
+</div>
+{% endfor %}

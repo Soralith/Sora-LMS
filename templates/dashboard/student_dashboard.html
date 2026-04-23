@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Siswa - Sora LMS{% endblock %}
+{% block page_title %}Beranda Belajar{% endblock %}
+
+{% load static %}
+{% block extra_css %}
+<style>
+    /* Student Premium Theme - Dark Mode Support */
+    .dashboard-container {
+        background: var(--sora-bg);
+        min-height: 100vh;
+    }
+
+    /* Hero Welcome Siswa - Dark Mode Support */
+    .welcome-hero {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        border-radius: 30px;
+        padding: 2.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 30px rgba(30, 27, 75, 0.2);
+    }
+    
+    [data-bs-theme="dark"] .welcome-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .welcome-hero::after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+
+    /* Stat Cards - Dark Mode Support */
+    .stat-premium {
+        background: var(--sora-card);
+        border-radius: 24px;
+        padding: 1.5rem;
+        border: 1px solid var(--sora-border);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .stat-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+    [data-bs-theme="dark"] .stat-premium:hover {
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+    
+    .stat-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-premium .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .stat-premium .h2 {
+        color: var(--sora-text);
+    }
+
+    /* Course Card Dashboard - Dark Mode Support */
+    .student-course-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        transition: 0.3s;
+    }
+    .student-course-card:hover {
+        border-color: var(--sora-primary);
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
+    }
+    [data-bs-theme="dark"] .student-course-card:hover {
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+    }
+    
+    .course-img-wrapper {
+        height: 140px;
+        background: #4f46e5;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+    .course-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .student-course-card h6 {
+        color: var(--sora-text);
+    }
+    
+    .progress-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--sora-primary);
+    }
+    
+    .custom-progress {
+        height: 8px;
+        background: var(--sora-bg);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .custom-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4f46e5 0%, #3730a3 100%);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+
+    /* Sidebar-like Cards for Tasks - Dark Mode Support */
+    .glass-list-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        padding: 1.5rem;
+    }
+    
+    .glass-list-card h6 {
+        color: var(--sora-text);
+    }
+    
+    .task-item {
+        padding: 1rem;
+        border-radius: 16px;
+        background: var(--sora-bg);
+        margin-bottom: 0.75rem;
+        border: 1px solid transparent;
+        transition: 0.2s;
+    }
+    .task-item:hover {
+        background: var(--sora-card);
+        border-color: var(--sora-border);
+        transform: scale(1.02);
+    }
+    
+    .task-item .fw-bold {
+        color: var(--sora-text);
+    }
+    
+    .task-item .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .score-badge {
+        width: 45px;
+        height: 45px;
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    .btn-action-sm {
+        padding: 0.4rem 1rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .hero-image-container {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .hero-photo {
+        height: 160px; 
+        width: 160px; 
+        object-fit: cover; 
+        border-radius: 24px;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        transform: rotate(3deg);
+        transition: transform 0.3s ease;
+    }
+
+    .hero-photo:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+    
+    /* Button Styles - Dark Mode Support */
+.btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    /* Text Colors */
+    .text-dark-purple {
+        color: var(--sora-text);
+    }
+    
+    .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    .text-warning {
+        color: var(--sora-warning) !important;
+    }
+    
+    .text-danger {
+        color: var(--sora-danger) !important;
+    }
+    
+    .text-success {
+        color: var(--sora-success) !important;
+    }
+    
+    /* Badge and border adjustments for dark mode */
+    [data-bs-theme="dark"] .bg-white.bg-opacity-20 {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    [data-bs-theme="dark"] .bg-danger.bg-opacity-10 {
+        background-color: var(--sora-danger-bg) !important;
+    }
+    
+    [data-bs-theme="dark"] .bg-success.bg-opacity-10 {
+        background-color: var(--sora-success-bg) !important;
+    }
+    
+    [data-bs-theme="dark"] .border-bottom {
+        border-color: var(--sora-border) !important;
+    }
+    
+    [data-bs-theme="dark"] .border-light {
+        border-color: var(--sora-border) !important;
+    }
+    
+    /* Icon background colors remain with opacity for dark mode */
+    .stat-icon-box[style*="background: #eff6ff"] {
+        background: rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    .stat-icon-box[style*="background: #ecfdf5"] {
+        background: rgba(16, 185, 129, 0.1) !important;
+    }
+    
+    .stat-icon-box[style*="background: #fffbeb"] {
+        background: rgba(245, 158, 11, 0.1) !important;
+    }
+    
+    .stat-icon-box[style*="background: #f5f3ff"] {
+        background: rgba(124, 58, 237, 0.1) !important;
+    }
+    
+    /* Empty state image for dark mode */
+    [data-bs-theme="dark"] .stat-premium img[src*="falling.svg"] {
+        filter: brightness(0.8) invert(0.8);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .welcome-hero {
+            padding: 1.5rem;
+        }
+        
+        .hero-photo {
+            height: 120px;
+            width: 120px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    
+    <div class="welcome-hero">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-white bg-opacity-20 rounded-pill px-3 py-2 mb-3">
+                    <i class="bi bi-stars me-1" style="color: blue;"> Semangat Belajar! 🚀</i> 
+                </span>
+                <h1 class="fw-bold mb-2">Halo, {{ user.first_name|default:user.username }}!</h1>
+                <p class="opacity-75 mb-0">Kamu sudah menyelesaikan <strong>{{ stats.completed_courses }}</strong> kelas sejauh ini. Lanjutkan perjalananmu!</p>
+            </div>
+            <div class="col-lg-4 text-lg-end d-none d-lg-block">
+                <a href="{% url 'accounts:profile' %}" class="hero-image-container text-decoration-none">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Profile" class="hero-photo" style="cursor: pointer;">
+                    {% else %}
+                        <img src="{% static 'images/perlica.jpg' %}" alt="Learning" class="hero-photo">
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                    <i class="bi bi-journal-bookmark"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Kelas Aktif</div>
+                <div class="h2 fw-800 mb-0">{{ stats.enrolled_courses }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    <i class="bi bi-award"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Selesai</div>
+                <div class="h2 fw-800 mb-0">{{ stats.completed_courses }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-box" style="background: var(--sora-warning-bg); color: var(--sora-warning);">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Tugas</div>
+                <div class="h2 fw-800 mb-0">{{ stats.pending_assignments }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-box" style="background: rgba(124, 58, 237, 0.1); color: #8b5cf6;">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Rata-rata</div>
+                <div class="h2 fw-800 mb-0">{{ stats.avg_score|floatformat:0 }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold mb-0" style="color: var(--sora-text);">Kelas yang Sedang Diikuti</h5>
+                <a href="{% url 'courses:course_list' %}" class="fw-600 text-decoration-none small" style="color: var(--sora-primary);">Lihat Semua <i class="bi bi-arrow-right"></i></a>
+            </div>
+
+            {% if enrollments %}
+            <div class="row g-3">
+                {% for enrollment in enrollments %}
+                <div class="col-md-6">
+                    <div class="student-course-card p-3">
+                        <div class="course-img-wrapper rounded-4 mb-3">
+                            {% if enrollment.course.cover_image %}
+                                <img src="{{ enrollment.course.cover_image.url }}" class="rounded-4">
+                            {% else %}
+                                <i class="bi bi-mortarboard-fill"></i>
+                            {% endif %}
+                        </div>
+                        <h6 class="fw-bold mb-1 text-truncate" style="color: var(--sora-text);">{{ enrollment.course.title }}</h6>
+                        <p class="text-muted small mb-3"><i class="bi bi-person me-1"></i> {{ enrollment.course.teacher.get_full_name|default:enrollment.course.teacher.username }}</p>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="small text-muted">Progress Belajar</span>
+                            <span class="progress-label">{{ enrollment.progress|floatformat:0 }}%</span>
+                        </div>
+                        <div class="custom-progress mb-3">
+                            <div class="custom-progress-fill" style="width: {{ enrollment.progress }}%"></div>
+                        </div>
+                        
+                        <a href="{% url 'courses:course_detail' slug=enrollment.course.slug %}" class="btn btn-sora-primary w-100 rounded-3">
+                            Lanjutkan <i class="bi bi-play-circle ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="stat-premium text-center py-5">
+                <img src="https://illustrations.popsy.co/white/falling.svg" style="height: 120px;" class="mb-3" alt="No courses">
+                <p class="text-muted">Kamu belum mengambil kelas apapun.</p>
+                <a href="{% url 'courses:course_list' %}" class="btn btn-sora-primary px-4">Cari Kelas Sekarang</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-list-card mb-4">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <div class="p-2 rounded-3" style="background: var(--sora-danger-bg); color: var(--sora-danger);">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0" style="color: var(--sora-text);">Tugas Mendatang</h6>
+                </div>
+                
+                {% for assignment in upcoming_assignments %}
+                <div class="task-item">
+                    <div class="fw-bold small mb-1" style="color: var(--sora-text);">{{ assignment.title|truncatechars:35 }}</div>
+                    <div class="text-muted mb-2" style="font-size: 0.7rem;">
+                        <i class="bi bi-folder2-open me-1"></i> {{ assignment.course.title|truncatechars:25 }}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-600" style="font-size: 0.7rem; color: {% if assignment.is_overdue %}var(--sora-danger){% else %}var(--sora-warning){% endif %};">
+                            <i class="bi bi-clock me-1"></i> {{ assignment.due_date|date:"d M, H:i" }}
+                        </span>
+                        <a href="{% url 'assignments:assignment_detail' pk=assignment.pk %}" class="btn btn-sora-primary btn-action-sm">Kerjakan</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-3">
+                    <i class="bi bi-check2-circle text-success fs-2"></i>
+                    <p class="text-muted small mt-2">Semua tugas beres!</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="glass-list-card">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <div class="p-2 rounded-3" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <h6 class="fw-bold mb-0" style="color: var(--sora-text);">Nilai Terbaru</h6>
+                </div>
+
+                {% for sub in recent_scores %}
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom" style="border-color: var(--sora-border);">
+                    <div style="max-width: 70%;">
+                        <div class="fw-bold small text-truncate" style="color: var(--sora-text);">{{ sub.assignment.title }}</div>
+                        <div class="text-muted" style="font-size: 0.7rem;">{{ sub.assignment.course.title }}</div>
+                    </div>
+                    <div class="score-badge">
+                        <span class="small" style="font-size: 0.55rem;">SKOR</span>
+                        {{ sub.score }}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted small py-3">Belum ada nilai rilis.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animasi muncul pelan-pelan
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = document.querySelectorAll('.stat-premium, .student-course-card, .glass-list-card');
+        elements.forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(15px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.4s ease-out';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, i * 50);
+        });
+    });
+</script>
+{% endblock %}

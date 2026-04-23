@@ -1,0 +1,580 @@
+{% extends 'base.html' %}
+{% block title %}{{ material.title }} - Sora LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --sora-purple: #7c3aed;
+        --sora-purple-dark: #6d28d9;
+        --sora-purple-light: #ddd6fe;
+        --sora-purple-faded: #f5f3ff;
+    }
+    .text-dark-purple { color: var(--sora-text) !important; }
+    .text-purple { color: var(--sora-primary) !important; }
+    .bg-purple-soft { background-color: var(--sora-bg) !important; }
+    .bg-success-soft { background-color: rgba(16, 185, 129, 0.1) !important; }
+    .border-purple-light { border: 1px solid var(--sora-border) !important; }
+    .bg-light-purple-subtle { background-color: var(--sora-bg) !important; }
+    .border-purple { border-color: var(--sora-primary) !important; }
+
+    .btn-purple {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white; transition: all 0.3s ease; border: none;
+    }
+    .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,0.3); color: white; }
+    .btn-purple-outline {
+        border: 1.5px solid #4f46e5; color: #4f46e5;
+        font-weight: 500; background: transparent;
+    }
+    .btn-purple-outline:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white; border-color: transparent;
+    }
+    .btn-link { color: var(--sora-text); opacity: 0.7; }
+    .btn-link:hover { color: var(--sora-primary); opacity: 1; }
+
+    .icon-box-purple {
+        width: 56px; height: 56px; border-radius: 16px;
+        background: var(--sora-card); display: flex; align-items: center;
+        justify-content: center; color: var(--sora-primary);
+        font-size: 1.8rem; border: 1px solid var(--sora-border);
+    }
+    .hover-purple:hover { color: var(--sora-primary) !important; }
+    .bg-purple-gradient { background: linear-gradient(135deg, var(--sora-primary) 0%, var(--sora-primary-light) 100%); }
+    .content-area { text-align: justify; color: var(--sora-text); line-height: 1.8; }
+    .breadcrumb-item + .breadcrumb-item::before { color: var(--sora-text); opacity: 0.5; }
+    .breadcrumb-item a { color: var(--sora-text); text-decoration: none; opacity: 0.7; }
+    .breadcrumb-item a:hover { color: var(--sora-primary); opacity: 1; }
+    .breadcrumb-item.active { color: var(--sora-text); opacity: 0.5; }
+
+    .card {
+        background: var(--sora-card); border: 1px solid var(--sora-border);
+        border-radius: 24px !important; box-shadow: 0 8px 30px -12px rgba(0,0,0,0.08) !important;
+    }
+    [data-bs-theme="dark"] .card { box-shadow: 0 8px 30px -12px rgba(0,0,0,0.3) !important; }
+    .card-header { background: var(--sora-card) !important; border-bottom: 1px solid var(--sora-border) !important; }
+    .badge.bg-purple-soft { background: var(--sora-bg) !important; color: var(--sora-primary) !important; border: 1px solid var(--sora-border); }
+    .file-download-card { background: var(--sora-bg) !important; border: 2px solid var(--sora-border) !important; border-radius: 20px !important; }
+    .text-secondary { color: var(--sora-text) !important; opacity: 0.7; }
+    .text-muted { color: var(--sora-text) !important; opacity: 0.6; }
+    .text-success { color: #10b981 !important; }
+    .border-success-subtle { border-color: rgba(16,185,129,0.3) !important; }
+    .bg-success-soft { background: rgba(16,185,129,0.1) !important; border: 1px solid rgba(16,185,129,0.3); }
+    .bg-light-purple-subtle { background: var(--sora-bg) !important; border-left: 4px solid var(--sora-primary) !important; }
+    .ratio-16x9 { border-radius: 16px; overflow: hidden; }
+    .border-light { border-color: var(--sora-border) !important; }
+    .card.border-purple-light { background: var(--sora-card) !important; border-color: var(--sora-border) !important; }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .card { animation: fadeInUp 0.4s ease forwards; }
+
+    @media (max-width: 768px) {
+        .card-body { padding: 1.25rem !important; }
+        .file-download-card { flex-direction: column; text-align: center; }
+        .icon-box-purple { margin-bottom: 0.75rem; }
+    }
+
+    /* ── Comment Section ── */
+    .comment-section { margin-top: 2rem; }
+    .comment-input-box {
+        background: var(--sora-bg); border: 1.5px solid var(--sora-border);
+        border-radius: 16px; padding: 1rem; transition: border-color 0.2s;
+    }
+    .comment-input-box:focus-within { border-color: var(--sora-primary); }
+    .comment-textarea {
+        width: 100%; border: none; background: transparent; resize: none;
+        outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.9rem; color: var(--sora-text); line-height: 1.6;
+        min-height: 60px; max-height: 160px;
+    }
+    .comment-item {
+        display: flex; gap: 0.85rem; padding: 1rem 0;
+        border-bottom: 1px solid var(--sora-border); animation: fadeInUp 0.25s ease;
+    }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-avatar {
+        width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 0.8rem; color: white;
+        background: linear-gradient(135deg, #7c3aed, #6366f1); overflow: hidden;
+    }
+    .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .comment-body { flex: 1; min-width: 0; }
+    .comment-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+    .comment-author { font-weight: 700; font-size: 0.85rem; color: var(--sora-text); }
+    .comment-role { font-size: 0.68rem; padding: 0.15rem 0.55rem; border-radius: 20px; font-weight: 600; }
+    .role-teacher { background: #eff6ff; color: #1d4ed8; }
+    .role-admin   { background: #fffbeb; color: #b45309; }
+    .role-student { background: #f0fdf4; color: #15803d; }
+    .comment-time { font-size: 0.72rem; color: var(--sora-text); opacity: 0.5; }
+    .comment-content { font-size: 0.875rem; color: var(--sora-text); line-height: 1.6; word-break: break-word; }
+    .comment-deleted { font-style: italic; opacity: 0.45; font-size: 0.85rem; }
+    .comment-actions { margin-top: 0.4rem; display: flex; gap: 0.75rem; }
+    .comment-action-btn {
+        background: none; border: none; padding: 0;
+        font-size: 0.75rem; color: var(--sora-text); opacity: 0.5;
+        cursor: pointer; transition: all 0.15s;
+    }
+    .comment-action-btn:hover { opacity: 1; color: var(--sora-primary); }
+    .comment-action-btn.delete:hover { color: #ef4444; }
+    .replies-container { margin-left: 2.5rem; margin-top: 0.25rem; }
+    .reply-item { border-left: 2px solid var(--sora-border); padding-left: 0.85rem; }
+    .reply-box {
+        margin-top: 0.5rem; margin-left: 2.5rem;
+        background: var(--sora-bg); border: 1.5px solid var(--sora-border);
+        border-radius: 12px; padding: 0.75rem; display: none;
+    }
+    .reply-box.open { display: block; animation: fadeInUp 0.2s ease; }
+    .reply-textarea {
+        width: 100%; border: none; background: transparent; resize: none;
+        outline: none; font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.85rem; color: var(--sora-text); min-height: 48px;
+    }
+    .empty-comments { text-align: center; padding: 2.5rem 1rem; color: var(--sora-text); opacity: 0.45; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-9 col-xl-8">
+
+        <nav aria-label="breadcrumb" class="mb-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <a href="{% url 'courses:course_detail' slug=course.slug %}" class="btn btn-link text-decoration-none p-0">
+                    <i class="bi bi-chevron-left me-1"></i> Kembali ke Kelas
+                </a>
+                <span class="badge rounded-pill bg-purple-soft px-3 py-2">
+                    <i class="bi
+                        {% if material.material_type == 'video' %}bi-play-circle-fill
+                        {% elif material.material_type == 'document' %}bi-file-text-fill
+                        {% elif material.material_type == 'presentation' %}bi-easel-fill
+                        {% elif material.material_type == 'link' %}bi-link-45deg
+                        {% else %}bi-file-richtext-fill{% endif %} me-1"></i>
+                    {{ material.get_material_type_display }}
+                </span>
+            </div>
+        </nav>
+
+        <!-- Material Card -->
+        <div class="card border-0 shadow-sm overflow-hidden">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+                    <div class="flex-grow-1">
+                        <nav style="--bs-breadcrumb-divider: '›';" aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-2">
+                                <li class="breadcrumb-item"><a href="{% url 'courses:course_detail' slug=course.slug %}">{{ material.module.course.title }}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{{ material.module.title }}</li>
+                            </ol>
+                        </nav>
+                        <h2 class="fw-bold text-dark-purple mb-2">{{ material.title }}</h2>
+                    </div>
+                    {% if user == material.module.course.teacher or is_teacher or user.is_admin %}
+                    <a href="{% url 'courses:material_edit' pk=material.pk %}" class="btn btn-purple-outline rounded-pill px-3">
+                        <i class="bi bi-pencil-square me-1"></i> Edit
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                {% if material.description %}
+                <div class="p-3 mb-4 rounded-3 bg-light-purple-subtle border-start border-purple border-4">
+                    <p class="text-secondary mb-0" style="font-size:0.95rem;">
+                        <i class="bi bi-info-circle me-2"></i>{{ material.description }}
+                    </p>
+                </div>
+                {% endif %}
+
+                <div class="material-media-container mb-4">
+                    {% if material.material_type == 'video' and material.url %}
+                        {% if 'youtube' in material.url or 'youtu.be' in material.url %}
+                        <div class="ratio ratio-16x9 rounded-4 shadow-sm overflow-hidden border border-light">
+                            <iframe src="{{ material.embed_url }}" title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5 rounded-4 bg-purple-gradient text-white">
+                            <i class="bi bi-play-circle display-4 mb-3"></i><br>
+                            <a href="{{ material.url }}" target="_blank" class="btn btn-light rounded-pill px-4 fw-600" style="background:white;color:var(--sora-primary);">
+                                Putar Video Eksternal
+                            </a>
+                        </div>
+                        {% endif %}
+
+                    {% elif material.material_type == 'link' and material.url %}
+                    <div class="card border-purple-light bg-white p-4 text-center rounded-4 shadow-sm">
+                        <div class="mb-3 text-purple"><i class="bi bi-link-45deg display-5"></i></div>
+                        <h5 class="mb-3" style="color:var(--sora-text);">Tautan Referensi Eksternal</h5>
+                        <a href="{{ material.url }}" target="_blank" class="btn btn-purple rounded-pill px-5 shadow-sm">
+                            Buka Tautan <i class="bi bi-box-arrow-up-right ms-2"></i>
+                        </a>
+                    </div>
+
+                    {% elif material.file %}
+                        {% with filename=material.file.name|lower %}
+                        {% if ".pdf" in filename %}
+                        <!-- PDF Live Preview -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-600" style="font-size:0.88rem; color:var(--sora-text);">
+                                    <i class="bi bi-file-earmark-pdf-fill me-2" style="color:#ef4444;"></i>
+                                    {{ material.file.name|cut:"courses/materials/" }}
+                                </span>
+                                <a href="{{ material.file.url }}" download class="btn btn-sm btn-purple-outline rounded-pill px-3" style="font-size:0.78rem;">
+                                    <i class="bi bi-cloud-arrow-down me-1"></i>Unduh
+                                </a>
+                            </div>
+                            <div style="border:1.5px solid var(--sora-border); border-radius:16px; overflow:hidden; height:600px;">
+                                <iframe src="{{ material.file.url }}" width="100%" height="100%"
+                                        style="border:none; display:block;" title="{{ material.title }}">
+                                    <p>Browser kamu tidak mendukung preview PDF.
+                                        <a href="{{ material.file.url }}" download>Unduh di sini</a>.
+                                    </p>
+                                </iframe>
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- File lain: download card -->
+                        <div class="file-download-card p-4 rounded-4 d-flex align-items-center gap-3 border-2 border-purple-light bg-purple-faded flex-wrap">
+                            <div class="icon-box-purple shadow-sm">
+                                <i class="bi bi-file-earmark-fill"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold text-dark-purple">{{ material.file.name|cut:"courses/materials/" }}</div>
+                                <div class="text-muted small">{{ material.get_file_size_display|default:"File Dokumen" }}</div>
+                            </div>
+                            <a href="{{ material.file.url }}" download class="btn btn-purple rounded-pill px-4">
+                                <i class="bi bi-cloud-arrow-down me-2"></i>Unduh
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+
+                    {% endif %}
+                </div>
+
+                {% if material.content %}
+                <hr class="my-4 opacity-25" style="border-color:var(--sora-border);">
+                <div class="prose content-area" style="font-size:1.05rem; line-height:1.8;">
+                    {{ material.content|safe|linebreaks }}
+                </div>
+                {% endif %}
+
+                {% if user.is_student and is_completed %}
+                <div class="mt-5 p-3 rounded-pill bg-success-soft text-success text-center fw-600 border border-success-subtle">
+                    <i class="bi bi-check2-circle me-2"></i> Anda telah menyelesaikan materi ini
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ── Comment Section ── -->
+        <div class="card border-0 shadow-sm mt-3 comment-section">
+            <div class="card-body px-4 py-4">
+                <h6 class="fw-700 mb-4" style="font-size:1rem; color:var(--sora-text);">
+                    <i class="bi bi-chat-dots me-2" style="color:var(--sora-primary);"></i>
+                    Diskusi & Komentar
+                    <span class="badge ms-2 rounded-pill" style="background:var(--sora-bg); color:var(--sora-primary); border:1px solid var(--sora-border); font-size:0.72rem;" id="commentCount">
+                        {{ comments|length }}
+                    </span>
+                </h6>
+
+                <!-- Form komentar baru -->
+                <div class="comment-input-box mb-4">
+                    <div class="d-flex gap-3">
+                        <div class="comment-avatar flex-shrink-0">
+                            {% if request.user.avatar %}
+                                <img src="{{ request.user.avatar.url }}" alt="">
+                            {% else %}
+                                {{ request.user.first_name|first|upper|default:request.user.username|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <textarea class="comment-textarea" id="mainCommentInput"
+                                      placeholder="Tulis komentar atau pertanyaan..."></textarea>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="text-muted" style="font-size:0.72rem;" id="mainCharCount">0 / 2000</span>
+                                <button class="btn btn-purple rounded-pill px-4" style="font-size:0.82rem; padding-top:0.4rem; padding-bottom:0.4rem;"
+                                        onclick="submitComment()" id="mainSubmitBtn">
+                                    <i class="bi bi-send me-1"></i>Kirim
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- List komentar -->
+                <div id="commentList">
+                    {% if comments %}
+                        {% for comment in comments %}
+                        <div class="comment-item" id="comment-{{ comment.pk }}">
+                            <div class="comment-avatar flex-shrink-0">
+                                {% if comment.author.avatar %}
+                                    <img src="{{ comment.author.avatar.url }}" alt="">
+                                {% else %}
+                                    {{ comment.author.first_name|first|upper|default:comment.author.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="comment-body">
+                                <div class="comment-meta">
+                                    <span class="comment-author">{{ comment.author.get_full_name|default:comment.author.username }}</span>
+                                    {% if comment.author.is_admin %}
+                                        <span class="comment-role role-admin">Admin</span>
+                                    {% elif comment.author.is_teacher %}
+                                        <span class="comment-role role-teacher">Guru</span>
+                                    {% else %}
+                                        <span class="comment-role role-student">Siswa</span>
+                                    {% endif %}
+                                    <span class="comment-time">{{ comment.created_at|timesince }} lalu</span>
+                                </div>
+                                {% if comment.is_deleted %}
+                                    <p class="comment-deleted mb-0">Komentar ini telah dihapus.</p>
+                                {% else %}
+                                    <p class="comment-content mb-0">{{ comment.content }}</p>
+                                    <div class="comment-actions">
+                                        <button class="comment-action-btn" onclick="toggleReply({{ comment.pk }})">
+                                            <i class="bi bi-reply me-1"></i>Balas
+                                        </button>
+                                        {% if comment.author == request.user or is_teacher or request.user.is_admin %}
+                                        <button class="comment-action-btn delete" onclick="deleteComment({{ comment.pk }})">
+                                            <i class="bi bi-trash me-1"></i>Hapus
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+
+                                <!-- Reply box -->
+                                <div class="reply-box" id="reply-box-{{ comment.pk }}">
+                                    <textarea class="reply-textarea" id="reply-input-{{ comment.pk }}"
+                                              placeholder="Tulis balasan..." rows="2"></textarea>
+                                    <div class="d-flex justify-content-end gap-2 mt-2">
+                                        <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="toggleReply({{ comment.pk }})" style="font-size:0.75rem;">Batal</button>
+                                        <button class="btn btn-sm btn-purple rounded-pill" onclick="submitReply({{ comment.pk }})" style="font-size:0.75rem;">
+                                            <i class="bi bi-send me-1"></i>Balas
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Replies -->
+                                <div class="replies-container" id="replies-{{ comment.pk }}">
+                                    {% for reply in comment.replies.all %}
+                                    {% if not reply.is_deleted %}
+                                    <div class="comment-item reply-item" id="comment-{{ reply.pk }}">
+                                        <div class="comment-avatar flex-shrink-0" style="width:28px;height:28px;font-size:0.7rem;">
+                                            {% if reply.author.avatar %}
+                                                <img src="{{ reply.author.avatar.url }}" alt="">
+                                            {% else %}
+                                                {{ reply.author.first_name|first|upper|default:reply.author.username|first|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div class="comment-body">
+                                            <div class="comment-meta">
+                                                <span class="comment-author">{{ reply.author.get_full_name|default:reply.author.username }}</span>
+                                                {% if reply.author.is_admin %}
+                                                    <span class="comment-role role-admin">Admin</span>
+                                                {% elif reply.author.is_teacher %}
+                                                    <span class="comment-role role-teacher">Guru</span>
+                                                {% else %}
+                                                    <span class="comment-role role-student">Siswa</span>
+                                                {% endif %}
+                                                <span class="comment-time">{{ reply.created_at|timesince }} lalu</span>
+                                            </div>
+                                            <p class="comment-content mb-0">{{ reply.content }}</p>
+                                            <div class="comment-actions">
+                                                {% if reply.author == request.user or is_teacher or request.user.is_admin %}
+                                                <button class="comment-action-btn delete" onclick="deleteComment({{ reply.pk }})">
+                                                    <i class="bi bi-trash me-1"></i>Hapus
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-comments" id="emptyState">
+                            <i class="bi bi-chat-square-dots" style="font-size:2.5rem; display:block; margin-bottom:0.75rem;"></i>
+                            Belum ada komentar. Jadilah yang pertama berdiskusi!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const MATERIAL_PK = {{ material.pk }};
+const CSRF = '{{ csrf_token }}';
+let commentCount = {{ comments|length }};
+
+document.getElementById('mainCommentInput').addEventListener('input', function () {
+    document.getElementById('mainCharCount').textContent = `${this.value.length} / 2000`;
+});
+
+function toggleReply(commentPk) {
+    const box = document.getElementById(`reply-box-${commentPk}`);
+    box.classList.toggle('open');
+    if (box.classList.contains('open')) {
+        document.getElementById(`reply-input-${commentPk}`).focus();
+    }
+}
+
+async function submitComment() {
+    const input = document.getElementById('mainCommentInput');
+    const content = input.value.trim();
+    if (!content) return;
+    const btn = document.getElementById('mainSubmitBtn');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`/courses/material/${MATERIAL_PK}/comment/add/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+            body: JSON.stringify({ content })
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        input.value = '';
+        document.getElementById('mainCharCount').textContent = '0 / 2000';
+        document.getElementById('emptyState')?.remove();
+        appendComment(data);
+        updateCount(1);
+    } catch (e) {
+        alert('Gagal mengirim komentar.');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+async function submitReply(parentPk) {
+    const input = document.getElementById(`reply-input-${parentPk}`);
+    const content = input.value.trim();
+    if (!content) return;
+    try {
+        const res = await fetch(`/courses/material/${MATERIAL_PK}/comment/add/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+            body: JSON.stringify({ content, parent_id: parentPk })
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        input.value = '';
+        toggleReply(parentPk);
+        appendReply(data, parentPk);
+        updateCount(1);
+    } catch (e) {
+        alert('Gagal mengirim balasan.');
+    }
+}
+
+async function deleteComment(commentPk) {
+    if (!confirm('Hapus komentar ini?')) return;
+    try {
+        const res = await fetch(`/courses/comment/${commentPk}/delete/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF }
+        });
+        const data = await res.json();
+        if (data.error) { alert(data.error); return; }
+        const el = document.getElementById(`comment-${commentPk}`);
+        if (el) {
+            const contentEl = el.querySelector('.comment-content');
+            const actionsEl = el.querySelector('.comment-actions');
+            if (contentEl) { contentEl.className = 'comment-deleted mb-0'; contentEl.textContent = 'Komentar ini telah dihapus.'; }
+            if (actionsEl) actionsEl.remove();
+        }
+        updateCount(-1);
+    } catch (e) {
+        alert('Gagal menghapus komentar.');
+    }
+}
+
+function appendComment(data) {
+    const list = document.getElementById('commentList');
+    list.insertAdjacentHTML('beforeend', buildCommentHTML(data));
+}
+
+function appendReply(data, parentPk) {
+    const container = document.getElementById(`replies-${parentPk}`);
+    if (!container) return;
+    container.insertAdjacentHTML('beforeend', `
+    <div class="comment-item reply-item" id="comment-${data.id}">
+        <div class="comment-avatar flex-shrink-0" style="width:28px;height:28px;font-size:0.7rem;">
+            ${data.avatar_url ? `<img src="${data.avatar_url}" alt="">` : data.author_initial}
+        </div>
+        <div class="comment-body">
+            <div class="comment-meta">
+                <span class="comment-author">${escHtml(data.author_name)}</span>
+                <span class="comment-role ${roleClass(data.role_label)}">${escHtml(data.role_label)}</span>
+                <span class="comment-time">${data.created_at}</span>
+            </div>
+            <p class="comment-content mb-0">${escHtml(data.content)}</p>
+            <div class="comment-actions">
+                ${data.is_own ? `<button class="comment-action-btn delete" onclick="deleteComment(${data.id})"><i class="bi bi-trash me-1"></i>Hapus</button>` : ''}
+            </div>
+        </div>
+    </div>`);
+}
+
+function buildCommentHTML(data) {
+    return `
+    <div class="comment-item" id="comment-${data.id}">
+        <div class="comment-avatar flex-shrink-0">
+            ${data.avatar_url ? `<img src="${data.avatar_url}" alt="">` : data.author_initial}
+        </div>
+        <div class="comment-body">
+            <div class="comment-meta">
+                <span class="comment-author">${escHtml(data.author_name)}</span>
+                <span class="comment-role ${roleClass(data.role_label)}">${escHtml(data.role_label)}</span>
+                <span class="comment-time">${data.created_at}</span>
+            </div>
+            <p class="comment-content mb-0">${escHtml(data.content)}</p>
+            <div class="comment-actions">
+                <button class="comment-action-btn" onclick="toggleReply(${data.id})"><i class="bi bi-reply me-1"></i>Balas</button>
+                ${data.is_own ? `<button class="comment-action-btn delete" onclick="deleteComment(${data.id})"><i class="bi bi-trash me-1"></i>Hapus</button>` : ''}
+            </div>
+        </div>
+        <div class="reply-box" id="reply-box-${data.id}">
+            <textarea class="reply-textarea" id="reply-input-${data.id}" placeholder="Tulis balasan..." rows="2"></textarea>
+            <div class="d-flex justify-content-end gap-2 mt-2">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="toggleReply(${data.id})" style="font-size:0.75rem;">Batal</button>
+                <button class="btn btn-sm btn-purple rounded-pill" onclick="submitReply(${data.id})" style="font-size:0.75rem;"><i class="bi bi-send me-1"></i>Balas</button>
+            </div>
+        </div>
+        <div class="replies-container" id="replies-${data.id}"></div>
+    </div>`;
+}
+
+function roleClass(label) {
+    if (!label) return '';
+    const l = label.toLowerCase();
+    if (l.includes('admin')) return 'role-admin';
+    if (l.includes('guru') || l.includes('teacher')) return 'role-teacher';
+    return 'role-student';
+}
+
+function updateCount(delta) {
+    commentCount += delta;
+    document.getElementById('commentCount').textContent = commentCount;
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('mainCommentInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submitComment(); }
+});
+</script>
+{% endblock %}

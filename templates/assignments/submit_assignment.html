@@ -1,0 +1,545 @@
+{% extends 'base.html' %}
+{% block title %}Kumpulkan Tugas - Sora LMS{% endblock %}
+{% block page_title %}Kumpulkan Tugas{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Submit Assignment Styling - Dark Mode Support */
+    body {
+        background: var(--sora-bg);
+    }
+    
+    .submit-wrapper {
+        max-width: 700px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+        background: var(--sora-card);
+        border-radius: 40px;
+        border: 1px solid var(--sora-border);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        opacity: 0.8;
+    }
+    .back-link:hover {
+        color: var(--sora-primary);
+        transform: translateX(-3px);
+        background: var(--sora-bg);
+        border-color: var(--sora-primary);
+        opacity: 1;
+    }
+    
+    /* Info Card - Assignment Summary */
+    .info-card-summary {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    [data-bs-theme="dark"] .info-card-summary {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
+    .assignment-title-summary {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--sora-text);
+        margin-bottom: 0.5rem;
+    }
+    .assignment-desc-summary {
+        font-size: 0.8rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+    .deadline-info {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.8;
+        margin-bottom: 0.75rem;
+    }
+    .deadline-info span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .deadline-normal {
+        color: #f59e0b;
+    }
+    .deadline-overdue {
+        color: #ef4444;
+    }
+    .warning-alert {
+        background: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 12px;
+        padding: 0.6rem 1rem;
+        font-size: 0.75rem;
+        color: #f59e0b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+    
+    /* Form Card - Like Window */
+    .form-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    [data-bs-theme="dark"] .form-card {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    }
+    
+    /* Card Header - Like Window Title Bar */
+    .card-header-window {
+        background: var(--sora-card);
+        padding: 1.25rem 1.75rem;
+        border-bottom: 1px solid var(--sora-border);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .card-header-window h6 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--sora-text);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .card-header-window i {
+        font-size: 1.2rem;
+        color: #10b981;
+    }
+    
+    /* Card Body */
+    .card-body-window {
+        padding: 1.75rem;
+    }
+    
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label-modern {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--sora-text);
+        opacity: 0.8;
+        margin-bottom: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-label-modern i {
+        font-size: 0.85rem;
+        color: var(--sora-primary);
+    }
+    .required-star {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    
+    /* File Upload */
+    .file-upload-wrapper {
+        position: relative;
+        margin-top: 0.25rem;
+    }
+    .file-upload-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        background: var(--sora-bg);
+        border: 2px dashed var(--sora-border);
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+    .file-upload-label:hover {
+        border-color: var(--sora-primary);
+        background: var(--sora-card);
+        color: var(--sora-primary);
+        opacity: 1;
+    }
+    .file-upload-label i {
+        font-size: 1.3rem;
+    }
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .file-name {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.3rem 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 30px;
+        border: 1px solid var(--sora-border);
+    }
+    .help-text {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .help-text i {
+        font-size: 0.7rem;
+    }
+    
+    /* Textarea */
+    .textarea-modern {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 16px;
+        transition: all 0.2s;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .textarea-modern:focus {
+        outline: none;
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .textarea-modern:hover:not(:focus) {
+        border-color: var(--sora-border);
+    }
+    .textarea-modern::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    /* Error Styling */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+    .errorlist li {
+        font-size: 0.7rem;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .errorlist li::before {
+        content: "⚠";
+        font-size: 0.65rem;
+    }
+    .textarea-modern.error {
+        border-color: #ef4444;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        padding-top: 0.5rem;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        color: white;
+    }
+    .btn-cancel {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-cancel:hover {
+        background: var(--sora-border);
+        color: var(--sora-text);
+        transform: translateY(-2px);
+        opacity: 0.8;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .info-card-summary, .form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .submit-wrapper {
+            margin: 1rem auto;
+        }
+        .card-body-window {
+            padding: 1.25rem;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            justify-content: center;
+        }
+        .deadline-info {
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="submit-wrapper">
+    <!-- Back Link -->
+    <a href="{% url 'assignments:assignment_detail' pk=assignment.pk %}" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke Detail Tugas
+    </a>
+    
+    <!-- Assignment Summary Card -->
+    <div class="info-card-summary">
+        <div class="assignment-title-summary">{{ assignment.title }}</div>
+        <div class="assignment-desc-summary">{{ assignment.description|truncatechars:150|default:"Tidak ada deskripsi" }}</div>
+        <div class="deadline-info">
+            <span class="{% if assignment.is_overdue %}deadline-overdue{% else %}deadline-normal{% endif %}">
+                <i class="bi bi-calendar3"></i>
+                Deadline: {{ assignment.due_date|date:"d M Y, H:i" }}
+                {% if assignment.is_overdue %}
+                <span class="ms-1">(Terlambat)</span>
+                {% endif %}
+            </span>
+            <span>
+                <i class="bi bi-award"></i>
+                Nilai Maksimal: {{ assignment.max_score }}
+            </span>
+        </div>
+        {% if assignment.is_overdue %}
+        <div class="warning-alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Deadline sudah lewat, pengumpulan akan ditandai terlambat.
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Submit Form Card -->
+    <div class="form-card">
+        <div class="card-header-window">
+            <h6>
+                <i class="bi bi-cloud-upload"></i>
+                Form Pengumpulan Tugas
+            </h6>
+        </div>
+        
+        <div class="card-body-window">
+            <form method="post" enctype="multipart/form-data" id="submitForm">
+                {% csrf_token %}
+                
+                <!-- File Upload -->
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
+                        Upload File Jawaban
+                        <span class="required-star">*</span>
+                    </label>
+                    <div class="file-upload-wrapper">
+                        <label for="id_file" class="file-upload-label">
+                            <i class="bi bi-cloud-upload"></i>
+                            <span>Pilih file dari komputer</span>
+                        </label>
+                        {{ form.file }}
+                        <div id="file-name" class="file-name" style="display: none;"></div>
+                    </div>
+                    <div class="help-text">
+                        <i class="bi bi-info-circle"></i>
+                        Format yang didukung: PDF, DOC, DOCX, XLS, XLSX, ZIP, RAR. Maksimal 50MB.
+                    </div>
+                    {% if form.file.errors %}
+                        {{ form.file.errors }}
+                    {% endif %}
+                </div>
+                
+                <!-- Text Answer (Optional) -->
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-textarea-t"></i>
+                        Jawaban Teks
+                    </label>
+                    {{ form.text_answer }}
+                    <div class="help-text">
+                        <i class="bi bi-lightbulb"></i>
+                        Bisa diisi dengan link, penjelasan, atau catatan tambahan (opsional)
+                    </div>
+                    {% if form.text_answer.errors %}
+                        {{ form.text_answer.errors }}
+                    {% endif %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-cloud-arrow-up-fill"></i>
+                        Kumpulkan Tugas
+                    </button>
+                    <a href="{% url 'assignments:assignment_detail' pk=assignment.pk %}" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i>
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // File upload preview
+        const fileInput = document.getElementById('id_file');
+        const fileNameSpan = document.getElementById('file-name');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const fileName = file.name;
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                    
+                    // Check file size (max 50MB)
+                    if (file.size > 50 * 1024 * 1024) {
+                        fileNameSpan.innerHTML = '<i class="bi bi-exclamation-triangle-fill" style="color: #ef4444;"></i> File terlalu besar (maks 50MB)';
+                        fileNameSpan.style.color = '#ef4444';
+                        fileNameSpan.style.background = 'rgba(239, 68, 68, 0.1)';
+                        fileNameSpan.style.display = 'inline-flex';
+                        this.value = '';
+                        return;
+                    }
+                    
+                    // Get file extension
+                    const fileExt = fileName.split('.').pop().toUpperCase();
+                    let fileIcon = 'bi-file-earmark-text';
+                    if (['PDF'].includes(fileExt)) fileIcon = 'bi-file-earmark-pdf';
+                    else if (['DOC', 'DOCX'].includes(fileExt)) fileIcon = 'bi-file-earmark-word';
+                    else if (['XLS', 'XLSX'].includes(fileExt)) fileIcon = 'bi-file-earmark-excel';
+                    else if (['ZIP', 'RAR', '7Z'].includes(fileExt)) fileIcon = 'bi-file-earmark-zip';
+                    else if (['JPG', 'JPEG', 'PNG', 'GIF'].includes(fileExt)) fileIcon = 'bi-file-earmark-image';
+                    
+                    fileNameSpan.innerHTML = `<i class="bi ${fileIcon}" style="color: #10b981;"></i> ${fileName} (${fileSize} MB)`;
+                    fileNameSpan.style.color = '#10b981';
+                    fileNameSpan.style.background = 'rgba(16, 185, 129, 0.1)';
+                    fileNameSpan.style.display = 'inline-flex';
+                } else {
+                    fileNameSpan.style.display = 'none';
+                }
+            });
+        }
+        
+        // Add error styling
+        const errorFields = document.querySelectorAll('.errorlist');
+        errorFields.forEach(error => {
+            const parent = error.closest('.form-group');
+            if (parent) {
+                const input = parent.querySelector('input, textarea');
+                if (input) {
+                    input.classList.add('error');
+                }
+            }
+        });
+        
+        // Warn before leaving if form has unsaved changes
+        let formChanged = false;
+        const form = document.getElementById('submitForm');
+        if (form) {
+            form.querySelectorAll('input, textarea').forEach(field => {
+                field.addEventListener('input', () => {
+                    formChanged = true;
+                });
+                field.addEventListener('change', () => {
+                    formChanged = true;
+                });
+            });
+            
+            window.addEventListener('beforeunload', (e) => {
+                if (formChanged) {
+                    e.preventDefault();
+                    e.returnValue = 'Anda belum menyelesaikan pengumpulan tugas. Yakin ingin meninggalkan halaman?';
+                    return e.returnValue;
+                }
+            });
+            
+            form.addEventListener('submit', () => {
+                formChanged = false;
+            });
+        }
+    });
+</script>
+{% endblock %}

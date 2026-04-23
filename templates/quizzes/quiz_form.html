@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Kuis - Sora LMS{% endblock %}
+{% block page_title %}{{ action }} Kuis{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quiz Form Premium Styling - Dark Mode Support */
+    .form-container {
+        background: var(--sora-bg);
+        padding-bottom: 3rem;
+    }
+
+    .quiz-form-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+    
+    [data-bs-theme="dark"] .quiz-form-card {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .card-header-premium {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        padding: 2rem;
+        color: white;
+    }
+    
+    [data-bs-theme="dark"] .card-header-premium {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    }
+    
+    .card-header-premium h4 {
+        color: white;
+    }
+    
+    .card-header-premium p {
+        color: rgba(255,255,255,0.8);
+    }
+
+    .form-section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--sora-primary);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .form-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--sora-border);
+    }
+
+    .card-body-premium {
+        padding: 2.5rem;
+    }
+
+    /* Label Styling */
+    label {
+        font-weight: 600;
+        color: var(--sora-text);
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        opacity: 0.8;
+    }
+
+    /* Custom Input Style */
+    input[type="text"], 
+    input[type="number"], 
+    textarea, 
+    select, 
+    input[type="datetime-local"] {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        border: 1.5px solid var(--sora-border);
+        transition: all 0.3s;
+        font-size: 0.9rem;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    
+    input[type="text"]:focus, 
+    input[type="number"]:focus, 
+    textarea:focus, 
+    select:focus, 
+    input[type="datetime-local"]:focus {
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+    
+    input[type="text"]::placeholder, 
+    textarea::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+
+    /* Checkbox Group */
+    .checkbox-group-card {
+        background: var(--sora-bg);
+        padding: 1.25rem;
+        border-radius: 18px;
+        border: 1px solid var(--sora-border);
+    }
+
+    .form-check {
+        padding-left: 2rem;
+        margin-bottom: 0;
+    }
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-left: -2rem;
+        cursor: pointer;
+        accent-color: var(--sora-primary);
+    }
+    .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        color: var(--sora-text);
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    .btn-save {
+        padding: 0.8rem 2rem;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: 0.3s;
+        background: linear-gradient(135deg, var(--sora-primary), var(--sora-primary-light));
+        color: white;
+        border: none;
+    }
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        color: white;
+    }
+    
+    .btn-cancel {
+        padding: 0.8rem 2rem;
+        border-radius: 14px;
+        font-weight: 600;
+        color: var(--sora-text);
+        text-decoration: none;
+        transition: 0.3s;
+        background: transparent;
+        border: 1px solid var(--sora-border);
+    }
+    .btn-cancel:hover {
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        border-color: var(--sora-primary);
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    .text-danger {
+        color: #ef4444 !important;
+    }
+    
+    .border-top {
+        border-top-color: var(--sora-border) !important;
+    }
+    
+    .fw-600 {
+        font-weight: 600;
+    }
+    
+    .fw-800 {
+        font-weight: 800;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .quiz-form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-header-premium {
+            padding: 1.25rem;
+        }
+        .card-body-premium {
+            padding: 1.25rem;
+        }
+        .form-section-title {
+            margin-bottom: 1rem;
+        }
+        .btn-save, .btn-cancel {
+            padding: 0.6rem 1.25rem;
+            font-size: 0.85rem;
+        }
+        .checkbox-group-card .row {
+            gap: 0.75rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="mb-4">
+                <a href="{% url 'courses:course_detail' slug=course.slug %}" class="text-muted text-decoration-none small fw-600">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Detail Kelas
+                </a>
+            </div>
+
+            <div class="quiz-form-card">
+                <div class="card-header-premium">
+                    <h4 class="fw-800 mb-1">{{ action }} Kuis ✨</h4>
+                    <p class="mb-0 opacity-75 small">Atur konfigurasi kuis, batas waktu, dan kriteria kelulusan.</p>
+                </div>
+
+                <div class="card-body-premium">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-section-title">Informasi Dasar</div>
+                        <div class="row g-4 mb-5">
+                            <div class="col-12">
+                                <label>Judul Kuis <span class="text-danger">*</span></label>
+                                {{ form.title }}
+                                {% if form.title.errors %}<div class="text-danger small mt-1">{{ form.title.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label>Deskripsi Kuis</label>
+                                {{ form.description }}
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Aturan & Penilaian</div>
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-4">
+                                <label><i class="bi bi-clock me-1"></i> Batas Waktu (Menit)</label>
+                                {{ form.time_limit }}
+                                <div class="small text-muted mt-1">Kosongkan untuk tidak ada batas waktu</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label><i class="bi bi-trophy me-1"></i> Nilai Lulus (%)</label>
+                                {{ form.passing_score }}
+                                <div class="small text-muted mt-1">Minimal persentase untuk lulus</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label><i class="bi bi-arrow-repeat me-1"></i> Maks. Percobaan</label>
+                                {{ form.max_attempts }}
+                                <div class="small text-muted mt-1">Kosongkan untuk unlimited</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label><i class="bi bi-calendar-event me-1"></i> Tanggal Mulai</label>
+                                {{ form.start_date }}
+                                <div class="small text-muted mt-1">Kosongkan untuk mulai sekarang</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label><i class="bi bi-calendar-x me-1"></i> Tanggal Selesai</label>
+                                {{ form.end_date }}
+                                <div class="small text-muted mt-1">Kosongkan untuk tidak ada batas</div>
+                            </div>
+                        </div>
+
+                        <div class="form-section-title">Opsi Tambahan</div>
+                        <div class="checkbox-group-card mb-5">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-check d-flex align-items-center">
+                                        {{ form.shuffle_questions }}
+                                        <label class="form-check-label ms-2">Acak Urutan Soal</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check d-flex align-items-center">
+                                        {{ form.show_results }}
+                                        <label class="form-check-label ms-2">Tampilkan Hasil Ke Siswa</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-check d-flex align-items-center">
+                                        {{ form.is_published }}
+                                        <label class="form-check-label ms-2 fw-bold" style="color: var(--sora-primary);">Terbitkan Kuis Sekarang</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 pt-3 border-top">
+                            <button type="submit" class="btn-save">
+                                <i class="bi bi-cloud-arrow-up me-2"></i>Simpan Perubahan
+                            </button>
+                            <a href="{% url 'courses:course_detail' slug=course.slug %}" class="btn-cancel">
+                                <i class="bi bi-x-lg me-1"></i>Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

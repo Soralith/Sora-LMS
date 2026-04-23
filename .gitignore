@@ -1,0 +1,34 @@
+# Environment variables
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual env
+main/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Database
+db.sqlite3
+
+# Uploads - media folder
+*/media/
+media/
+*.jpg
+*.png
+*.pdf
+
+# Logs
+*.log
+
+# Backup folders
+BACKUP/
+BACKUP2/
+{*/

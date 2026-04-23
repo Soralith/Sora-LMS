@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="light" id="mainHtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sora LMS{% endblock %}</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Sora Dark Purple Palette (Sidebar) */
+            --sora-sidebar-bg: #1e1b4b; /* Navy Purple Gelap */
+            --sora-sidebar-hover: rgba(255, 255, 255, 0.08);
+            --sora-sidebar-active: #3b82f6; /* Blue Accent */
+            --sora-sidebar-text: rgba(255, 255, 255, 0.7);
+            
+            /* Sora Primary Colors - Blue Theme */
+            --sora-primary: #3b82f6;      /* Blue 500 */
+            --sora-primary-light: #60a5fa; /* Blue 400 */
+            --sora-primary-dark: #1d4ed8;  /* Blue 700 */
+            --bg-light: #f8fafc;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+            /* Semantic Colors - Blue Theme */
+            --sora-success: #3b82f6;   /* Blue for success */
+            --sora-success-bg: rgba(59, 130, 246, 0.1);
+            --sora-danger: #2563eb;     /* Blue 600 for danger */
+            --sora-danger-bg: rgba(37, 99, 235, 0.1);
+            --sora-warning: #60a5fa;   /* Light blue for warning */
+            --sora-warning-bg: rgba(96, 165, 250, 0.1);
+            --sora-info: #93c5fd;      /* Light blue for info */
+            --sora-info-bg: rgba(147, 197, 253, 0.1);
+            --sora-primary-bg: rgba(59, 130, 246, 0.1);
+
+            /* Legacy color aliases for compatibility */
+            --success: var(--sora-success);
+            --danger: var(--sora-danger);
+            --warning: var(--sora-warning);
+            --info: var(--sora-info);
+
+            /* Light Mode */
+            --sora-bg: #f8fafc;
+            --sora-card: #ffffff;
+            --sora-text: #1e293b;
+            --sora-border: #eef2ff;
+
+        }
+        /* Dark Mode */
+        [data-bs-theme="dark"] {
+            /* Mode Gelap */
+            --sora-bg: #0f172a;      /* Navy Gelap */
+            --sora-card: #1e293b;    /* Navy Muda */
+            --sora-text: #f1f5f9;    /* Putih Abu */
+            --sora-border: #334155;
+            
+            /* Dark mode semantic colors */
+            --sora-success-bg: rgba(59, 130, 246, 0.15);
+            --sora-danger-bg: rgba(37, 99, 235, 0.15);
+            --sora-warning-bg: rgba(96, 165, 250, 0.15);
+            --sora-info-bg: rgba(147, 197, 253, 0.15);
+            --sora-primary-bg: rgba(59, 130, 246, 0.15);
+        }
+
+[data-bs-theme="dark"] .topbar {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-bottom: 1px solid #334155 !important;
+}
+
+[data-bs-theme="dark"] .topbar .btn {
+    background: var(--sora-card) !important;
+    border-color: var(--sora-border) !important;
+    color: var(--sora-text) !important;
+}
+
+        [data-bs-theme="dark"] .page-title {
+            color: #f1f5f9 !important;
+        }
+
+        /* Global Color Consistency Overrides */
+        .text-success { color: var(--sora-success) !important; }
+        .text-danger { color: var(--sora-danger) !important; }
+        .text-warning { color: var(--sora-warning) !important; }
+        .text-info { color: var(--sora-info) !important; }
+        
+        .bg-success { background-color: var(--sora-success) !important; }
+        .bg-danger { background-color: var(--sora-danger) !important; }
+        .bg-warning { background-color: var(--sora-warning) !important; }
+        .bg-info { background-color: var(--sora-info) !important; }
+        
+        .border-success { border-color: var(--sora-success) !important; }
+        .border-danger { border-color: var(--sora-danger) !important; }
+        
+        /* Override inline styles commonly used */
+        [style*="color: #22c55e"], [style*="color: #10b981"] { color: var(--sora-success) !important; }
+        [style*="color: #ef4444"] { color: var(--sora-danger) !important; }
+        [style*="color: #f59e0b"] { color: var(--sora-warning) !important; }
+        [style*="color: #3b82f6"] { color: var(--sora-success) !important; }
+        
+        [style*="background: #22c55e"], [style*="background: #10b981"] { background-color: var(--sora-success) !important; }
+        [style*="background: #ef4444"] { background-color: var(--sora-danger) !important; }
+        [style*="background: #f59e0b"] { background-color: var(--sora-warning) !important; }
+        
+        [style*="background: rgba(16, 185, 129"], [style*="background: rgba(34, 197, 94"] { background-color: var(--sora-success-bg) !important; }
+        [style*="background: rgba(239, 68, 68"] { background-color: var(--sora-danger-bg) !important; }
+        [style*="background: rgba(245, 158, 11"] { background-color: var(--sora-warning-bg) !important; }
+        [style*="background: rgba(59, 130, 246"] { background-color: var(--sora-success-bg) !important; }
+
+        /* Override purple colors to blue */
+        [style*="color: #7c3aed"], [style*="color: #8b5cf6"], [style*="color: #a78bfa"], [style*="color: #6366f1"] { color: var(--sora-primary) !important; }
+        [style*="background: #7c3aed"], [style*="background: #8b5cf6"], [style*="background: #a78bfa"], [style*="background: #6366f1"] { background-color: var(--sora-primary) !important; }
+        [style*="background: rgba(124, 58, 237"], [style*="background: rgba(139, 92, 246"], [style*="background: rgba(167, 139, 250"], [style*="background: rgba(99, 102, 241"] { background-color: var(--sora-primary-bg) !important; }
+        [style*="border-color: #7c3aed"], [style*="border-color: #8b5cf6"], [style*="border-color: #6366f1"] { border-color: var(--sora-primary) !important; }
+        [style*="box-shadow"], [style*="box-shadow: 0 0 0 3px rgba(99,102,241"] { box-shadow: 0 0 0 3px rgba(59,130,246,0.12) !important; }
+
+        /* Global button styling */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        }
+        
+        /* Override all Bootstrap btn-primary to blue gradient */
+        [class*="btn-primary"] {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+            border: none !important;
+        }
+
+        /* Global gradient buttons matching admin_dashboard */
+        .btn-success, .btn-danger {
+            background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%) !important;
+            border: none !important;
+            color: white;
+        }
+        .btn-success:hover, .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Override gradient backgrounds to indigo (matching admin_dashboard) */
+
+        /* Biar card-card di dashboard otomatis gelap */
+        [data-bs-theme="dark"] .card {
+            background-color: var(--sora-card);
+            border-color: var(--sora-border);
+            color: var(--sora-text);
+        }
+        
+        * { font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* body { background: var(--bg-light); color: #1e293b; overflow-x: hidden; } */
+        body {
+            background-color: var(--sora-bg);
+            color: var(--sora-text);
+        }
+
+        /* --- DARK SIDEBAR REBORN --- */
+        .sora-sidebar {
+            width: 280px;
+            height: 100vh;
+            background: var(--sora-sidebar-bg);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-brand {
+            padding: 2.5rem 1.75rem;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .brand-name {
+            color: white;
+            font-weight: 800;
+            font-size: 1.4rem;
+            letter-spacing: -0.5px;
+            margin-bottom: -4px;
+        }
+
+        .brand-sub {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .sidebar-nav {
+            padding: 0 1.25rem;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar-section-title {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 1.5rem 0.75rem 0.75rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.85rem 1rem;
+            color: var(--sora-sidebar-text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-link i {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-link:hover {
+            background: var(--sora-sidebar-hover);
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: var(--sora-sidebar-active);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .sidebar-link.text-danger {
+            color: #fb7185 !important;
+        }
+        .sidebar-link.text-danger:hover {
+            background: rgba(251, 113, 133, 0.1);
+        }
+
+        .sidebar-footer {
+            padding: 1.25rem;
+            background: rgba(0, 0, 0, 0.2);
+            margin-top: auto;
+        }
+
+        .user-mini {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            padding: 0.5rem;
+        }
+
+        .user-mini-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-mini-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            line-height: 1.2;
+        }
+        .user-mini-role { font-size: 0.7rem; color: rgba(255, 255, 255, 0.4); }
+
+        /* --- MAIN CONTENT --- */
+        .main-wrapper { margin-left: 280px; min-height: 100vh; transition: all 0.4s; }
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.1rem 2rem;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title { font-size: 1.15rem; font-weight: 700; color: #1e293b; margin: 0; }
+        .main-content { padding: 2rem; background: var(--sora-bg); }
+
+        /* Badge Style */
+        .badge-role-admin { background: #fffbeb; color: #b45309; border: 1px solid #fef3c7; }
+        .badge-role-teacher { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
+        .badge-role-student { background: #f0fdf4; color: #15803d; border: 1px solid #dcfce7; }
+
+        /* Dark Mode Badge */
+        [data-bs-theme="dark"] .badge-role-admin { background: rgba(234, 179, 8, 0.15); color: #fde047; border-color: rgba(234, 179, 8, 0.3); }
+        [data-bs-theme="dark"] .badge-role-teacher { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
+        [data-bs-theme="dark"] .badge-role-student { background: rgba(34, 197, 94, 0.15); color: #4ade80; border-color: rgba(34, 197, 94, 0.3); }
+
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .sora-sidebar { transform: translateX(-100%); }
+            .sora-sidebar.show { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; }
+        }
+
+        /* Modal z-index override */
+        .modal { z-index: 10050; }
+        .modal-backdrop { z-index: 10049; }
+        .modal-dialog { z-index: 10051; }
+
+        /* Splash Screen Loader */
+        .splash-loader {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: #1e1b4b;
+            z-index: 999999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .splash-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+        }
+
+        [data-bs-theme="dark"] .splash-loader {
+            background: #0f172a;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- Splash Screen Loader - only on dashboard -->
+{% if request.resolver_match.namespace == 'dashboard' %}
+<div class="splash-loader" id="splashLoader">
+    <div class="splash-video">
+        <video id="splashVideo" autoplay muted playsinline>
+            <source src="{% static 'images/splash.mp4' %}" type="video/mp4">
+        </video>
+    </div>
+</div>
+{% endif %}
+
+<div class="sora-sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <a href="/" class="brand-container">
+            <div class="brand-logo" style="overflow: hidden; background: none; box-shadow: none;">
+                <img src="{% static 'images/logo.png' %}" alt="Sora Logo" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+
+            <div>
+                <div class="brand-name">Sora</div>
+                <div class="brand-sub">Learning Management</div>
+            </div>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="sidebar-section-title">Menu Utama</div>
+        <a href="{% url 'dashboard:index' %}" class="sidebar-link {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+        </a>
+        <a href="{% url 'courses:course_list' %}" class="sidebar-link {% if request.resolver_match.namespace == 'courses' %}active{% endif %}">
+            <i class="bi bi-book-half"></i> Semua Kelas
+        </a>
+        <a href="{% url 'komunitas:index' %}" class="sidebar-link {% if request.resolver_match.namespace == 'komunitas' %}active{% endif %}">
+            <i class="bi bi-people-fill"></i> Komunitas
+        </a>
+        <a href="{% url 'ai_chat:chat' %}" class="sidebar-link {% if request.resolver_match.namespace == 'ai_chat' %}active{% endif %}">
+            <i class="bi bi-stars"></i> Chat AI
+        </a>
+        <div class="sidebar-section-title">Mode Tampilan</div>
+        <a href="javascript:void(0)" class="sidebar-link" id="darkModeToggle">
+            <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+            <span id="themeText">Mode Gelap</span>
+        </a>
+        
+        {% if user.is_student %}
+        <a href="{% url 'assignments:tugas_saya' %}" class="sidebar-link {% if request.resolver_match.namespace == 'assignments' and 'my' in request.path %}active{% endif %}" hx-boost="false">
+            <i class="bi bi-patch-check-fill"></i> Tugas Saya
+        </a>
+        {% endif %}
+
+        {% if user.is_teacher or user.is_admin %}
+        <div class="sidebar-section-title">Pengajaran</div>
+        <a href="{% url 'courses:course_create' %}" class="sidebar-link" hx-boost="true">
+            <i class="bi bi-plus-circle-fill"></i> Buat Kelas
+        </a>
+        {% endif %}
+
+        {% if user.is_admin %}
+        <div class="sidebar-section-title">Admin Panel</div>
+        <a href="{% url 'accounts:user_list' %}" class="sidebar-link {% if request.resolver_match.namespace == 'accounts' and 'user' in request.path %}active{% endif %}" hx-boost="false">
+            <i class="bi bi-people-fill"></i> Kelola User
+        </a>
+        <a href="/admin/" class="sidebar-link" target="_blank" hx-boost="false">
+            <i class="bi bi-gear-fill"></i> Halaman Admin
+        </a>
+        {% endif %}
+
+        <div class="sidebar-section-title">Pengaturan</div>
+        <a href="{% url 'accounts:profile' %}" class="sidebar-link {% if 'profile' in request.path %}active{% endif %}" hx-boost="false">
+            <i class="bi bi-person-fill-gear"></i> Profil
+        </a>
+        <a href="{% url 'accounts:logout' %}" class="sidebar-link text-danger mt-3" hx-boost="false">
+            <i class="bi bi-box-arrow-left"></i> Keluar
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-mini">
+            <div class="user-mini-avatar">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="avatar" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">
+                {% else %}
+                    {{ user.username|slice:":1"|upper }}
+                {% endif %}
+            </div>
+            <div class="user-mini-info">
+                <div class="user-mini-name">{{ user.username|truncatechars:15 }}</div>
+                <div class="user-mini-role">{{ user.get_role_display }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-wrapper">
+    <div class="topbar">
+        <div class="d-flex align-items-center gap-3">
+            {% block topbar_left %}
+            <button class="btn btn-sm d-lg-none" onclick="document.getElementById('sidebar').classList.toggle('show')" style="background: var(--sora-card); border: 1px solid var(--sora-border);">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+            <h6 class="page-title">{% block page_title %}Sora LMS{% endblock %}</h6>
+            {% endblock %}
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            {% block topbar_right %}
+            {% if request.resolver_match.namespace == 'ai_chat' %}
+            <button class="btn btn-sm btn-outline-secondary d-none d-lg-inline-flex" onclick="showHistoryModal()" style="border-radius: 20px;">
+                <i class="bi bi-list me-1"></i> Riwayat
+            </button>
+            <button class="btn btn-sm btn-primary d-none d-lg-inline-flex" onclick="newSession()" style="border-radius: 20px;">
+                <i class="bi bi-plus-lg me-1"></i> Chat Baru
+            </button>
+            {% endif %}
+            <span class="badge px-3 py-2 {% if user.is_admin %}badge-role-admin{% elif user.is_teacher %}badge-role-teacher{% else %}badge-role-student{% endif %} rounded-pill d-none d-sm-inline-flex">
+                {{ user.get_role_display }}
+            </span>
+            {% endblock %}
+        </div>
+    </div>
+
+    <div class="main-content" style="min-height: 100vh;">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+{% else %}
+    {% block auth_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Toggle sidebar mobile
+    document.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('sidebar');
+        const btn = event.target.closest('[onclick*="sidebar"]');
+        if (!sidebar.contains(event.target) && !btn && sidebar.classList.contains('show')) {
+            sidebar.classList.remove('show');
+        }
+    });
+    const html = document.getElementById('mainHtml');
+    const btn = document.getElementById('darkModeToggle');
+    const icon = document.getElementById('themeIcon');
+    const text = document.getElementById('themeText'); // Tambah ini
+    
+    function updateUI(theme) {
+        html.setAttribute('data-bs-theme', theme);
+        if (theme === 'dark') {
+            icon.className = 'bi bi-sun-fill';
+            text.innerText = 'Mode Terang';
+        } else {
+            icon.className = 'bi bi-moon-stars-fill';
+            text.innerText = 'Mode Gelap';
+        }
+    }
+    
+    // Init theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    updateUI(savedTheme);
+    
+    btn.addEventListener('click', () => {
+        const newTheme = html.getAttribute('data-bs-theme') === 'light' ? 'dark' : 'light';
+        localStorage.setItem('theme', newTheme);
+        updateUI(newTheme);
+    });
+
+    // Splash Screen Loader - show only on dashboard once per session
+    (function() {
+        const splash = document.getElementById('splashLoader');
+        const video = document.getElementById('splashVideo');
+        if (splash) {
+            // Only show splash on dashboard
+            if (!window.location.pathname.startsWith('/dashboard')) {
+                splash.style.display = 'none';
+                return;
+            }
+            
+            const hasSeenSplash = sessionStorage.getItem('sora_splash_shown');
+            if (hasSeenSplash) {
+                splash.style.display = 'none';
+                return;
+            }
+            sessionStorage.setItem('sora_splash_shown', 'true');
+            
+            function hideSplash() {
+                splash.classList.add('hidden');
+                setTimeout(function() {
+                    splash.style.display = 'none';
+                }, 500);
+            }
+            
+            // Click to skip
+            splash.addEventListener('click', hideSplash);
+            
+            window.addEventListener('load', function() {
+                if (video) {
+                    video.addEventListener('ended', hideSplash);
+                } else {
+                    setTimeout(hideSplash, 800);
+                }
+            });
+        }
+    })();
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

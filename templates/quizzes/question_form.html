@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% block title %}Tambah Soal - {{ quiz.title }}{% endblock %}
+{% block page_title %}Tambah Soal Baru{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dark Mode Support for Question Create Form */
+    .builder-container {
+        padding-bottom: 4rem;
+    }
+
+    .quiz-info-mini {
+        background: var(--sora-card);
+        border-radius: 16px;
+        border: 1px solid var(--sora-border);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+    
+    [data-bs-theme="dark"] .quiz-info-mini {
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .quiz-info-mini .bg-primary.bg-opacity-10 {
+        background: rgba(99, 102, 241, 0.1) !important;
+    }
+    
+    .quiz-info-mini .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    .quiz-info-mini .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    .badge.bg-dark {
+        background: var(--sora-bg) !important;
+        color: var(--sora-text) !important;
+        border: 1px solid var(--sora-border);
+    }
+
+    .question-card-builder {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    
+    [data-bs-theme="dark"] .question-card-builder {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .card-header-builder {
+        background: var(--sora-card);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--sora-border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .card-header-builder .bg-white {
+        background: var(--sora-bg) !important;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .card-header-builder .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    .card-header-builder h5 {
+        color: var(--sora-text);
+    }
+
+    /* Form Styling */
+    .form-label-sora {
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--sora-text);
+        opacity: 0.8;
+        margin-bottom: 0.6rem;
+        display: block;
+    }
+
+    .form-control-sora {
+        border-radius: 14px;
+        border: 1.5px solid var(--sora-border);
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        transition: 0.3s;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .form-control-sora:focus {
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    .form-control-sora::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    select.form-control-sora {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+    
+    textarea.form-control-sora {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Answers Section */
+    .answers-wrapper {
+        background: var(--sora-bg);
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid var(--sora-border);
+    }
+
+    .answer-input-group {
+        background: var(--sora-card);
+        border: 1px solid var(--sora-border);
+        border-radius: 14px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: 0.2s;
+        margin-bottom: 0.75rem;
+    }
+    .answer-input-group:focus-within {
+        border-color: var(--sora-primary);
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.05);
+    }
+    
+    .answer-input-group .form-control {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        color: var(--sora-text);
+    }
+    
+    .answer-input-group .form-control::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+
+    .correct-radio {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+        accent-color: #10b981;
+    }
+
+    .btn-action-group .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    
+    /* Custom Buttons */
+    .btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        color: var(--sora-primary);
+        border: 1.5px solid var(--sora-primary);
+        transition: all 0.2s;
+    }
+    .btn-outline-primary:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-light {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1.5px solid var(--sora-border);
+        transition: all 0.2s;
+    }
+    .btn-light:hover {
+        background: var(--sora-card);
+        color: var(--sora-primary);
+        border-color: var(--sora-primary);
+        transform: translateY(-2px);
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    .border-top {
+        border-top-color: var(--sora-border) !important;
+    }
+    
+    .bg-success.bg-opacity-10 {
+        background: rgba(16, 185, 129, 0.1) !important;
+    }
+    
+    .text-success {
+        color: #10b981 !important;
+    }
+    
+    .fw-600 {
+        font-weight: 600;
+    }
+    
+    .fw-800 {
+        font-weight: 800;
+    }
+    
+    /* Animation for dynamic elements */
+    .fade-in-sora {
+        animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-header-builder {
+            padding: 1rem 1.25rem;
+        }
+        .p-4.p-lg-5 {
+            padding: 1.25rem !important;
+        }
+        .btn-action-group {
+            flex-direction: column;
+        }
+        .btn-action-group .btn,
+        .btn-action-group .ms-auto {
+            margin-left: 0 !important;
+            width: 100%;
+            text-align: center;
+        }
+        .quiz-info-mini {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+        .answers-wrapper {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="builder-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="quiz-info-mini mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 bg-primary bg-opacity-10 rounded-3">
+                        <i class="bi bi-journal-text text-primary"></i>
+                    </div>
+                    <div>
+                        <div class="text-muted small fw-600">Sedang mengedit:</div>
+                        <div class="fw-800 text-dark-purple">{{ quiz.title }}</div>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-dark rounded-pill px-3">{{ quiz.get_question_count }} Soal Terdaftar</span>
+                </div>
+            </div>
+
+            <div class="question-card-builder">
+                <div class="card-header-builder">
+                    <div class="p-2 bg-white rounded-circle shadow-sm">
+                        <i class="bi bi-plus-lg text-primary"></i>
+                    </div>
+                    <h5 class="fw-800 mb-0">Buat Pertanyaan Baru</h5>
+                </div>
+
+                <div class="p-4 p-lg-5">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-12">
+                                <label class="form-label-sora">Isi Pertanyaan <span class="text-danger">*</span></label>
+                                {{ form.text }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-sora"><i class="bi bi-layers me-1"></i> Tipe Soal</label>
+                                {{ form.question_type }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label-sora"><i class="bi bi-patch-check me-1"></i> Bobot Poin</label>
+                                {{ form.points }}
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label-sora"><i class="bi bi-lightbulb me-1"></i> Penjelasan (Feedback Jawaban)</label>
+                                {{ form.explanation }}
+                                <div class="text-muted small mt-2">Muncul setelah siswa selesai mengerjakan (opsional).</div>
+                            </div>
+                        </div>
+
+                        <div id="answers-section" class="fade-in-sora">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <label class="form-label-sora mb-0">Opsi Jawaban & Kunci</label>
+                                <span class="badge bg-success bg-opacity-10 text-success small fw-normal">Pilih satu jawaban benar</span>
+                            </div>
+                            
+                            <div class="answers-wrapper">
+                                {% for i in "0123" %}
+                                <div class="answer-input-group" data-index="{{ forloop.counter0 }}">
+                                    <input type="radio" 
+                                           name="correct_answer" 
+                                           value="{{ forloop.counter0 }}" 
+                                           class="form-check-input correct-radio m-0"
+                                           {% if forloop.first %}checked{% endif %}>
+                                    
+                                    <input type="text" 
+                                           name="answer_text" 
+                                           class="form-control border-0 p-0 shadow-none bg-transparent" 
+                                           placeholder="Tulis opsi jawaban {{ forloop.counter }}..."
+                                           style="font-size: 0.9rem;">
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="btn-action-group d-flex flex-wrap gap-2 mt-5 pt-4 border-top">
+                            <button type="submit" name="add_more" class="btn-sora-primary shadow-sm px-4">
+                                <i class="bi bi-plus-circle me-2"></i>Simpan & Tambah Lagi
+                            </button>
+                            <button type="submit" name="save" class="btn-outline-primary px-4">
+                                <i class="bi bi-check2-all me-2"></i>Simpan & Selesai
+                            </button>
+                            <a href="{% url 'quizzes:quiz_detail' pk=quiz.pk %}" class="btn-light ms-auto px-4">
+                                <i class="bi bi-x-lg me-2"></i>Batal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('id_question_type');
+    const answersSection = document.getElementById('answers-section');
+    const answerGroups = document.querySelectorAll('.answer-input-group');
+    
+    function toggleAnswers() {
+        const type = typeSelect ? typeSelect.value : 'multiple_choice';
+        const needsAnswers = ['multiple_choice', 'true_false'].includes(type);
+        
+        // Animasi sembunyi/tampil
+        if (answersSection) {
+            answersSection.style.display = needsAnswers ? 'block' : 'none';
+        }
+
+        // Logic True/False otomatis
+        if (type === 'true_false') {
+            answerGroups.forEach((group, index) => {
+                const input = group.querySelector('input[type="text"]');
+                if (index === 0) {
+                    input.value = 'Benar';
+                    input.readOnly = true;
+                    group.style.display = 'flex';
+                } else if (index === 1) {
+                    input.value = 'Salah';
+                    input.readOnly = true;
+                    group.style.display = 'flex';
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+        } else {
+            // Multiple Choice: reset state
+            answerGroups.forEach(group => {
+                const input = group.querySelector('input[type="text"]');
+                input.readOnly = false;
+                group.style.display = 'flex';
+                // Jika isinya 'Benar'/'Salah' bekas T/F, kita kosongkan (opsional)
+                if (input.value === 'Benar' || input.value === 'Salah') {
+                    input.value = '';
+                }
+            });
+        }
+    }
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', toggleAnswers);
+        toggleAnswers(); // Run on load
+    }
+});
+</script>
+{% endblock %}

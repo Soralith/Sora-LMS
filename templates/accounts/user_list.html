@@ -1,0 +1,677 @@
+{% extends 'base.html' %}
+{% block title %}Kelola Pengguna - Sora LMS{% endblock %}
+{% block page_title %}Kelola Pengguna{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    .page-header h5 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.02em;
+    }
+    .page-header p {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+    }
+    [data-bs-theme="dark"] .page-header p {
+        color: #94a3b8;
+    }
+    
+    .filter-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid #f1f5f9;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    [data-bs-theme="dark"] .filter-card {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .filter-card:hover {
+        border-color: #e2e8f0;
+        box-shadow: 0 12px 20px rgba(0,0,0,0.05);
+    }
+    [data-bs-theme="dark"] .filter-card:hover {
+        border-color: #334155;
+    }
+    
+    .table-premium {
+        font-size: 0.85rem;
+    }
+    .table-premium thead th {
+        background: #f8fafc;
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        padding: 1rem 1.2rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    [data-bs-theme="dark"] .table-premium thead th {
+        background: #0f172a;
+        color: #cbd5e1;
+        border-bottom-color: #1e293b;
+    }
+    .table-premium tbody td {
+        padding: 1rem 1.2rem;
+        vertical-align: middle;
+        border-color: #f1f5f9;
+        transition: background 0.2s;
+        color: #1e293b;
+    }
+    [data-bs-theme="dark"] .table-premium tbody td {
+        border-color: #1e293b;
+        color: #f8fafc;
+    }
+    .table-premium tbody tr:hover td {
+        background: #f8fafc;
+    }
+    [data-bs-theme="dark"] .table-premium tbody tr:hover td {
+        background: #1e293b;
+    }
+    
+    .avatar-premium {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 800;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        position: relative;
+    }
+    .avatar-premium::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100px;
+        height: 100px;
+        background: rgba(139, 92, 246, 0.3);
+        border-radius: 50%;
+        filter: blur(15px);
+        pointer-events: none;
+    }
+    .avatar-premium::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 80px;
+        height: 80px;
+        background: rgba(79, 70, 229, 0.2);
+        border-radius: 50%;
+        filter: blur(10px);
+        pointer-events: none;
+    }
+    .avatar-premium img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: relative;
+        z-index: 1;
+    }
+    .user-info h6 {
+        font-size: 0.9rem;
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+        color: #1e293b;
+    }
+    [data-bs-theme="dark"] .user-info h6 {
+        color: #f8fafc;
+    }
+    .user-info p {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin: 0;
+    }
+    [data-bs-theme="dark"] .user-info p {
+        color: #94a3b8;
+    }
+    
+    .badge-role-modern {
+        padding: 0.35rem 1rem;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+    .badge-role-admin-modern {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .badge-role-teacher-modern {
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        color: #3730a3;
+        border: 1px solid rgba(79, 70, 229, 0.2);
+    }
+    .badge-role-student-modern {
+        background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+        color: #065f46;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    [data-bs-theme="dark"] .badge-role-admin-modern {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fde68a;
+        border-color: rgba(251, 191, 36, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-teacher-modern {
+        background: rgba(99, 102, 241, 0.15);
+        color: #c7d2fe;
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-student-modern {
+        background: rgba(16, 185, 129, 0.15);
+        color: #a7f3d0;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+    
+    .status-badge {
+        padding: 0.3rem 1rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        backdrop-filter: blur(10px);
+    }
+    .status-active {
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .status-inactive {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    [data-bs-theme="dark"] .status-active {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+    }
+    [data-bs-theme="dark"] .status-inactive {
+        background: rgba(239, 68, 68, 0.15);
+        color: #f87171;
+    }
+    
+    .action-group {
+        display: flex;
+        gap: 0.6rem;
+    }
+    .btn-action {
+        padding: 0.35rem 1rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        border-radius: 40px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+    .btn-edit {
+        background: #f1f5f9;
+        color: #1e293b;
+        border: 1px solid #e2e8f0;
+    }
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+    }
+    [data-bs-theme="dark"] .btn-edit {
+        background: #1e293b;
+        color: #cbd5e1;
+        border-color: #334155;
+    }
+    .btn-delete {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .btn-delete:hover {
+        background: #ef4444;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 14px rgba(239, 68, 68, 0.25);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid #f1f5f9;
+    }
+    [data-bs-theme="dark"] .empty-state {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        background: #f8fafc;
+        border-radius: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    [data-bs-theme="dark"] .empty-state-icon {
+        background: #1e293b;
+    }
+    .empty-state-icon i {
+        font-size: 2.5rem;
+        color: #64748b;
+    }
+    
+    .form-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.05em;
+    }
+    [data-bs-theme="dark"] .form-label {
+        color: #94a3b8;
+    }
+    
+    .input-group-modern {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+        transition: all 0.2s;
+        background: #ffffff;
+    }
+    [data-bs-theme="dark"] .input-group-modern {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    .input-group-modern:focus-within {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .input-group-modern .input-group-text {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        padding: 0.6rem 1rem;
+    }
+    .input-group-modern input,
+    .input-group-modern select {
+        border: none;
+        padding: 0.6rem 0.85rem;
+        font-size: 0.85rem;
+        background: transparent;
+        color: #1e293b;
+    }
+    [data-bs-theme="dark"] .input-group-modern input,
+    [data-bs-theme="dark"] .input-group-modern select {
+        color: #f8fafc;
+    }
+    .input-group-modern input:focus,
+    .input-group-modern select:focus {
+        box-shadow: none;
+        outline: none;
+    }
+    .input-group-modern input::placeholder {
+        color: #cbd5e1;
+    }
+    
+.btn-sora-primary {
+         background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+         color: white;
+         border: none;
+         border-radius: 100px;
+         padding: 0.6rem 1.25rem;
+         font-size: 0.85rem;
+         font-weight: 600;
+         transition: all 0.2s;
+     }
+     .btn-sora-primary:hover {
+         transform: translateY(-2px);
+         box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+         color: white;
+         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+     }
+    
+    .glass-card {
+        background: #ffffff;
+        border-radius: 28px;
+        border: 1px solid #f1f5f9;
+        overflow: hidden;
+        transition: all 0.25s ease;
+    }
+    [data-bs-theme="dark"] .glass-card {
+        background: #0f172a;
+        border-color: #1e293b;
+    }
+    
+    .badge.bg-light {
+        background: #f1f5f9 !important;
+        color: #1e293b !important;
+        border: 1px solid #e2e8f0;
+        font-weight: 700;
+    }
+    [data-bs-theme="dark"] .badge.bg-light {
+        background: #1e293b !important;
+        color: #cbd5e1 !important;
+        border-color: #334155;
+    }
+    
+    .text-muted {
+        color: #64748b !important;
+    }
+    [data-bs-theme="dark"] .text-muted {
+        color: #94a3b8 !important;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .user-row {
+        animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        animation-delay: calc(var(--delay, 0) * 0.03s);
+        opacity: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .filter-card {
+            padding: 1rem;
+        }
+        .table-premium thead th {
+            font-size: 0.6rem;
+            padding: 0.75rem 0.5rem;
+        }
+        .table-premium tbody td {
+            padding: 0.75rem 0.5rem;
+        }
+        .btn-action span {
+            display: none;
+        }
+        .action-group {
+            gap: 0.4rem;
+        }
+        .avatar-premium {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h5>
+        <i class="bi bi-people-fill me-2" style="background: linear-gradient(135deg, #4f46e5, #818cf8); -webkit-background-clip: text; background-clip: text; color: transparent;"></i>Manajemen Pengguna
+    </h5>
+    <p>Kelola semua pengguna platform Sora LMS</p>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <span class="badge bg-light rounded-pill px-3 py-2">
+            <i class="bi bi-person me-1"></i>{{ users.count }} pengguna
+        </span>
+    </div>
+    <a href="{% url 'accounts:user_create' %}" class="btn-sora-primary">
+        <i class="bi bi-person-plus me-1"></i>Tambah Pengguna
+    </a>
+</div>
+
+<div class="filter-card">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-md-7">
+            <label class="form-label">
+                <i class="bi bi-search me-1"></i>Cari Pengguna
+            </label>
+            <div class="input-group-modern d-flex">
+                <span class="input-group-text bg-transparent border-0">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="text" name="q" class="form-control border-0" placeholder="Cari berdasarkan nama, username, atau email..." value="{{ query }}">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">
+                <i class="bi bi-funnel me-1"></i>Filter Peran
+            </label>
+            <div class="input-group-modern">
+                <select name="role" class="form-select border-0 bg-transparent">
+                    <option value="">Semua Peran</option>
+                    <option value="admin" {% if role_filter == 'admin' %}selected{% endif %}>Admin</option>
+                    <option value="teacher" {% if role_filter == 'teacher' %}selected{% endif %}>Guru</option>
+                    <option value="student" {% if role_filter == 'student' %}selected{% endif %}>Siswa</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn-sora-primary w-100">
+                <i class="bi bi-funnel me-1"></i>Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="table table-premium mb-0">
+            <thead>
+                <tr>
+                    <th>Pengguna</th>
+                    <th>Peran</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Bergabung</th>
+                    <th style="width: 100px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr class="user-row" style="--delay: {{ forloop.counter0 }}">
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-premium">
+                                {% if u.avatar %}
+                                    <img src="{{ u.avatar.url }}" alt="{{ u.username }}">
+                                {% else %}
+                                    {{ u.first_name|first|upper|default:u.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="user-info">
+                                <h6>{{ u.get_full_name|default:u.username }}</h6>
+                                <p>@{{ u.username }}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if u.is_admin %}
+                            <span class="badge-role-modern badge-role-admin-modern">
+                                <i class="bi bi-shield-lock"></i> Admin
+                            </span>
+                        {% elif u.is_teacher %}
+                            <span class="badge-role-modern badge-role-teacher-modern">
+                                <i class="bi bi-person-workspace"></i> Guru
+                            </span>
+                        {% else %}
+                            <span class="badge-role-modern badge-role-student-modern">
+                                <i class="bi bi-person-fill"></i> Siswa
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="text-muted" style="font-size:0.8rem;">
+                            <i class="bi bi-envelope me-1"></i>{{ u.email|default:"-" }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-badge {% if u.is_active %}status-active{% else %}status-inactive{% endif %}">
+                            <i class="bi {% if u.is_active %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></i>
+                            {% if u.is_active %}Aktif{% else %}Nonaktif{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="text-muted" style="font-size:0.75rem;">
+                            <i class="bi bi-calendar3 me-1"></i>{{ u.date_joined|date:"d M Y" }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-group">
+                            <a href="javascript:void(0)" class="btn-action btn-edit quick-view-btn" data-user-id="{{ u.pk }}" title="Lihat detail">
+                                <i class="bi bi-eye"></i>
+                                <span class="d-none d-md-inline">Lihat</span>
+                            </a>
+                            <a href="{% url 'accounts:user_edit' pk=u.pk %}" class="btn-action btn-edit" title="Edit pengguna">
+                                <i class="bi bi-pencil"></i>
+                                <span class="d-none d-md-inline">Edit</span>
+                            </a>
+                            {% if u != request.user %}
+                            <a href="{% url 'accounts:user_delete' pk=u.pk %}" class="btn-action btn-delete" title="Hapus pengguna" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+                                <i class="bi bi-trash"></i>
+                                <span class="d-none d-md-inline">Hapus</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center p-5">
+                        <div class="empty-state" style="background: transparent; padding: 3rem;">
+                            <div class="empty-state-icon" style="margin: 0 auto 1rem auto;">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <h6 class="fw-bold mb-2" style="color: #1e293b;">Tidak Ada Pengguna</h6>
+                            <p class="text-muted small mb-3">Belum ada pengguna yang terdaftar atau tidak ada hasil yang cocok dengan filter.</p>
+                            <a href="{% url 'accounts:user_create' %}" class="btn-sora-primary" style="display: inline-block;">
+                                <i class="bi bi-person-plus me-1"></i>Tambah Pengguna Baru
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="userQuickViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 620px;">
+        <div class="modal-content glass-card border-0 shadow-lg">
+            <div id="modalContentBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if users %}
+<div class="mt-4 text-center">
+    <span class="text-muted small">
+        <i class="bi bi-info-circle me-1"></i>
+        Menampilkan {{ users.count }} pengguna
+        {% if query %} - hasil pencarian "{{ query }}"{% endif %}
+        {% if role_filter %} - filter peran {{ role_filter }}{% endif %}
+    </span>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.user-row');
+        rows.forEach((row, index) => {
+            row.style.animationDelay = `${index * 0.03}s`;
+            row.style.opacity = '1';
+        });
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.querySelector('input[name="q"]');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+    });
+
+    document.querySelectorAll('.quick-view-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const userId = this.getAttribute('data-user-id');
+            const modalElement = document.getElementById('userQuickViewModal');
+            const contentBody = document.getElementById('modalContentBody');
+            const modal = new bootstrap.Modal(modalElement);
+
+            contentBody.innerHTML = `
+                <div class="p-5 text-center">
+                    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Memuat data pengguna...</p>
+                </div>`;
+            
+            modal.show();
+
+            fetch(`/accounts/users/${userId}/detail-ajax/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    contentBody.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    contentBody.innerHTML = `
+                        <div class="p-4 text-center">
+                            <i class="bi bi-exclamation-triangle-fill text-danger fs-1"></i>
+                            <p class="mt-3 text-danger">Gagal memuat data pengguna.</p>
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>`;
+                });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,702 @@
+{% extends 'base.html' %}
+{% block title %}{{ assignment.title }} - Sora LMS{% endblock %}
+{% block page_title %}{{ assignment.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: var(--sora-bg);
+    }
+    
+    .detail-wrapper {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+        background: var(--sora-card);
+        border-radius: 40px;
+        border: 1px solid var(--sora-border);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .back-link:hover {
+        color: #6366f1;
+        transform: translateX(-3px);
+        background: var(--sora-bg);
+        border-color: #6366f1;
+    }
+    
+    .detail-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .card-header-window {
+        background: var(--sora-card);
+        padding: 1.25rem 2rem;
+        border-bottom: 1px solid var(--sora-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .assignment-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--sora-text);
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.5px;
+    }
+    .course-meta {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .btn-action {
+        padding: 0.35rem 1rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-edit {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+    }
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+    .btn-delete {
+        background: var(--sora-danger-bg);
+        color: var(--sora-danger);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    .btn-delete:hover {
+        background: var(--sora-danger);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .card-body-window {
+        padding: 2rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    .info-card {
+        padding: 1.25rem;
+        border-radius: 20px;
+        transition: all 0.2s;
+    }
+    .info-card.deadline {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.04));
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    .info-card.maxscore {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04));
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    .info-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .info-value {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--sora-text);
+    }
+    .deadline .info-value {
+        color: #f59e0b;
+    }
+    .maxscore .info-value {
+        color: #6366f1;
+        font-size: 1.25rem;
+    }
+    .overdue-badge {
+        display: inline-block;
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        padding: 0.2rem 0.6rem;
+        border-radius: 30px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    .section {
+        margin-bottom: 1.75rem;
+    }
+    .section-title {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--sora-border);
+    }
+    .section-title i {
+        color: #6366f1;
+    }
+    .description-text {
+        font-size: 0.9rem;
+        line-height: 1.8;
+        color: var(--sora-text);
+        background: var(--sora-bg);
+        padding: 1.25rem;
+        border-radius: 20px;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .attachment-card {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.25rem;
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        transition: all 0.2s;
+    }
+    .attachment-card:hover {
+        background: var(--sora-card);
+        border-color: #6366f1;
+    }
+    .attachment-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--sora-card);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        border: 1px solid var(--sora-border);
+    }
+    .attachment-icon i {
+        font-size: 1.5rem;
+        color: #6366f1;
+    }
+    .attachment-info {
+        flex: 1;
+    }
+    .attachment-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--sora-text);
+        opacity: 0.7;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    .attachment-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        word-break: break-all;
+    }
+    .btn-download {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.5rem 1.2rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+    .btn-download:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+        color: white;
+    }
+    
+    .btn-submit-large {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        padding: 0.9rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        margin-top: 1rem;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    }
+    .btn-submit-large:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+        color: white;
+    }
+    
+    .submission-card {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04));
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-radius: 20px;
+        padding: 1.25rem;
+        margin-top: 1rem;
+    }
+    .submission-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .submission-header i {
+        font-size: 1.25rem;
+        color: #10b981;
+    }
+    .submission-header h6 {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #10b981;
+        margin: 0;
+    }
+    .submission-info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .submission-info-item {
+        background: var(--sora-card);
+        padding: 0.5rem 0.75rem;
+        border-radius: 12px;
+        border: 1px solid var(--sora-border);
+    }
+    .submission-info-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-bottom: 0.25rem;
+    }
+    .submission-info-value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--sora-text);
+    }
+    .score-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #6366f1;
+    }
+    .feedback-text {
+        background: var(--sora-card);
+        padding: 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        color: var(--sora-text);
+        margin-top: 0.75rem;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .submissions-wrapper {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--sora-border);
+    }
+    .submissions-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .submissions-header h6 {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+    }
+    .submissions-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .submission-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 1rem;
+        background: var(--sora-bg);
+        border-radius: 14px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+    .submission-item:hover {
+        background: var(--sora-card);
+        border-color: var(--sora-border);
+    }
+    .submission-student {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .student-avatar-sm {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .student-avatar-sm img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .student-info {
+        flex: 1;
+    }
+    .student-name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--sora-text);
+    }
+    .submission-date {
+        font-size: 0.65rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    .submission-score {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #6366f1;
+    }
+    .btn-grade {
+        background: var(--sora-card);
+        color: #6366f1;
+        border: 1px solid var(--sora-border);
+        border-radius: 30px;
+        padding: 0.3rem 0.8rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-grade:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+    }
+    
+    .text-success {
+        color: #10b981 !important;
+    }
+    .text-primary {
+        color: #6366f1 !important;
+    }
+    .text-danger {
+        color: #ef4444 !important;
+    }
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .badge.bg-primary {
+        background: rgba(99, 102, 241, 0.15) !important;
+        color: #6366f1 !important;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .detail-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    .submissions-list::-webkit-scrollbar {
+        width: 6px;
+    }
+    .submissions-list::-webkit-scrollbar-track {
+        background: var(--sora-border);
+        border-radius: 10px;
+    }
+    .submissions-list::-webkit-scrollbar-thumb {
+        background: #6366f1;
+        opacity: 0.5;
+        border-radius: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .detail-wrapper {
+            margin: 1rem auto;
+        }
+        .card-body-window {
+            padding: 1.25rem;
+        }
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        .submission-info {
+            grid-template-columns: 1fr;
+        }
+        .attachment-card {
+            flex-wrap: wrap;
+        }
+        .btn-download {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-wrapper">
+    <a href="{% url 'assignments:assignment_list' course_slug=course.slug %}" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke Daftar Tugas
+    </a>
+    
+    <div class="detail-card">
+        <div class="card-header-window">
+            <div>
+                <h1 class="assignment-title">{{ assignment.title }}</h1>
+                <div class="course-meta">
+                    <i class="bi bi-book"></i>
+                    {{ course.title }}
+                </div>
+            </div>
+            {% if user == course.teacher or user.is_admin %}
+            <div class="action-buttons">
+                <a href="{% url 'assignments:assignment_edit' pk=assignment.pk %}" class="btn-action btn-edit">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                </a>
+                <a href="{% url 'assignments:assignment_delete' pk=assignment.pk %}" class="btn-action btn-delete" onclick="return confirm('Yakin ingin menghapus tugas ini?')">
+                    <i class="bi bi-trash me-1"></i>Hapus
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="card-body-window">
+            <div class="info-grid">
+                <div class="info-card deadline">
+                    <div class="info-label">
+                        <i class="bi bi-calendar3"></i> Deadline
+                    </div>
+                    <div class="info-value">
+                        {{ assignment.due_date|date:"d M Y, H:i" }}
+                        {% if assignment.is_overdue %}
+                        <span class="overdue-badge">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Terlambat
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-card maxscore">
+                    <div class="info-label">
+                        <i class="bi bi-award"></i> Nilai Maksimum
+                    </div>
+                    <div class="info-value">
+                        {{ assignment.max_score }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    <i class="bi bi-text-paragraph"></i>
+                    Deskripsi Tugas
+                </div>
+                <div class="description-text">
+                    {{ assignment.description|linebreaks|default:"Tidak ada deskripsi untuk tugas ini." }}
+                </div>
+            </div>
+            
+            {% if assignment.attachment %}
+            <div class="section">
+                <div class="section-title">
+                    <i class="bi bi-paperclip"></i>
+                    Lampiran
+                </div>
+                <div class="attachment-card">
+                    <div class="attachment-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div class="attachment-info">
+                        <div class="attachment-label">File Terlampir</div>
+                        <div class="attachment-name">{{ assignment.attachment.name|cut:"assignments/files/" }}</div>
+                    </div>
+                    <a href="{{ assignment.attachment.url }}" download class="btn-download">
+                        <i class="bi bi-download me-1"></i>Unduh File
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if user.is_student and not submission %}
+            <a href="{% url 'assignments:submit_assignment' pk=assignment.pk %}" class="btn-submit-large">
+                <i class="bi bi-cloud-upload me-2"></i>Kumpulkan Tugas
+            </a>
+            {% endif %}
+            
+            {% if submission %}
+            <div class="submission-card">
+                <div class="submission-header">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h6>Tugas Sudah Dikumpulkan</h6>
+                </div>
+                <div class="submission-info">
+                    <div class="submission-info-item">
+                        <div class="submission-info-label">Status</div>
+                        <div class="submission-info-value">
+                            {% if submission.status == 'graded' %}
+                                <span class="text-success">✓ Sudah Dinilai</span>
+                            {% elif submission.status == 'submitted' %}
+                                <span class="text-primary">⏳ Menunggu Penilaian</span>
+                            {% elif submission.status == 'late' %}
+                                <span class="text-danger">⚠ Terlambat</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="submission-info-item">
+                        <div class="submission-info-label">Dikumpulkan</div>
+                        <div class="submission-info-value">{{ submission.submitted_at|date:"d M Y, H:i" }}</div>
+                    </div>
+                    {% if submission.score is not None %}
+                    <div class="submission-info-item">
+                        <div class="submission-info-label">Nilai</div>
+                        <div class="submission-info-value">
+                            <span class="score-value">{{ submission.score }}</span>
+                            <span class="text-muted"> / {{ assignment.max_score }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if submission.feedback %}
+                <div class="feedback-text">
+                    <i class="bi bi-chat-quote me-1" style="color: #6366f1;"></i>
+                    <strong>Komentar Guru:</strong><br>
+                    {{ submission.feedback }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            {% if submissions and not user.is_student %}
+            <div class="submissions-wrapper">
+                <div class="submissions-header">
+                    <h6>
+                        <i class="bi bi-people-fill" style="color: #6366f1;"></i>
+                        Pengumpulan Siswa
+                    </h6>
+                    <span class="badge bg-primary px-2 py-1 rounded-pill">
+                        {{ submissions.count }} siswa
+                    </span>
+                </div>
+                <div class="submissions-list">
+                    {% for sub in submissions %}
+                    <div class="submission-item">
+                        <div class="submission-student">
+                            <div class="student-avatar-sm" style="overflow: hidden;">
+                                {% if sub.student.avatar %}
+                                    <img src="{{ sub.student.avatar.url }}" alt="{{ sub.student.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    {{ sub.student.first_name|first|upper|default:sub.student.username|first|upper }}
+                                {% endif %}
+                            </div>
+                            <div class="student-info">
+                                <div class="student-name">{{ sub.student.get_full_name|default:sub.student.username }}</div>
+                                <div class="submission-date">
+                                    <i class="bi bi-clock me-1"></i>{{ sub.submitted_at|date:"d M, H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if sub.score is not None %}
+                            <span class="submission-score">{{ sub.score }}</span>
+                            {% endif %}
+                            <a href="{% url 'assignments:grade_submission' pk=sub.pk %}" class="btn-grade">
+                                {% if sub.status == 'graded' %}
+                                    <i class="bi bi-pencil"></i> Edit
+                                {% else %}
+                                    <i class="bi bi-star"></i> Nilai
+                                {% endif %}
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

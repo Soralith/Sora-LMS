@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Modul - Sora LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Color Variables - Dark Mode Support */
+    :root {
+        --sora-purple: #7c3aed;
+        --sora-purple-dark: #6d28d9;
+        --sora-purple-light: #f5f3ff;
+        --sora-border: #e2e8f0;
+    }
+
+    .text-dark-purple { 
+        color: var(--sora-text) !important; 
+    }
+    .fw-600 { 
+        font-weight: 600; 
+    }
+
+    /* Card Styling */
+    .custom-form-card {
+        border-radius: 24px;
+        background: var(--sora-card);
+        border: 1px solid var(--sora-border);
+        transition: transform 0.3s ease;
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.08);
+    }
+    
+    [data-bs-theme="dark"] .custom-form-card {
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Icon Circle Header */
+    .icon-circle-purple {
+        width: 64px;
+        height: 64px;
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        border: 1px solid var(--sora-border);
+    }
+
+    /* Modern Input Groups */
+    .input-group-sora {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: var(--sora-bg);
+        border: 2px solid var(--sora-border);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        padding: 2px 15px;
+    }
+
+    .input-group-sora i {
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-right: 12px;
+        font-size: 1.1rem;
+    }
+
+    .input-group-sora:focus-within {
+        background: var(--sora-card);
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Target Django Form Widgets */
+    .input-group-sora input, 
+    .input-group-sora textarea, 
+    .input-group-sora select {
+        border: none !important;
+        background: transparent !important;
+        padding: 10px 0;
+        width: 100%;
+        outline: none;
+        color: var(--sora-text);
+    }
+    
+    .input-group-sora input::placeholder,
+    .input-group-sora textarea::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+
+    .input-group-sora textarea {
+        min-height: 100px;
+    }
+    
+    .input-group-sora select {
+        cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-purple-lg {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-purple-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+    }
+    
+    .btn-link {
+        color: var(--sora-text);
+        opacity: 0.7;
+        text-decoration: none;
+    }
+    
+    .btn-link:hover {
+        color: var(--sora-primary);
+        opacity: 1;
+    }
+
+    /* Form Text */
+    .form-text {
+        font-size: 0.8rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-top: 0.5rem;
+    }
+    
+    /* Form Label */
+    .form-label {
+        color: var(--sora-text);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-label .text-danger {
+        color: #ef4444 !important;
+    }
+    
+    /* Error messages */
+    .text-danger {
+        color: #ef4444 !important;
+        font-size: 0.75rem;
+        margin-top: 0.5rem;
+    }
+    
+    hr {
+        border-color: var(--sora-border);
+        opacity: 0.5;
+    }
+    
+    /* Text colors */
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .custom-form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.25rem !important;
+        }
+        .icon-circle-purple {
+            width: 50px;
+            height: 50px;
+            font-size: 1.4rem;
+        }
+        .btn-purple-lg {
+            padding: 10px 20px;
+        }
+        .input-group-sora {
+            padding: 2px 12px;
+        }
+        .input-group-sora i {
+            margin-right: 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-lg-6 col-md-8">
+        <div class="text-center mb-4">
+            <div class="icon-circle-purple mx-auto mb-3">
+                <i class="bi bi-collection-play"></i>
+            </div>
+            <h3 class="fw-bold" style="color: var(--sora-text);">{{ action }} Modul</h3>
+            <p class="text-muted small">Kelola materi pembelajaran untuk kelas <strong>{{ course.title }}</strong></p>
+        </div>
+
+        <div class="card border-0 shadow-sm custom-form-card">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" class="needs-validation">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-600">Judul Modul <span class="text-danger">*</span></label>
+                        <div class="input-group-sora">
+                            <i class="bi bi-tag"></i>
+                            {{ form.title }}
+                        </div>
+                        {% if form.title.errors %}
+                            <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-600">Deskripsi Singkat</label>
+                        <div class="input-group-sora align-items-start">
+                            <i class="bi bi-justify-left mt-2"></i>
+                            {{ form.description }}
+                        </div>
+                        <div class="form-text mt-1">Jelaskan secara singkat apa yang akan dipelajari di modul ini.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-600">Urutan Modul</label>
+                        <div class="input-group-sora" style="max-width: 150px;">
+                            <i class="bi bi-sort-numeric-down"></i>
+                            {{ form.order }}
+                        </div>
+                        <div class="form-text">Contoh: 1, 2, atau 3.</div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'courses:course_detail' slug=course.slug %}" class="btn btn-link text-decoration-none me-md-2">
+                            <i class="bi bi-x-lg me-1"></i>Batal
+                        </a>
+                        <button type="submit" class="btn-purple-lg px-5">
+                            <i class="bi bi-check2-circle me-2"></i> Simpan Modul
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

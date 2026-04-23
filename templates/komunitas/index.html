@@ -1,0 +1,487 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+.wa-chat-area {
+    padding: 16px;
+    padding-bottom: 150px;
+    min-height: calc(100vh - 200px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--sora-bg);
+}
+
+.wa-message-bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    min-width: 100px;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wa-scroll-down-btn {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    margin-left: 140px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--sora-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    z-index: 9990;
+}
+
+@media (max-width: 992px) {
+    .wa-scroll-down-btn {
+        left: auto;
+        right: 16px;
+        margin-left: 0;
+    }
+}
+
+.wa-scroll-down-btn:hover {
+    background: var(--sora-primary-dark);
+}
+
+.wa-scroll-down-btn i {
+    font-size: 1.2rem;
+}
+
+.wa-message {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+}
+
+.wa-message.received {
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.wa-message.sent {
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.wa-message-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.wa-message-avatar:hover {
+    transform: scale(1.1);
+}
+
+.wa-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wa-message.sent .wa-message-avatar {
+    order: 2;
+}
+
+.wa-message.sent .wa-message-bubble {
+    order: 1;
+}
+
+.wa-my-avatar {
+    background: var(--sora-primary-dark);
+}
+
+.wa-message-bubble {
+    padding: 8px 12px;
+    border-radius: 16px;
+    min-width: 100px;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wa-message.received .wa-message-bubble {
+    background: var(--sora-card);
+    border: 1px solid var(--sora-border);
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+}
+
+.wa-message.sent .wa-message-bubble {
+    background: var(--sora-primary);
+    color: white;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.wa-message-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sora-primary);
+    margin-bottom: 4px;
+}
+
+.wa-message.sent .wa-message-name {
+    color: rgba(255,255,255,0.8);
+}
+
+.wa-message-content {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.wa-message-image {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 12px;
+    margin-top: 6px;
+    cursor: pointer;
+    display: block;
+}
+
+.wa-message.sent .wa-message-image {
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.wa-message-time {
+    font-size: 0.65rem;
+    opacity: 0.6;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+
+.wa-message.sent .wa-message-time {
+    color: rgba(255,255,255,0.7);
+}
+
+.wa-input-wrapper-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px;
+    padding-left: 296px;
+    background: var(--sora-bg);
+    z-index: 9998;
+    box-sizing: border-box;
+}
+
+@media (max-width: 992px) {
+    .wa-input-wrapper-fixed {
+        padding-left: 16px;
+    }
+}
+
+.wa-input-area {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--sora-card);
+    border: 1px solid var(--sora-border);
+    border-radius: 28px;
+    position: relative;
+    z-index: 9999;
+}
+
+@media (max-width: 992px) {
+    .wa-input-area {
+        max-width: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .wa-input-area {
+        border-radius: 24px;
+        padding: 6px 10px;
+        gap: 6px;
+    }
+}
+
+.wa-btn-icon,
+.wa-btn-send {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--sora-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.wa-btn-icon:hover,
+.wa-btn-send:hover {
+    background: var(--sora-primary-dark);
+    transform: scale(1.05);
+}
+
+.wa-btn-send {
+    background: var(--sora-primary-dark);
+}
+
+.wa-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.wa-file-selected {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: var(--sora-primary);
+}
+
+.wa-file-selected i {
+    font-size: 1.1rem;
+}
+
+.wa-input-wrapper input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 0.88rem;
+    background: transparent;
+    color: var(--sora-text);
+    maxlength: 50;
+}
+
+.wa-input-wrapper input::placeholder {
+    color: var(--sora-text);
+    opacity: 0.5;
+}
+
+.wa-char-count {
+    font-size: 0.7rem;
+    color: var(--sora-text);
+    opacity: 0.5;
+    margin-left: 8px;
+    flex-shrink: 0;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.wa-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--sora-text);
+    opacity: 0.5;
+}
+
+.wa-empty i {
+    font-size: 4rem;
+    margin-bottom: 16px;
+}
+
+#userProfileModal .modal-dialog {
+    z-index: 10051 !important;
+}
+
+.glass-card {
+    background: #ffffff;
+    border-radius: 28px;
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+[data-bs-theme="dark"] .glass-card {
+    background: #0f172a;
+    border-color: #1e293b;
+}
+</style>
+{% endblock %}
+
+{% block page_title %}Komunitas{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center gap-3 mb-3">
+    <i class="bi bi-people-fill" style="font-size: 1.5rem; color: var(--sora-primary);"></i>
+    <h4 class="mb-0" style="font-weight: 600;">Komunitas Sora LMS</h4>
+</div>
+
+<div class="wa-scroll-down-btn" id="scrollDownBtn" onclick="window.scrollTo(0, document.body.scrollHeight);" title="Scroll ke bawah">
+    <i class="bi bi-chevron-down"></i>
+</div>
+
+<div class="wa-chat-area" id="chatArea">
+    {% include 'komunitas/partials/message_list.html' %}
+</div>
+
+<div class="modal fade" id="userProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md" style="max-width: 620px;">
+        <div class="modal-content glass-card border-0 shadow-lg">
+            <div id="userProfileContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showUserProfile(userId) {
+    fetch('/accounts/users/' + userId + '/detail-ajax/')
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('userProfileContent').innerHTML = html;
+            var modal = new bootstrap.Modal(document.getElementById('userProfileModal'));
+            modal.show();
+        });
+}
+</script>
+
+<div class="wa-input-wrapper-fixed">
+    <form method="POST" action="{% url 'komunitas:post_message' %}" enctype="multipart/form-data" class="wa-input-area" id="messageForm" onsubmit="return handleSubmit(event);">
+        {% csrf_token %}
+        <label for="image" class="wa-btn-icon" title="Kirim gambar">
+            <i class="bi bi-image"></i>
+        </label>
+        <input type="file" name="image" id="image" class="file-input" accept="image/*">
+        
+        <div class="wa-input-wrapper" id="textInputWrapper">
+            <input type="text" name="content" id="messageInput" placeholder="Ketik pesan..." autocomplete="off" maxlength="50">
+            <span class="wa-char-count" id="charCount">0/50</span>
+        </div>
+        
+        <div class="wa-file-selected" id="fileSelected" style="display: none;">
+            <i class="bi bi-image"></i>
+            <span id="fileSelectedName">File dipilih</span>
+            <button type="button" onclick="document.getElementById('image').value='';document.getElementById('fileSelected').style.display='none';document.getElementById('textInputWrapper').style.display='flex';" style="background:none;border:none;cursor:pointer;color:var(--sora-danger);">
+                <i class="bi bi-x-circle"></i>
+            </button>
+        </div>
+        
+        <button type="submit" class="wa-btn-send" title="Kirim">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    </form>
+</div>
+
+<script>
+var lastMessageCount = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetch("{% url 'komunitas:message_list' %}", {
+        credentials: 'same-origin'
+    })
+    .then(function(response) { return response.text(); })
+    .then(function(html) {
+        document.getElementById('chatArea').innerHTML = html;
+        lastMessageCount = html.length;
+        var chatArea = document.getElementById('chatArea');
+        chatArea.scrollTop = chatArea.scrollHeight;
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+    
+    setInterval(refreshMessages, 3000);
+    
+    var fileInput = document.getElementById('image');
+    var fileSelected = document.getElementById('fileSelected');
+    var fileSelectedName = document.getElementById('fileSelectedName');
+    var textInputWrapper = document.getElementById('textInputWrapper');
+    var messageInput = document.getElementById('messageInput');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files.length > 0) {
+            fileSelectedName.textContent = 'File: ' + this.files[0].name;
+            fileSelected.style.display = 'flex';
+            textInputWrapper.style.display = 'none';
+            messageInput.value = '';
+            document.getElementById('charCount').textContent = '0/50';
+        } else {
+            fileSelected.style.display = 'none';
+            textInputWrapper.style.display = 'flex';
+        }
+    });
+});
+
+document.getElementById('messageInput').addEventListener('input', function() {
+    var count = this.value.length;
+    document.getElementById('charCount').textContent = count + '/50';
+});
+
+function handleSubmit(e) {
+    e.preventDefault();
+    var form = document.getElementById('messageForm');
+    var formData = new FormData(form);
+    var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch("{% url 'komunitas:post_message' %}", {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(function(response) {
+        if (!response.ok) return;
+        form.reset();
+        document.getElementById('fileSelected').style.display = 'none';
+        document.getElementById('textInputWrapper').style.display = 'flex';
+        document.getElementById('charCount').textContent = '0/50';
+        
+        refreshMessages();
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+    
+    return false;
+}
+
+function refreshMessages() {
+    fetch("{% url 'komunitas:message_list' %}", {
+        credentials: 'same-origin'
+    })
+    .then(function(response) { return response.text(); })
+    .then(function(html) {
+        var chatArea = document.getElementById('chatArea');
+        if (!html || html.trim() === '') return;
+        
+        if (html.length !== lastMessageCount) {
+            chatArea.innerHTML = html;
+            lastMessageCount = html.length;
+        }
+    });
+}
+
+window.addEventListener('scroll', function() {
+    var btn = document.getElementById('scrollDownBtn');
+    if (btn) {
+        var scrollBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 100;
+        btn.style.display = scrollBottom ? 'none' : 'flex';
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,446 @@
+{% extends 'base.html' %}
+{% block title %}Mengerjakan: {{ quiz.title }} - Sora LMS{% endblock %}
+{% block page_title %}{{ quiz.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quiz Session Styling - Dark Mode Support */
+    .quiz-session-container {
+        background: var(--sora-bg);
+        min-height: 100vh;
+        padding-bottom: 5rem;
+    }
+
+    /* Sticky Timer Bar */
+    .timer-bar {
+        position: sticky;
+        top: 80px;
+        z-index: 100;
+        background: var(--sora-card);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid var(--sora-border);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    [data-bs-theme="dark"] .timer-bar {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .timer-text {
+        font-family: 'Monaco', 'Consolas', monospace;
+        font-weight: 800;
+        letter-spacing: 1px;
+        color: var(--sora-primary);
+    }
+    .timer-text.text-danger {
+        color: var(--sora-danger) !important;
+    }
+    
+    /* Question Card */
+    .question-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    .question-card:hover {
+        border-color: var(--sora-primary);
+    }
+
+    .question-number {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+    
+    .question-card h5 {
+        color: var(--sora-text);
+    }
+
+    /* Custom Radio Styling */
+    .answer-option {
+        border: 2px solid var(--sora-border);
+        border-radius: 16px;
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+    }
+    .answer-option:hover {
+        background: var(--sora-bg);
+        border-color: var(--sora-primary);
+    }
+    .answer-option.selected {
+        background: var(--sora-bg);
+        border-color: var(--sora-primary);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+    }
+
+    .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+        border-color: var(--sora-border);
+        background-color: var(--sora-bg);
+    }
+    .form-check-input:checked {
+        background-color: #4f46e5;
+        border-color: var(--sora-primary);
+    }
+    
+    .answer-option .fw-600 {
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+
+    /* Essay/Short Answer Styling */
+    .essay-input {
+        border-radius: 16px;
+        padding: 1.25rem;
+        border: 2px solid var(--sora-border);
+        background: var(--sora-bg);
+        font-size: 0.95rem;
+        transition: 0.3s;
+        color: var(--sora-text);
+    }
+    .essay-input:focus {
+        background: var(--sora-card);
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        outline: none;
+    }
+    .essay-input::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+
+    /* Submission Bar */
+    .bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--sora-card);
+        padding: 1rem 2rem;
+        border-top: 1px solid var(--sora-border);
+        z-index: 1000;
+    }
+    
+    /* Badge styling */
+    .badge.bg-light {
+        background: var(--sora-bg) !important;
+        color: var(--sora-text) !important;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    .fw-700 {
+        font-weight: 700;
+    }
+    
+    .fw-800 {
+        font-weight: 800;
+    }
+    
+    /* Button Styles */
+    .btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .bg-warning.bg-opacity-10 {
+        background: rgba(245, 158, 11, 0.15) !important;
+    }
+    .text-warning {
+        color: #f59e0b !important;
+    }
+    .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    /* Animation pulse for warning */
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    .animate-pulse {
+        animation: pulse 1s ease-in-out infinite;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .question-card {
+            padding: 1rem;
+        }
+        .answer-option {
+            padding: 0.75rem 1rem;
+        }
+        .bottom-bar {
+            padding: 0.75rem 1rem;
+        }
+        .timer-bar {
+            top: 60px;
+        }
+        .timer-text {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-session-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            {% if quiz.time_limit %}
+            <div class="timer-bar p-3 mb-4 d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="p-2 bg-warning bg-opacity-10 rounded-pill">
+                        <i class="bi bi-hourglass-split text-warning"></i>
+                    </div>
+                    <span class="fw-700" style="color: var(--sora-text);">Waktu Berjalan</span>
+                </div>
+                <div id="timer" class="timer-text fs-3">
+                    {{ quiz.time_limit }}:00
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="mb-4">
+                <h4 class="fw-800 text-dark-purple">{{ quiz.title }}</h4>
+                <p class="text-muted small">Harap teliti sebelum mengumpulkan. Jawaban tersimpan otomatis secara lokal.</p>
+            </div>
+
+            <form method="post" id="quiz-form">
+                {% csrf_token %}
+                {% for question in questions %}
+                <div class="question-card" id="q-{{ forloop.counter }}">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="question-number">{{ forloop.counter }}</div>
+                            <h5 class="fw-700 mb-0" style="line-height: 1.5; font-size: 1.05rem;">
+                                {{ question.text }}
+                            </h5>
+                        </div>
+                        <span class="badge bg-light rounded-pill border">{{ question.points }} Poin</span>
+                    </div>
+
+                    {% if question.question_type == 'multiple_choice' or question.question_type == 'true_false' %}
+                        <div class="d-flex flex-column gap-3">
+                            {% for answer in question.answers.all %}
+                            <label class="answer-option" for="ans-{{ answer.pk }}">
+                                <input type="radio" 
+                                       name="question_{{ question.pk }}" 
+                                       id="ans-{{ answer.pk }}"
+                                       value="{{ answer.pk }}" 
+                                       class="form-check-input m-0 quiz-radio">
+                                <span class="fw-600">{{ answer.text }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="mt-3">
+                            <textarea name="text_{{ question.pk }}" 
+                                      class="form-control essay-input" 
+                                      rows="{% if question.question_type == 'essay' %}6{% else %}2{% endif %}" 
+                                      placeholder="Ketik jawaban Anda di sini..."></textarea>
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="mt-5 mb-5 text-center d-none d-lg-block">
+                    <p class="text-muted small mb-3">Sudah selesai? Pastikan semua soal telah terjawab.</p>
+                    <button type="button" class="btn-sora-primary btn-lg px-5 rounded-pill shadow-lg" onclick="confirmSubmit()">
+                        <i class="bi bi-cloud-upload me-2"></i>Kumpulkan Sekarang
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-bar d-flex justify-content-between align-items-center">
+    <div class="d-none d-md-block">
+        <span class="text-muted small fw-600">Total: {{ questions|length }} Soal</span>
+    </div>
+    <div class="d-flex gap-2 w-100 w-md-auto">
+        <button type="button" class="btn-sora-primary w-100 px-4 rounded-pill fw-bold" onclick="confirmSubmit()">
+            Submit Kuis <i class="bi bi-chevron-right ms-1"></i>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 1. Highlight UI untuk Radio Button
+    document.querySelectorAll('.quiz-radio').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Hapus kelas 'selected' dari semua opsi di pertanyaan yang sama
+            const questionContainer = this.closest('.question-card');
+            questionContainer.querySelectorAll('.answer-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            // Tambahkan ke yang terpilih
+            if (this.checked) {
+                this.closest('.answer-option').classList.add('selected');
+            }
+        });
+        
+        // Check if radio is pre-checked (e.g., from local storage or previous session)
+        if (radio.checked) {
+            radio.closest('.answer-option').classList.add('selected');
+        }
+    });
+
+    // 2. SweetAlert Konfirmasi Submit
+    function confirmSubmit() {
+        Swal.fire({
+            title: 'Kumpulkan Kuis?',
+            text: "Pastikan semua jawaban sudah benar. Anda tidak bisa mengulangi sesi ini jika sudah dikirim.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#6366f1',
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'Ya, Kumpulkan!',
+            cancelButtonText: 'Cek Lagi',
+            background: 'var(--sora-card)',
+            color: 'var(--sora-text)',
+            iconColor: 'var(--sora-primary)'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('quiz-form').submit();
+            }
+        });
+    }
+
+    // 3. Timer Logic yang Lebih Presisi
+    {% if quiz.time_limit %}
+    let totalSeconds = {{ quiz.time_limit }} * 60;
+    const timerEl = document.getElementById('timer');
+    
+    const interval = setInterval(() => {
+        totalSeconds--;
+        
+        const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+        const secs = (totalSeconds % 60).toString().padStart(2, '0');
+        
+        timerEl.textContent = `${mins}:${secs}`;
+        
+        // Visual Warning saat waktu menipis
+        if (totalSeconds <= 60) {
+            timerEl.classList.remove('text-primary');
+            timerEl.classList.add('text-danger', 'animate-pulse');
+        } else if (totalSeconds <= 300) {
+            timerEl.classList.remove('text-primary');
+            timerEl.style.color = '#f59e0b';
+        }
+
+        if (totalSeconds <= 0) {
+            clearInterval(interval);
+            Swal.fire({
+                title: 'Waktu Habis!',
+                text: 'Kuis Anda akan dikumpulkan otomatis.',
+                icon: 'warning',
+                timer: 2000,
+                showConfirmButton: false,
+                background: 'var(--sora-card)',
+                color: 'var(--sora-text)'
+            }).then(() => {
+                document.getElementById('quiz-form').submit();
+            });
+        }
+    }, 1000);
+    {% endif %}
+
+    // 4. Mencegah Tutup Tab Tak Sengaja
+    let formSubmitted = false;
+    
+    window.onbeforeunload = function() {
+        if (!formSubmitted) {
+            return "Apakah Anda yakin ingin keluar? Jawaban Anda mungkin tidak tersimpan.";
+        }
+    };
+    
+    // Matikan warning saat submit
+    document.getElementById('quiz-form').onsubmit = function() {
+        formSubmitted = true;
+        window.onbeforeunload = null;
+    };
+    
+    // Optional: Save answers to localStorage (auto-save)
+    function autoSave() {
+        const form = document.getElementById('quiz-form');
+        const formData = new FormData(form);
+        const answers = {};
+        for (let [key, value] of formData.entries()) {
+            answers[key] = value;
+        }
+        localStorage.setItem('quiz_autosave_{{ quiz.pk }}', JSON.stringify(answers));
+    }
+    
+    // Auto-save every 30 seconds
+    {% if not quiz.time_limit or quiz.time_limit > 0 %}
+    setInterval(autoSave, 30000);
+    {% endif %}
+    
+    // Restore saved answers if any
+    const saved = localStorage.getItem('quiz_autosave_{{ quiz.pk }}');
+    if (saved) {
+        const answers = JSON.parse(saved);
+        for (const [name, value] of Object.entries(answers)) {
+            const input = document.querySelector(`[name="${name}"]`);
+            if (input) {
+                if (input.type === 'radio') {
+                    const radio = document.querySelector(`[name="${name}"][value="${value}"]`);
+                    if (radio) radio.checked = true;
+                } else {
+                    input.value = value;
+                }
+            }
+        }
+        // Trigger change events to update UI
+        document.querySelectorAll('.quiz-radio').forEach(radio => {
+            if (radio.checked) {
+                radio.dispatchEvent(new Event('change'));
+            }
+        });
+    }
+</script>
+{% endblock %}

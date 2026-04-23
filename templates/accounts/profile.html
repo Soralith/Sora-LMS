@@ -1,0 +1,499 @@
+{% extends 'base.html' %}
+{% block title %}Profil - Sora LMS{% endblock %}
+{% block page_title %}Profil Saya{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .profile-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        padding: 2rem 2rem 3rem 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: -10%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: -20%;
+        left: -5%;
+        width: 200px;
+        height: 200px;
+        background: rgba(99,102,241,0.1);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+    
+    .avatar-premium-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 3rem;
+        overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.3);
+        border: 4px solid rgba(255,255,255,0.2);
+        transition: transform 0.3s;
+    }
+    .avatar-premium-large:hover {
+        transform: scale(1.02);
+    }
+    .avatar-premium-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-name {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+    .profile-username {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .badge-role-premium {
+        padding: 0.35rem 1rem;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.3px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+    .badge-role-admin-premium {
+        background: rgba(254, 243, 199, 0.95);
+        color: #92400e;
+        border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .badge-role-teacher-premium {
+        background: rgba(224, 231, 255, 0.95);
+        color: #3730a3;
+        border: 1px solid rgba(79, 70, 229, 0.2);
+    }
+    .badge-role-student-premium {
+        background: rgba(209, 250, 229, 0.95);
+        color: #065f46;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    [data-bs-theme="dark"] .badge-role-admin-premium {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fde68a;
+        border-color: rgba(251, 191, 36, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-teacher-premium {
+        background: rgba(99, 102, 241, 0.15);
+        color: #c7d2fe;
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-student-premium {
+        background: rgba(16, 185, 129, 0.15);
+        color: #a7f3d0;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-edit-profile {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        border-radius: 40px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-edit-profile:hover {
+        background: rgba(255,255,255,0.25);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .info-card {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        padding: 1.25rem;
+        transition: all 0.2s;
+    }
+    .info-card:hover {
+        border-color: #6366f1;
+        background: var(--sora-card);
+        transform: translateY(-2px);
+    }
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--sora-card);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        border: 1px solid var(--sora-border);
+    }
+    .info-icon i {
+        font-size: 1.2rem;
+        color: #6366f1;
+    }
+    .info-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
+    }
+    .info-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--sora-text);
+        word-break: break-word;
+    }
+    .info-value-empty {
+        color: var(--sora-text);
+        opacity: 0.5;
+        font-weight: 400;
+        font-style: italic;
+    }
+    
+    .bio-section {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+    .bio-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--sora-card);
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--sora-border);
+    }
+    .bio-icon i {
+        color: #6366f1;
+    }
+    .bio-text {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--sora-text);
+        margin: 0;
+    }
+    
+    .stat-mini {
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 16px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+    .stat-mini:hover {
+        background: var(--sora-card);
+        border-color: var(--sora-border);
+    }
+    .stat-mini-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--sora-text);
+    }
+    .stat-mini-label {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-top: 0.25rem;
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .text-dark {
+        color: var(--sora-text) !important;
+    }
+    
+    hr {
+        border-color: var(--sora-border) !important;
+    }
+    
+    h6.fw-bold {
+        color: var(--sora-text) !important;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .profile-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    .info-card {
+        animation: fadeInUp 0.4s ease forwards;
+        animation-delay: calc(var(--delay, 0) * 0.1s);
+        opacity: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .profile-header {
+            padding: 1.5rem;
+        }
+        .profile-name {
+            font-size: 1.3rem;
+        }
+        .avatar-premium-large {
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+            border-radius: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-4 flex-wrap">
+                        <div class="avatar-premium-large">
+                            {% if user_profile.avatar %}
+                                <img src="{{ user_profile.avatar.url }}" alt="{{ user_profile.username }}">
+                            {% else %}
+                                {{ user_profile.first_name|first|upper|default:user_profile.username|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h1 class="profile-name">{{ user_profile.get_full_name|default:user_profile.username }}</h1>
+                            <div class="d-flex gap-3 align-items-center flex-wrap mt-2">
+                                <span class="badge-role-premium 
+                                    {% if user_profile.is_admin %}badge-role-admin-premium
+                                    {% elif user_profile.is_teacher %}badge-role-teacher-premium
+                                    {% else %}badge-role-student-premium{% endif %}">
+                                    <i class="bi 
+                                        {% if user_profile.is_admin %}bi-shield-lock
+                                        {% elif user_profile.is_teacher %}bi-person-workspace
+                                        {% else %}bi-person-graduate{% endif %}"></i>
+                                    {{ user_profile.get_role_display }}
+                                </span>
+                                <span class="profile-username">
+                                    <i class="bi bi-at"></i>{{ user_profile.username }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="{% url 'accounts:profile_edit' %}" class="btn-edit-profile">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Profil
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-4 p-md-5">
+            <div class="row g-3 mb-5">
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">{{ user_profile.date_joined|date:"Y"|default:"2024" }}</div>
+                        <div class="stat-mini-label">Bergabung</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">
+                            {% if user_profile.is_admin %}Admin
+                            {% elif user_profile.is_teacher %}Guru
+                            {% else %}Siswa{% endif %}
+                        </div>
+                        <div class="stat-mini-label">Peran</div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">
+                            {% if user_profile.is_active %}✓{% else %}✗{% endif %}
+                        </div>
+                        <div class="stat-mini-label">Status</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h6 class="fw-bold mb-3" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
+                <i class="bi bi-info-circle me-2" style="color: #6366f1;"></i>Informasi Kontak
+            </h6>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6" style="--delay: 1">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div class="info-label">Alamat Email</div>
+                        <div class="info-value {% if not user_profile.email %}info-value-empty{% endif %}">
+                            {% if user_profile.email %}
+                                <i class="bi bi-envelope me-1"></i>{{ user_profile.email }}
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="--delay: 2">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div class="info-label">Nomor Telepon</div>
+                        <div class="info-value {% if not user_profile.phone %}info-value-empty{% endif %}">
+                            {% if user_profile.phone %}
+                                <i class="bi bi-whatsapp me-1"></i>{{ user_profile.phone }}
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-6" style="--delay: 3">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-heart-fill"></i>
+                        </div>
+                        <div class="info-label">Tanggal Lahir</div>
+                        <div class="info-value {% if not user_profile.date_of_birth %}info-value-empty{% endif %}">
+                            {% if user_profile.date_of_birth %}
+                                <i class="bi bi-calendar me-1"></i>{{ user_profile.date_of_birth|date:"d F Y" }}
+                                <span class="text-muted small ms-2">
+                                    ({{ user_profile.date_of_birth|timesince }})
+                                </span>
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="--delay: 4">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="info-label">Bergabung Sejak</div>
+                        <div class="info-value">
+                            <i class="bi bi-calendar3 me-1"></i>{{ user_profile.date_joined|date:"d F Y" }}
+                            <span class="text-muted small ms-2">({{ user_profile.date_joined|timesince }} lalu)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user_profile.bio %}
+            <h6 class="fw-bold mb-3 mt-4" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
+                <i class="bi bi-chat-quote me-2" style="color: #6366f1;"></i>Tentang Saya
+            </h6>
+            <div class="bio-section">
+                <div class="d-flex gap-3">
+                    <div class="bio-icon">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <p class="bio-text">{{ user_profile.bio }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="mt-5 pt-3 text-center">
+                <hr class="my-4">
+                <div class="d-flex justify-content-center gap-4 flex-wrap">
+                    <div class="text-center">
+                        <div class="small text-muted">Akun Terdaftar</div>
+                        <div class="fw-semibold" style="color: var(--sora-text);">{{ user_profile.date_joined|date:"d M Y" }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="small text-muted">Terakhir Login</div>
+                        <div class="fw-semibold" style="color: var(--sora-text);">{{ user_profile.last_login|date:"d M Y H:i"|default:"Belum pernah login" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const infoCards = document.querySelectorAll('.info-card');
+        infoCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity = '1';
+            }, index * 100);
+        });
+        
+        const statMinis = document.querySelectorAll('.stat-mini');
+        statMinis.forEach(stat => {
+            stat.style.transition = 'all 0.2s ease';
+        });
+    });
+</script>
+{% endblock %}

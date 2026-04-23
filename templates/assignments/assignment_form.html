@@ -1,0 +1,565 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Tugas - Sora LMS{% endblock %}
+{% block page_title %}{{ action }} Tugas{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.5rem 0;
+        transition: all 0.2s;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+    .back-link:hover {
+        color: #6366f1;
+        transform: translateX(-3px);
+        opacity: 1;
+    }
+    
+    .form-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .form-header {
+        background: var(--sora-card);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    .form-header h6 {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--sora-text);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .form-header h6 i {
+        font-size: 1.3rem;
+        color: #6366f1;
+    }
+    .course-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--sora-bg);
+        padding: 0.3rem 1rem;
+        border-radius: 40px;
+        margin-top: 0.75rem;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+    }
+    .course-badge i {
+        color: #6366f1;
+    }
+    
+    .form-body {
+        padding: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label-modern {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-label-modern i {
+        font-size: 0.85rem;
+        color: #6366f1;
+    }
+    .required-star {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    
+    .input-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 14px;
+        transition: all 0.2s;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .input-modern:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .input-modern:hover:not(:focus) {
+        border-color: var(--sora-border);
+        opacity: 0.9;
+    }
+    .input-modern::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    .textarea-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 14px;
+        transition: all 0.2s;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .textarea-modern:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .textarea-modern::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .file-upload-wrapper {
+        position: relative;
+        margin-top: 0.25rem;
+    }
+    .file-upload-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.2rem;
+        background: var(--sora-bg);
+        border: 1.5px dashed var(--sora-border);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+    .file-upload-label:hover {
+        border-color: #6366f1;
+        background: var(--sora-card);
+        color: #6366f1;
+        opacity: 1;
+    }
+    .file-upload-label i {
+        font-size: 1.1rem;
+    }
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .file-name {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+    .current-file {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 10px;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 14px;
+        border: 1px solid var(--sora-border);
+        flex-wrap: wrap;
+    }
+    .checkbox-wrapper input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #6366f1;
+    }
+    .checkbox-wrapper label {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        cursor: pointer;
+        margin: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .checkbox-wrapper .help-text {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-left: auto;
+    }
+    
+    .help-text {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .help-text i {
+        font-size: 0.7rem;
+    }
+    
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+    .errorlist li {
+        font-size: 0.7rem;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .errorlist li::before {
+        content: "⚠";
+        font-size: 0.65rem;
+    }
+    .input-modern.error,
+    .textarea-modern.error {
+        border-color: #ef4444;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--sora-border);
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+        color: white;
+    }
+    .btn-cancel {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-cancel:hover {
+        background: var(--sora-border);
+        color: var(--sora-text);
+        transform: translateY(-2px);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    @media (max-width: 768px) {
+        .form-body {
+            padding: 1.5rem;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            justify-content: center;
+        }
+        .checkbox-wrapper {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .checkbox-wrapper .help-text {
+            margin-left: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <a href="{% url 'courses:course_detail' slug=course.slug %}" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke {{ course.title }}
+    </a>
+    
+    <div class="form-card">
+        <div class="form-header">
+            <h6>
+                <i class="bi bi-{% if action == 'Buat' %}journal-plus{% else %}pencil-square{% endif %}"></i>
+                {{ action }} Tugas
+            </h6>
+            <div class="course-badge">
+                <i class="bi bi-book"></i>
+                {{ course.title }}
+            </div>
+        </div>
+        
+        <div class="form-body">
+            <form method="post" enctype="multipart/form-data" id="assignmentForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-heading"></i>
+                        Judul Tugas
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        {{ form.title.errors }}
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="bi bi-info-circle"></i>
+                        Beri judul yang jelas agar siswa mudah memahami tugas
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-text-paragraph"></i>
+                        Deskripsi / Instruksi
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        {{ form.description.errors }}
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="bi bi-lightbulb"></i>
+                        Jelaskan secara detail apa yang harus dikerjakan siswa
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-paperclip"></i>
+                        File Lampiran
+                    </label>
+                    <div class="file-upload-wrapper">
+                        <label for="id_attachment" class="file-upload-label">
+                            <i class="bi bi-cloud-upload"></i>
+                            Pilih File
+                        </label>
+                        {{ form.attachment }}
+                        <span id="file-name" class="file-name"></span>
+                    </div>
+                    
+                    {% if assignment and assignment.attachment %}
+                    <div class="current-file">
+                        <i class="bi bi-file-earmark-text"></i>
+                        File saat ini: {{ assignment.attachment.name|cut:"attachments/" }}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="help-text">
+                        <i class="bi bi-info-circle"></i>
+                        Format: PDF, DOC, DOCX, ZIP. Maksimal 10MB
+                    </div>
+                    {% if form.attachment.errors %}
+                        {{ form.attachment.errors }}
+                    {% endif %}
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label-modern">
+                            <i class="bi bi-calendar3"></i>
+                            Deadline
+                            <span class="required-star">*</span>
+                        </label>
+                        {{ form.due_date }}
+                        {% if form.due_date.errors %}
+                            {{ form.due_date.errors }}
+                        {% endif %}
+                        <div class="help-text">
+                            <i class="bi bi-clock"></i>
+                            Format: YYYY-MM-DD HH:MM:SS
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label-modern">
+                            <i class="bi bi-award"></i>
+                            Nilai Maksimum
+                        </label>
+                        {{ form.max_score }}
+                        {% if form.max_score.errors %}
+                            {{ form.max_score.errors }}
+                        {% endif %}
+                        <div class="help-text">
+                            <i class="bi bi-info-circle"></i>
+                            Nilai tertinggi yang bisa didapat siswa (default: 100)
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-wrapper">
+                        {{ form.is_published }}
+                        <label for="{{ form.is_published.id_for_label }}">
+                            <i class="bi bi-globe"></i>
+                            Terbitkan tugas
+                        </label>
+                        <div class="help-text">
+                            <i class="bi bi-info-circle"></i>
+                            Siswa akan langsung melihat tugas jika diterbitkan
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-lg"></i>
+                        Simpan Tugas
+                    </button>
+                    <a href="{% url 'courses:course_detail' slug=course.slug %}" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i>
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('id_attachment');
+        const fileNameSpan = document.getElementById('file-name');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const fileName = file.name;
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                    
+                    if (file.size > 10 * 1024 * 1024) {
+                        fileNameSpan.innerHTML = '<i class="bi bi-exclamation-triangle-fill" style="color: #ef4444;"></i> File terlalu besar (maks 10MB)';
+                        fileNameSpan.style.color = '#ef4444';
+                        this.value = '';
+                        return;
+                    }
+                    
+                    fileNameSpan.innerHTML = `<i class="bi bi-check-circle-fill" style="color: #10b981;"></i> ${fileName} (${fileSize} MB)`;
+                    fileNameSpan.style.color = '#10b981';
+                } else {
+                    fileNameSpan.innerHTML = '';
+                }
+            });
+        }
+        
+        const errorFields = document.querySelectorAll('.errorlist');
+        errorFields.forEach(error => {
+            const parent = error.closest('.form-group');
+            if (parent) {
+                const input = parent.querySelector('input, textarea, select');
+                if (input) {
+                    input.classList.add('error');
+                }
+            }
+        });
+        
+        const dateInput = document.querySelector('input[name="due_date"]');
+        if (dateInput && !dateInput.value) {
+            dateInput.placeholder = 'YYYY-MM-DD HH:MM:SS';
+        }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            const form = document.getElementById('assignmentForm');
+            if (form) {
+                form.submit();
+            }
+        }
+    });
+</script>
+{% endblock %}

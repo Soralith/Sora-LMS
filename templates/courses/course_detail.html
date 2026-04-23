@@ -1,0 +1,655 @@
+{% extends 'base.html' %}
+{% block title %}{{ course.title }} - Sora LMS{% endblock %}
+{% block page_title %}{{ course.title|truncatechars:40 }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .course-hero {
+        background: var(--sora-card);
+        border-radius: 28px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        position: relative;
+        border: 1px solid var(--sora-border);
+    }
+    .course-cover-full {
+        position: relative;
+        width: 100%;
+        height: 280px;
+        overflow: hidden;
+    }
+    .course-cover-full img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .course-cover-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #4f46e5 0%, #818cf8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .course-cover-placeholder i {
+        font-size: 4rem;
+        color: rgba(255,255,255,0.7);
+    }
+    .course-info-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.4), transparent);
+        padding: 2rem 2rem 1.5rem 2rem;
+        color: white;
+        z-index: 2;
+    }
+    .course-title-hero {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .course-meta-hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.85rem;
+        opacity: 0.95;
+    }
+    .course-meta-hero span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .course-description-hero {
+        font-size: 0.85rem;
+        line-height: 1.5;
+        opacity: 0.9;
+        max-width: 70%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .progress-card {
+        border-radius: 20px;
+        padding: 0.1rem 0.9rem;
+        margin-top: 1rem;
+        backdrop-filter: blur(10px);
+        background: rgba(255,255,255,0.15);
+    }
+    .progress-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: white;
+    }
+    .progress-value {
+        font-size: 1rem;
+        font-weight: 800;
+        color: white;
+    }
+    
+    .progress-bar-sora {
+        background: rgba(255,255,255,0.3);
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        background: linear-gradient(90deg, #10b981, #34d399);
+        border-radius: 10px;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+    
+    .alert-modern {
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 0.85rem 1.25rem;
+        margin-top: 1rem;
+        border: none;
+    }
+    
+    [data-bs-theme="dark"] .alert-modern {
+        background: rgba(30, 41, 59, 0.95);
+        color: var(--sora-text);
+    }
+    [data-bs-theme="dark"] .alert-modern span {
+        color: var(--sora-text) !important;
+    }
+    
+    .module-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+    }
+    .module-header {
+        background: var(--sora-card);
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .module-header:hover {
+        background: var(--sora-bg);
+    }
+    .module-number {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+    .module-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--sora-text);
+    }
+    .module-badge {
+        background: var(--sora-bg);
+        color: #6366f1;
+        padding: 0.2rem 0.7rem;
+        border-radius: 30px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border: 1px solid var(--sora-border);
+    }
+    .module-content {
+        padding: 0;
+        border-top: 1px solid var(--sora-border);
+    }
+    
+    .material-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.85rem 1.25rem;
+        border-bottom: 1px solid var(--sora-border);
+        transition: all 0.2s;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    .material-item:hover {
+        background: var(--sora-bg);
+    }
+    .material-info {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex: 1;
+    }
+    .material-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+    .material-icon.video { background: rgba(220, 38, 38, 0.15); color: #ef4444; }
+    .material-icon.document { background: rgba(79, 70, 229, 0.15); color: #6366f1; }
+    .material-icon.presentation { background: rgba(234, 88, 12, 0.15); color: #f97316; }
+    .material-icon.link { background: rgba(5, 150, 105, 0.15); color: #10b981; }
+    .material-icon.default { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+    .material-details h6 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        color: var(--sora-text);
+    }
+    .material-details p {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin: 0;
+    }
+    .material-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .sidebar-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    .sidebar-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--sora-border);
+        background: var(--sora-card);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .sidebar-header h6 {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+    }
+    .sidebar-body {
+        padding: 1.25rem;
+    }
+    
+    .quick-action-grid {
+        display: grid;
+        gap: 0.6rem;
+    }
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.7rem 1rem;
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 14px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+    .quick-action-btn:hover {
+        background: var(--sora-card);
+        border-color: #6366f1;
+        color: #6366f1;
+        transform: translateX(3px);
+    }
+    .quick-action-btn i {
+        font-size: 1rem;
+        width: 20px;
+    }
+    
+    .announcement-item {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    .announcement-item:last-child {
+        border-bottom: none;
+    }
+    .announcement-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        color: var(--sora-text);
+    }
+    .announcement-content {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.8;
+        line-height: 1.5;
+        margin-bottom: 0.5rem;
+    }
+    .announcement-date {
+        font-size: 0.65rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+    
+    .empty-module {
+        text-align: center;
+        padding: 3rem 2rem;
+    }
+    .empty-module i {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    .empty-module p {
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    
+.btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        transition: all 0.2s;
+    }
+    .btn-outline-secondary:hover {
+        background: var(--sora-bg);
+        color: #6366f1;
+        border-color: #6366f1;
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .module-content.show {
+        animation: slideDown 0.3s ease forwards;
+    }
+    
+    @media (max-width: 768px) {
+        .course-cover-full {
+            height: 220px;
+        }
+        .course-info-overlay {
+            padding: 1.25rem;
+        }
+        .course-title-hero {
+            font-size: 1.3rem;
+        }
+        .course-description-hero {
+            max-width: 100%;
+            font-size: 0.8rem;
+        }
+        .course-meta-hero {
+            gap: 1rem;
+            font-size: 0.7rem;
+        }
+        .sidebar-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="course-hero">
+            <div class="course-cover-full">
+                {% if course.cover_image %}
+                    <img src="{{ course.cover_image.url }}" alt="{{ course.title }}">
+                {% else %}
+                    <div class="course-cover-placeholder">
+                        <i class="bi bi-book"></i>
+                    </div>
+                {% endif %}
+                <div class="course-info-overlay">
+                    <h1 class="course-title-hero">{{ course.title }}</h1>
+                    <div class="course-meta-hero">
+                        <span><i class="bi bi-person-circle"></i>{{ course.teacher.get_full_name|default:course.teacher.username }}</span>
+                        <span><i class="bi bi-people"></i>{{ course.get_student_count }} siswa</span>
+                        {% if course.category %}
+                        <span><i class="bi bi-tag"></i>{{ course.category.name }}</span>
+                        {% endif %}
+                        <span><i class="bi bi-{% if course.status == 'active' %}play-circle{% elif course.status == 'draft' %}pencil{% else %}archive{% endif %}"></i>
+                            {{ course.get_status_display }}
+                        </span>
+                    </div>
+                    <p class="course-description-hero">{{ course.description|default:"Tidak ada deskripsi untuk kelas ini." }}</p>
+                    
+                    <div class="d-flex gap-2 mt-2 flex-wrap">
+                        {% if is_teacher or user.is_admin %}
+                        <a href="{% url 'courses:course_edit' slug=course.slug %}" class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white; border-radius: 40px; backdrop-filter: blur(4px);">
+                            <i class="bi bi-pencil me-1"></i>Edit Kelas
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if user.is_student %}
+                        {% if is_enrolled %}
+                            <div class="progress-card">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="progress-label"><i class="bi bi-graph-up me-1"></i>Progress Belajar Anda</span>
+                                    <span class="progress-value">{{ enrollment.progress|floatformat:0 }}%</span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert-modern">
+                                <i class="bi bi-info-circle-fill me-2" style="color: #6366f1;"></i>
+                                <span style="font-size:0.85rem;">Anda belum terdaftar di kelas ini. Hubungi guru atau admin untuk didaftarkan.</span>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-card" style="margin-bottom: 0;">
+            <div class="sidebar-header">
+                <h6>
+                    <i class="bi bi-collection" style="color: #6366f1;"></i>
+                    Materi Pembelajaran
+                </h6>
+                {% if is_teacher or user.is_admin %}
+                <a href="{% url 'courses:module_create' slug=course.slug %}" class="btn btn-sora-primary" style="padding: 0.3rem 1rem; font-size: 0.7rem;">
+                    <i class="bi bi-plus me-1"></i>Tambah Modul
+                </a>
+                {% endif %}
+            </div>
+            <div class="sidebar-body p-0">
+                {% for module in modules %}
+                <div class="module-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
+                    <div class="module-header" data-bs-toggle="collapse" data-bs-target="#module-{{ module.pk }}">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="module-number">{{ forloop.counter }}</div>
+                            <div>
+                                <div class="module-title">{{ module.title }}</div>
+                                {% if module.description %}
+                                <div class="text-muted" style="font-size: 0.7rem;">{{ module.description|truncatechars:60 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="module-badge">
+                                <i class="bi bi-files me-1"></i>{{ module.materials.count }} materi
+                            </span>
+                            {% if is_teacher or user.is_admin %}
+                            <a href="{% url 'courses:module_edit' pk=module.pk %}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.7rem; padding: 0.2rem 0.6rem;" onclick="event.stopPropagation()">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            {% endif %}
+                            <i class="bi bi-chevron-down text-muted" style="transition: transform 0.2s;"></i>
+                        </div>
+                    </div>
+                    <div class="module-content collapse show" id="module-{{ module.pk }}"> <!-- BACKUPPPP -->
+                        {% if is_teacher or user.is_admin %}
+                        <div class="material-item" style="border-top: 1px solid var(--sora-border); background: var(--sora-bg);">
+                            <div class="material-info">
+                                <div class="material-icon default" style="background: rgba(99, 102, 241, 0.1);">
+                                    <i class="bi bi-plus-lg" style="color: #6366f1;"></i>
+                                </div>
+                                <a href="{% url 'courses:material_create' module_pk=module.pk %}" style="text-decoration: none; font-size: 0.8rem; font-weight: 500; color: #6366f1;">
+                                    Tambah Materi Baru
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% for material in module.materials.all %}
+                        {% if material.is_published or is_teacher or user.is_admin %}
+                        <div class="material-item">
+                            <div class="material-info">
+                                <div class="material-icon 
+                                    {% if material.material_type == 'video' %}video
+                                    {% elif material.material_type == 'document' %}document
+                                    {% elif material.material_type == 'presentation' %}presentation
+                                    {% elif material.material_type == 'link' %}link
+                                    {% else %}default{% endif %}">
+                                    <i class="bi bi-{% if material.material_type == 'video' %}play-circle-fill{% elif material.material_type == 'document' %}file-text-fill{% elif material.material_type == 'presentation' %}easel-fill{% elif material.material_type == 'link' %}link-45deg{% else %}file-richtext-fill{% endif %}"></i>
+                                </div>
+                                <div class="material-details">
+                                    <h6>{{ material.title }}</h6>
+                                    <p>{{ material.get_material_type_display }}{% if material.file %} • {{ material.get_file_size_display }}{% endif %}</p>
+                                </div>
+                            </div>
+                            <div class="material-actions">
+                                {% if is_enrolled or is_teacher or user.is_admin %}
+                                <a href="{% url 'courses:material_detail' pk=material.pk %}" class="btn btn-sora-primary" style="padding: 0.3rem 0.8rem; font-size: 0.7rem;">
+                                    <i class="bi bi-play-fill me-1"></i>Buka
+                                </a>
+                                {% endif %}
+                                {% if is_teacher or user.is_admin %}
+                                <a href="{% url 'courses:material_edit' pk=material.pk %}" class="btn btn-sm btn-outline-secondary" style="padding: 0.3rem 0.8rem; font-size: 0.7rem;">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-file-earmark-text" style="font-size: 1.5rem; color: var(--sora-text); opacity: 0.5;"></i>
+                            <p class="text-muted small mt-1 mb-0">Belum ada materi di modul ini.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-module">
+                    <i class="bi bi-collection" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3 mb-0">Belum ada modul pembelajaran.</p>
+                    {% if is_teacher or user.is_admin %}
+                    <a href="{% url 'courses:module_create' slug=course.slug %}" class="btn btn-sora-primary mt-3" style="font-size: 0.85rem;">
+                        <i class="bi bi-plus me-1"></i>Buat Modul Pertama
+                    </a>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        {% if is_enrolled or is_teacher or user.is_admin %}
+        <div class="sidebar-card">
+            <div class="sidebar-header">
+                <h6><i class="bi bi-lightning-charge-fill" style="color: #f59e0b;"></i>Aksi Cepat</h6>
+            </div>
+            <div class="sidebar-body">
+                <div class="quick-action-grid">
+                    <a href="{% url 'assignments:assignment_list' course_slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-journal-check"></i>
+                        <span>Lihat Tugas</span>
+                    </a>
+                    <a href="{% url 'quizzes:quiz_list' course_slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-question-circle"></i>
+                        <span>Kuis & Ujian</span>
+                    </a>
+                    {% if is_teacher or user.is_admin %}
+                    <a href="{% url 'assignments:assignment_create' course_slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Buat Tugas Baru</span>
+                    </a>
+                    <a href="{% url 'quizzes:quiz_create' course_slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Buat Kuis Baru</span>
+                    </a>
+                    <a href="{% url 'courses:manage_enrollments' slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-people"></i>
+                        <span>Kelola Siswa</span>
+                    </a>
+                    {% if user.is_admin %}
+                    <a href="{% url 'courses:assign_teachers' slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Assign Guru</span>
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'courses:announcement_create' slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-megaphone"></i>
+                        <span>Buat Pengumuman</span>
+                    </a>
+                    <a href="{% url 'dashboard:progress_report' course_slug=course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-bar-chart-steps"></i>
+                        <span>Laporan Progres</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if announcements %}
+        <div class="sidebar-card">
+            <div class="sidebar-header">
+                <h6><i class="bi bi-megaphone" style="color: #6366f1;"></i>Pengumuman Terbaru</h6>
+            </div>
+            <div class="sidebar-body p-0">
+                {% for ann in announcements %}
+                <div class="announcement-item">
+                    <div class="announcement-title">{{ ann.title }}</div>
+                    <div class="announcement-content">{{ ann.content|truncatechars:100 }}</div>
+                    <div class="announcement-date">
+                        <i class="bi bi-clock"></i>{{ ann.created_at|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.module-header').forEach(header => {
+        const chevron = header.querySelector('.bi-chevron-down');
+        const target = document.querySelector(header.getAttribute('data-bs-target'));
+        
+        if (target) {
+            target.addEventListener('show.bs.collapse', () => {
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            });
+            target.addEventListener('hide.bs.collapse', () => {
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+            });
+            
+            if (target.classList.contains('show')) {
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
+</script>
+{% endblock %}

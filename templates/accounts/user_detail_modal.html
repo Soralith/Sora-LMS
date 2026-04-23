@@ -1,0 +1,299 @@
+{% if error %}
+<div class="p-5 text-center">
+    <div class="display-1 text-danger mb-4">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <h4 class="fw-bold">Terjadi Kesalahan</h4>
+    <p class="text-muted">{{ error }}</p>
+</div>
+{% else %}
+<style>
+    /* Container Styling */
+    .modal-content-custom {
+        overflow: hidden;
+        border-radius: 28px;
+        border: none;
+        background: #ffffff;
+    }
+    
+    [data-bs-theme="dark"] .modal-content-custom {
+        background: #0f172a;
+    }
+
+    /* Header Utama dengan Gradasi Keunguan yang lebih Deep */
+    .modal-profile-header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        padding: 3rem 1.5rem 2rem;
+        position: relative;
+        overflow: hidden;
+        border-radius: 28px 28px 0 0;
+    }
+
+    /* Dekorasi Bulat-Bulat (Ditingkatkan dengan Blur & Glow) */
+    .modal-profile-header::before {
+        content: '';
+        position: absolute;
+        top: -20%;
+        right: -5%;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, rgba(139, 92, 246, 0) 70%);
+        border-radius: 50%;
+        filter: blur(20px);
+        z-index: 1;
+    }
+
+    .modal-profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: -15%;
+        left: -5%;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(79, 70, 229, 0.4) 0%, rgba(79, 70, 229, 0) 70%);
+        border-radius: 50%;
+        filter: blur(15px);
+        z-index: 1;
+    }
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Avatar Premium dengan Ring Effect */
+    .avatar-modal-large {
+        width: 110px;
+        height: 110px;
+        border-radius: 32px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        padding: 6px;
+        margin: 0 auto 1.2rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .avatar-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 26px;
+        background: linear-gradient(145deg, #818cf8, #4f46e5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 800;
+        font-size: 2.8rem;
+        overflow: hidden;
+        box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+    }
+
+    .avatar-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Teks & Badge */
+    .modal-profile-name {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 0.2rem;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .modal-profile-username {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
+        margin-bottom: 1.2rem;
+        font-weight: 400;
+    }
+
+    .modal-badge-role {
+        padding: 0.5rem 1.2rem;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        backdrop-filter: blur(10px);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    /* Info Grid Modern */
+    .info-box {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 20px;
+        padding: 1.2rem;
+        height: 100%;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    [data-bs-theme="dark"] .info-box {
+        background: #1e293b;
+        border-color: #334155;
+    }
+
+    .info-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0,0,0,0.05);
+        border-color: #e2e8f0;
+    }
+
+    .info-icon-wrapper {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.8rem;
+        color: #6366f1;
+    }
+
+    [data-bs-theme="dark"] .info-icon-wrapper {
+        background: #334155;
+        color: #818cf8;
+    }
+
+    .info-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .info-text {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    [data-bs-theme="dark"] .info-text {
+        color: #f8fafc;
+    }
+
+    /* Tombol Edit */
+    .btn-edit-custom {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 18px;
+        font-weight: 700;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-edit-custom:hover {
+        transform: scale(1.02);
+        box-shadow: 0 15px 25px rgba(79, 70, 229, 0.3);
+        color: white;
+    }
+</style>
+
+<div class="modal-content-custom">
+    <div class="modal-profile-header">
+        <div class="header-content text-center">
+            <div class="avatar-modal-large">
+                <div class="avatar-inner">
+                    {% if u.avatar %}
+                        <img src="{{ u.avatar.url }}" alt="{{ u.username }}">
+                    {% else %}
+                        {{ u.first_name|first|upper|default:u.username|first|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <h4 class="modal-profile-name">{{ u.get_full_name|default:u.username }}</h4>
+            <div class="modal-profile-username">
+                <i class="bi bi-at"></i>{{ u.username }}
+                <!-- {% if u.jurusan %} - {{ u.jurusan.nama }} {% endif %} {% if u.role == 'admin' %} - Verified Admin {% endif %} -->
+                {% if u.jurusan %} 
+                    <span class="opacity-50 mx-1">-</span> {{ u.jurusan.nama }} 
+                {% endif %}
+                        
+                {% if u.role == 'admin' %}
+                    <span class="ms-1 text-info" title="Verified Admin">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </span>
+                {% endif %}
+            </div>
+
+            <span class="modal-badge-role">
+                <i class="bi {% if u.is_admin %}bi-shield-check{% elif u.is_teacher %}bi-person-badge{% else %}bi-mortarboard{% endif %}"></i>
+                {{ u.get_role_display }}
+            </span>
+        </div>
+    </div>
+
+    <div class="p-4">
+        <div class="row g-3">
+            <div class="col-6">
+                <div class="info-box">
+                    <div class="info-icon-wrapper"><i class="bi bi-envelope-fill"></i></div>
+                    <span class="info-label">Email</span>
+                    <span class="info-text text-truncate d-block">{{ u.email|default:"-" }}</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="info-box">
+                    <div class="info-icon-wrapper"><i class="bi bi-telephone-fill"></i></div>
+                    <span class="info-label">Telepon</span>
+                    <span class="info-text">{{ u.phone|default:"-" }}</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="info-box">
+                    <div class="info-icon-wrapper"><i class="bi bi-calendar-event-fill"></i></div>
+                    <span class="info-label">Tgl Lahir</span>
+                    <span class="info-text">{{ u.date_of_birth|date:"d M Y"|default:"-" }}</span>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="info-box">
+                    <div class="info-icon-wrapper"><i class="bi bi-stars"></i></div>
+                    <span class="info-label">Join Sejak</span>
+                    <span class="info-text">{{ u.date_joined|date:"d M Y" }}</span>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="info-box">
+                    <div class="info-icon-wrapper"><i class="bi bi-chat-quote-fill"></i></div>
+                    <span class="info-label">Bio Singkat</span>
+                    <p class="small mb-0 mt-1" style="color: #64748b; line-height: 1.6;">
+                        {{ u.bio|default:"<em>Belum ada bio yang ditambahkan untuk profil ini.</em>"|safe }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            {% if request.user.is_admin %}
+            <a href="{% url 'accounts:user_edit' u.pk %}" class="btn-edit-custom text-decoration-none">
+                <i class="bi bi-pencil-square"></i>
+                <span>Perbarui Profil</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}

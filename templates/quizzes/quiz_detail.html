@@ -1,0 +1,486 @@
+{% extends 'base.html' %}
+{% block title %}{{ quiz.title }} - Sora LMS{% endblock %}
+{% block page_title %}{{ quiz.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quiz Detail Premium Styling - Dark Mode Support */
+    .quiz-detail-container {
+        padding-bottom: 3rem;
+    }
+
+    .main-quiz-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+    
+    [data-bs-theme="dark"] .main-quiz-card {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .quiz-banner {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        padding: 2.5rem;
+        color: white;
+    }
+    
+    [data-bs-theme="dark"] .quiz-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    }
+
+    /* Stat Box Styling */
+    .stat-box {
+        border-radius: 20px;
+        padding: 1.25rem;
+        text-align: center;
+        transition: transform 0.3s ease;
+        border: 1px solid var(--sora-border);
+        height: 100%;
+        background: var(--sora-bg);
+    }
+    .stat-box:hover {
+        transform: translateY(-5px);
+    }
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 2px;
+        color: var(--sora-text);
+    }
+    .stat-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    
+    /* Specific stat box colors for dark mode compatibility */
+    .stat-box[style*="background: #eff6ff"] {
+        background: rgba(37, 99, 235, 0.1) !important;
+    }
+    .stat-box[style*="background: #fffbeb"] {
+        background: rgba(245, 158, 11, 0.1) !important;
+    }
+    .stat-box[style*="background: #ecfdf5"] {
+        background: rgba(5, 150, 105, 0.1) !important;
+    }
+    .stat-box[style*="background: #f5f3ff"] {
+        background: rgba(124, 58, 237, 0.1) !important;
+    }
+
+    /* Attempt Card */
+    .attempt-item {
+        border-radius: 18px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: 0.2s;
+        border: 1px solid var(--sora-border);
+        background: var(--sora-bg);
+    }
+    .attempt-pass { 
+        background: rgba(16, 185, 129, 0.1) !important; 
+        border-color: rgba(16, 185, 129, 0.3) !important;
+    }
+    .attempt-fail { 
+        background: rgba(239, 68, 68, 0.1) !important; 
+        border-color: rgba(239, 68, 68, 0.3) !important;
+    }
+    
+    .attempt-item .bg-white {
+        background: var(--sora-card) !important;
+        border: 1px solid var(--sora-border);
+    }
+    .text-success {
+        color: #10b981 !important;
+    }
+    .text-danger {
+        color: #ef4444 !important;
+    }
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+
+    /* Question List Styling */
+    .question-item {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+        transition: 0.2s;
+    }
+    .question-item:hover {
+        border-color: var(--sora-primary);
+        background: var(--sora-card);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    }
+    
+    .question-item .fw-700 {
+        color: var(--sora-text);
+    }
+    .question-item .text-primary {
+        color: var(--sora-primary) !important;
+    }
+
+    .answer-pill {
+        padding: 0.6rem 1rem;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--sora-card);
+        border: 1px solid var(--sora-border);
+        color: var(--sora-text);
+    }
+    .answer-correct {
+        background: rgba(16, 185, 129, 0.1) !important;
+        border-color: rgba(16, 185, 129, 0.3) !important;
+        color: #10b981 !important;
+        font-weight: 600;
+    }
+    .answer-correct i {
+        color: #10b981 !important;
+    }
+
+    .explanation-box {
+        background: var(--sora-warning-bg);
+        border-left: 4px solid var(--sora-warning);
+        padding: 1rem;
+        border-radius: 0 12px 12px 0;
+        font-size: 0.8rem;
+        color: var(--sora-warning);
+        margin-top: 1rem;
+    }
+    [data-bs-theme="dark"] .explanation-box {
+        background: var(--sora-warning-bg);
+    }
+
+    .action-btn-group .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+    
+    /* Button Styles */
+    .btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .btn-light {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+    }
+    .btn-light:hover {
+        background: var(--sora-card);
+        color: var(--sora-primary);
+        border-color: var(--sora-primary);
+    }
+    
+    .btn-outline-secondary {
+        background: transparent;
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+    }
+    .btn-outline-secondary:hover {
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        border-color: var(--sora-primary);
+    }
+    
+    .btn-outline-danger {
+        background: transparent;
+        color: var(--sora-danger);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .btn-outline-danger:hover {
+        background: var(--sora-danger-bg);
+        color: var(--sora-danger);
+        border-color: var(--sora-danger);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        border: none;
+        color: white;
+    }
+    .btn-success:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+    }
+    
+    .badge.bg-light {
+        background: var(--sora-bg) !important;
+        color: var(--sora-text) !important;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .text-dark {
+        color: var(--sora-text) !important;
+    }
+    
+    .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    .border-top {
+        border-top-color: var(--sora-border) !important;
+    }
+    
+    .bg-light {
+        background: var(--sora-bg) !important;
+    }
+    
+    .border-dashed {
+        border-style: dashed;
+        border-color: var(--sora-border);
+    }
+    
+    .fw-600 {
+        font-weight: 600;
+    }
+    
+    .fw-700 {
+        font-weight: 700;
+    }
+    
+    .fw-800 {
+        font-weight: 800;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .main-quiz-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .quiz-banner {
+            padding: 1.5rem;
+        }
+        .p-4.p-lg-5 {
+            padding: 1.25rem !important;
+        }
+        .attempt-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.75rem;
+        }
+        .attempt-item .text-end {
+            text-align: center !important;
+        }
+        .question-item {
+            padding: 1rem;
+        }
+        .action-btn-group {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-detail-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            
+            <div class="mb-4">
+                <a href="{% url 'quizzes:quiz_list' course_slug=course.slug %}" class="text-muted text-decoration-none small fw-600">
+                    <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Kuis
+                </a>
+            </div>
+
+            <div class="main-quiz-card">
+                <div class="quiz-banner d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h3 class="fw-800 mb-1">{{ quiz.title }}</h3>
+                        <p class="mb-0 opacity-75"><i class="bi bi-journal-text me-1"></i> {{ course.title }}</p>
+                    </div>
+                    
+                    {% if user == course.teacher or user.is_admin %}
+                    <div class="action-btn-group d-flex gap-2">
+                        <a href="{% url 'quizzes:quiz_results_overview' pk=quiz.pk %}" class="btn btn-success">
+                            <i class="bi bi-bar-chart-fill me-1"></i> Analisis Hasil
+                        </a>
+                        <a href="{% url 'quizzes:quiz_edit' pk=quiz.pk %}" class="btn btn-light">
+                            <i class="bi bi-pencil-square me-1"></i> Edit Kuis
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="p-4 p-lg-5">
+                    {% if quiz.description %}
+                    <div class="mb-5">
+                        <h6 class="fw-700 text-dark-purple">Deskripsi Kuis</h6>
+                        <p class="text-muted mb-0">{{ quiz.description }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-3 mb-5">
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box" style="background: rgba(37, 99, 235, 0.1);">
+                                <div class="stat-value" style="color: #3b82f6;">{{ quiz.get_question_count }}</div>
+                                <div class="stat-label">Total Soal</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box" style="background: rgba(245, 158, 11, 0.1);">
+                                <div class="stat-value" style="color: #f59e0b;">
+                                    {% if quiz.time_limit %}{{ quiz.time_limit }}'{% else %}∞{% endif %}
+                                </div>
+                                <div class="stat-label">Durasi</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box" style="background: rgba(5, 150, 105, 0.1);">
+                                <div class="stat-value" style="color: #10b981;">{{ quiz.passing_score }}%</div>
+                                <div class="stat-label">Min. Lulus</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-box" style="background: rgba(124, 58, 237, 0.1);">
+                                <div class="stat-value" style="color: #8b5cf6;">
+                                    {% if quiz.max_attempts %}{{ quiz.max_attempts }}x{% else %}∞{% endif %}
+                                </div>
+                                <div class="stat-label">Kesempatan</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if user.is_student %}
+                        <div class="mb-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="fw-800 text-dark-purple mb-0">Riwayat Percobaan Anda</h6>
+                                <span class="badge bg-light rounded-pill">{{ attempts|length }} Total</span>
+                            </div>
+
+                            {% for attempt in attempts %}
+                            <div class="attempt-item {% if attempt.is_passed %}attempt-pass{% else %}attempt-fail{% endif %}">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="p-2 rounded-circle bg-white shadow-sm">
+                                        <i class="bi bi-{% if attempt.is_passed %}check-lg text-success{% else %}x-lg text-danger{% endif %}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-700 small" style="color: var(--sora-text);">Percobaan #{{ forloop.revcounter }}</div>
+                                        <div class="text-muted" style="font-size: 0.7rem;">{{ attempt.started_at|date:"d M Y, H:i" }}</div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="h4 fw-800 mb-0 {% if attempt.is_passed %}text-success{% else %}text-danger{% endif %}">
+                                        {{ attempt.percentage|floatformat:0 }}%
+                                    </div>
+                                    <a href="{% url 'quizzes:quiz_result' attempt_pk=attempt.pk %}" class="btn btn-link btn-sm text-decoration-none fw-600 p-0" style="font-size: 0.75rem; color: var(--sora-primary);">Detail Skor →</a>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-4 bg-light rounded-4">
+                                <p class="text-muted small mb-0">Anda belum pernah mengerjakan kuis ini.</p>
+                            </div>
+                            {% endfor %}
+
+                            {% if quiz.is_published %}
+                            <div class="mt-4 text-center">
+                                <a href="{% url 'quizzes:start_quiz' pk=quiz.pk %}" class="btn btn-sora-primary btn-lg px-5 rounded-pill shadow">
+                                    <i class="bi bi-play-circle-fill me-2"></i>
+                                    {% if attempts %}Coba Lagi Sekarang{% else %}Mulai Kuis Sekarang{% endif %}
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if user == course.teacher or user.is_admin %}
+                        <div class="border-top pt-5">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h6 class="fw-800 text-dark-purple mb-0">Daftar Pertanyaan ({{ quiz.get_question_count }})</h6>
+                                <a href="{% url 'quizzes:question_create' quiz_pk=quiz.pk %}" class="btn btn-sora-primary btn-sm rounded-pill">
+                                    <i class="bi bi-plus-lg me-1"></i> Tambah Soal
+                                </a>
+                            </div>
+
+                            {% for question in questions_with_answers %}
+                            <div class="question-item">
+                                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                                    <div class="fw-700" style="font-size: 0.95rem;">
+                                        <span class="text-primary me-2">{{ forloop.counter }}.</span>{{ question.text }}
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <a href="{% url 'quizzes:question_edit' pk=question.pk %}" class="btn btn-sm btn-outline-secondary border-0"><i class="bi bi-pencil"></i></a>
+                                        <a href="{% url 'quizzes:question_delete' pk=question.pk %}" class="btn btn-sm btn-outline-danger border-0"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </div>
+
+                                <div class="answers-grid">
+                                    {% for answer in question.answers.all %}
+                                    <div class="answer-pill {% if answer.is_correct %}answer-correct{% endif %}">
+                                        <i class="bi bi-{% if answer.is_correct %}check-circle-fill{% else %}circle{% endif %}"></i>
+                                        {{ answer.text }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+                                {% if question.explanation %}
+                                <div class="explanation-box">
+                                    <i class="bi bi-info-circle-fill me-1"></i> <strong>Penjelasan:</strong> {{ question.explanation }}
+                                </div>
+                                {% endif %}
+                                
+                                <div class="mt-3 d-flex gap-2">
+                                    <span class="badge bg-light fw-normal" style="font-size: 0.65rem;">{{ question.get_question_type_display }}</span>
+                                    <span class="badge bg-light fw-normal" style="font-size: 0.65rem;">{{ question.points }} Poin</span>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-5 border-2 border-dashed rounded-4">
+                                <i class="bi bi-patch-question text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                                <p class="text-muted mt-2">Belum ada pertanyaan yang dibuat.</p>
+                                <a href="{% url 'quizzes:question_create' quiz_pk=quiz.pk %}" class="btn btn-outline-primary btn-sm mt-2">Tambah Soal Pertama</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

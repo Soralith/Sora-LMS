@@ -1,0 +1,557 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Pengguna - Sora LMS{% endblock %}
+{% block page_title %}{{ action }} Pengguna{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern User Form Styling - Centered Layout */
+    body {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+    
+    .form-wrapper {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+    
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #64748b;
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.2s;
+        background: white;
+        border-radius: 40px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .back-link:hover {
+        color: #4f46e5;
+        transform: translateX(-3px);
+        background: #f8fafc;
+    }
+    
+    /* Form Card - Like Window */
+    .form-card {
+        background: white;
+        border-radius: 28px;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    /* Card Header - Like Window Title Bar */
+    .card-header-window {
+        background: linear-gradient(135deg, #f8fafc, #ffffff);
+        padding: 1.25rem 1.75rem;
+        border-bottom: 1px solid #eef2ff;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .card-header-window h6 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+    .card-header-window i {
+        font-size: 1.2rem;
+        color: #6366f1;
+    }
+    
+    /* Card Body */
+    .card-body-window {
+        padding: 1.75rem;
+    }
+    
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    .form-full {
+        grid-column: span 2;
+    }
+    
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 0;
+    }
+    .form-label-modern {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #475569;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-label-modern i {
+        font-size: 0.85rem;
+        color: #6366f1;
+    }
+    .required-star {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    .optional-badge {
+        background: #e2e8f0;
+        color: #64748b;
+        font-size: 0.6rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: normal;
+        margin-left: 0.5rem;
+    }
+    
+    /* Input Fields */
+    .input-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        transition: all 0.2s;
+        background: #ffffff;
+    }
+    .input-modern:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .input-modern:hover:not(:focus) {
+        border-color: #cbd5e1;
+    }
+    
+    /* Select */
+    .select-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 14px;
+        transition: all 0.2s;
+        background: #ffffff;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+    .select-modern:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    /* Checkbox & Radio */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 0.5rem 0;
+    }
+    .checkbox-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+    .checkbox-option input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #6366f1;
+    }
+    .checkbox-option label {
+        font-size: 0.85rem;
+        color: #334155;
+        cursor: pointer;
+        margin: 0;
+    }
+    
+    /* Help Text */
+    .help-text {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .help-text i {
+        font-size: 0.7rem;
+    }
+    
+    /* Error Styling */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+    .error-text {
+        font-size: 0.7rem;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+    }
+    .error-text i {
+        font-size: 0.7rem;
+    }
+    .input-modern.error,
+    .select-modern.error {
+        border-color: #ef4444;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eef2ff;
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        color: white;
+    }
+    .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-cancel:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+        transform: translateY(-2px);
+    }
+    
+    /* Password Strength Indicator */
+    .password-strength {
+        margin-top: 0.5rem;
+        height: 4px;
+        border-radius: 4px;
+        transition: all 0.2s;
+    }
+    .strength-weak { background: #ef4444; width: 25%; }
+    .strength-fair { background: #f59e0b; width: 50%; }
+    .strength-good { background: #10b981; width: 75%; }
+    .strength-strong { background: #059669; width: 100%; }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-wrapper {
+            margin: 1rem auto;
+        }
+        .card-body-window {
+            padding: 1.25rem;
+        }
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .form-full {
+            grid-column: span 1;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-wrapper">
+    <!-- Back Link -->
+    <a href="{% url 'accounts:user_list' %}" class="back-link">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke Daftar Pengguna
+    </a>
+    
+    <!-- Form Card -->
+    <div class="form-card">
+        <div class="card-header-window">
+            <h6>
+                <i class="bi bi-{% if action == 'Tambah' %}person-plus{% else %}pencil-square{% endif %}"></i>
+                {{ action }} Pengguna
+            </h6>
+        </div>
+        
+        <div class="card-body-window">
+            <form method="post" enctype="multipart/form-data" id="userForm">
+                {% csrf_token %}
+                
+                <div class="form-grid">
+                    {% for field in form %}
+                    <div class="form-group 
+                        {% if field.name in 'first_name,last_name,password1,password2' %}form-full{% endif %}
+                        {% if field.name == 'username' or field.name == 'email' or field.name == 'role' %}form-full{% endif %}">
+                        
+                        <label class="form-label-modern">
+                            <i class="bi 
+                                {% if field.name == 'username' %}bi-person
+                                {% elif field.name == 'first_name' or field.name == 'last_name' %}bi-person-badge
+                                {% elif field.name == 'email' %}bi-envelope
+                                {% elif field.name == 'password1' or field.name == 'password2' %}bi-key
+                                {% elif field.name == 'role' %}bi-shield-lock
+                                {% elif field.name == 'phone' %}bi-telephone
+                                {% elif field.name == 'date_of_birth' %}bi-calendar-heart
+                                {% elif field.name == 'bio' %}bi-chat-quote
+                                {% elif field.name == 'avatar' %}bi-image
+                                {% elif field.name == 'is_active' %}bi-check-circle
+                                {% else %}bi-info-circle{% endif %}"></i>
+                            {{ field.label }}
+                            {% if field.field.required %}
+                                <span class="required-star">*</span>
+                            {% else %}
+                                <span class="optional-badge">Opsional</span>
+                            {% endif %}
+                        </label>
+                        
+                        <!-- Handle different field types -->
+                        {% if field.name == 'is_active' %}
+                            <div class="checkbox-group">
+                                <label class="checkbox-option">
+                                    {{ field }}
+                                    <span>Aktifkan pengguna</span>
+                                </label>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                        
+                        <!-- Error messages -->
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                            <div class="error-text">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                {{ error }}
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <!-- Help text -->
+                        {% if field.help_text %}
+                        <div class="help-text">
+                            <i class="bi bi-info-circle"></i>
+                            {{ field.help_text }}
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Password strength indicator for password1 -->
+                        {% if field.name == 'password1' and action == 'Tambah' %}
+                        <div class="password-strength" id="passwordStrength"></div>
+                        <div class="help-text" id="strengthText"></div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-{% if action == 'Tambah' %}check-lg{% else %}save{% endif %}"></i>
+                        {{ action }} Pengguna
+                    </button>
+                    <a href="{% url 'accounts:user_list' %}" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i>
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add custom classes to form fields
+        const formFields = document.querySelectorAll('input, select, textarea');
+        formFields.forEach(field => {
+            if (field.type !== 'checkbox' && field.type !== 'radio' && field.type !== 'file') {
+                field.classList.add('input-modern');
+            }
+            if (field.tagName === 'SELECT') {
+                field.classList.add('select-modern');
+            }
+            if (field.tagName === 'TEXTAREA') {
+                field.classList.add('textarea-modern');
+            }
+        });
+        
+        // Add error styling
+        const errorFields = document.querySelectorAll('.error-text');
+        errorFields.forEach(error => {
+            const parent = error.closest('.form-group');
+            if (parent) {
+                const input = parent.querySelector('input, select, textarea');
+                if (input) {
+                    input.classList.add('error');
+                }
+            }
+        });
+        
+        // Password strength indicator
+        const passwordInput = document.querySelector('input[name="password1"]');
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('strengthText');
+        
+        if (passwordInput && strengthBar && strengthText) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                let message = '';
+                
+                if (password.length === 0) {
+                    strengthBar.className = 'password-strength';
+                    strengthText.innerHTML = '<i class="bi bi-info-circle"></i> Masukkan password';
+                    return;
+                }
+                
+                // Check length
+                if (password.length >= 8) strength++;
+                if (password.length >= 12) strength++;
+                
+                // Check for numbers
+                if (/\d/.test(password)) strength++;
+                
+                // Check for uppercase and lowercase
+                if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+                
+                // Check for special characters
+                if (/[^a-zA-Z0-9]/.test(password)) strength++;
+                
+                // Determine strength
+                if (strength <= 2) {
+                    strengthBar.className = 'password-strength strength-weak';
+                    message = 'Password lemah';
+                } else if (strength <= 3) {
+                    strengthBar.className = 'password-strength strength-fair';
+                    message = 'Password cukup';
+                } else if (strength <= 4) {
+                    strengthBar.className = 'password-strength strength-good';
+                    message = 'Password baik';
+                } else {
+                    strengthBar.className = 'password-strength strength-strong';
+                    message = 'Password kuat!';
+                }
+                
+                strengthText.innerHTML = `<i class="bi bi-shield-lock"></i> ${message}`;
+            });
+        }
+        
+        // Confirm password validation
+        const passwordConfirm = document.querySelector('input[name="password2"]');
+        if (passwordConfirm && passwordInput) {
+            function validatePasswordMatch() {
+                if (passwordInput.value !== passwordConfirm.value && passwordConfirm.value.length > 0) {
+                    passwordConfirm.classList.add('error');
+                    let errorDiv = passwordConfirm.parentElement.querySelector('.error-text');
+                    if (!errorDiv) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.className = 'error-text';
+                        passwordConfirm.parentElement.appendChild(errorDiv);
+                    }
+                    errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> Password tidak sama';
+                } else {
+                    passwordConfirm.classList.remove('error');
+                    const errorDiv = passwordConfirm.parentElement.querySelector('.error-text');
+                    if (errorDiv && errorDiv.innerHTML.includes('Password tidak sama')) {
+                        errorDiv.remove();
+                    }
+                }
+            }
+            
+            passwordConfirm.addEventListener('input', validatePasswordMatch);
+            passwordInput.addEventListener('input', validatePasswordMatch);
+        }
+        
+        // Warn before leaving if form has unsaved changes
+        let formChanged = false;
+        const form = document.getElementById('userForm');
+        if (form) {
+            form.querySelectorAll('input, select, textarea').forEach(field => {
+                field.addEventListener('input', () => {
+                    formChanged = true;
+                });
+                field.addEventListener('change', () => {
+                    formChanged = true;
+                });
+            });
+            
+            window.addEventListener('beforeunload', (e) => {
+                if (formChanged) {
+                    e.preventDefault();
+                    e.returnValue = 'Anda belum menyimpan perubahan. Yakin ingin meninggalkan halaman?';
+                    return e.returnValue;
+                }
+            });
+            
+            form.addEventListener('submit', () => {
+                formChanged = false;
+            });
+        }
+    });
+</script>
+{% endblock %}

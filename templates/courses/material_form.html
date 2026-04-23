@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Materi - Sora LMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --sora-purple: #7c3aed;
+        --sora-purple-dark: #6d28d9;
+        --sora-purple-faded: #f5f3ff;
+        --sora-dark: #2e1065;
+    }
+
+    .text-dark-purple { 
+        color: var(--sora-text) !important; 
+    }
+    .text-purple { 
+        color: var(--sora-primary) !important; 
+    }
+    .bg-purple-faded { 
+        background-color: var(--sora-bg) !important; 
+    }
+    .border-purple-light { 
+        border-color: var(--sora-border) !important; 
+    }
+    .fw-600 { 
+        font-weight: 600; 
+    }
+
+    /* Header Icon */
+    .icon-square-purple {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Input Styling */
+    .input-group-sora {
+        position: relative;
+        display: flex;
+        background: var(--sora-bg);
+        border: 2px solid var(--sora-border);
+        border-radius: 14px;
+        padding: 4px 16px;
+        transition: all 0.3s ease;
+    }
+    .input-group-sora:focus-within {
+        background: var(--sora-card);
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+    .input-group-sora i { 
+        color: var(--sora-text); 
+        opacity: 0.6;
+        margin-right: 12px; 
+        font-size: 1.1rem; 
+        display: flex; 
+        align-items: center; 
+    }
+    .input-group-sora input, 
+    .input-group-sora select, 
+    .input-group-sora textarea {
+        border: none !important;
+        outline: none !important;
+        background: transparent !important;
+        padding: 10px 0;
+        width: 100%;
+        color: var(--sora-text);
+    }
+    .input-group-sora input::placeholder,
+    .input-group-sora textarea::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    .input-group-sora textarea { 
+        min-height: 120px; 
+    }
+    .input-group-sora select {
+        cursor: pointer;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+        border-color: var(--sora-border);
+        background: var(--sora-bg);
+        transition: 0.3s;
+        border: 2px dashed var(--sora-border);
+    }
+    .upload-zone:hover { 
+        border-color: var(--sora-primary); 
+        background: var(--sora-card); 
+    }
+    .upload-zone h6 {
+        color: var(--sora-text);
+    }
+    .upload-zone .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+
+    /* Custom Switch */
+    .custom-switch-purple .form-check-input {
+        background-color: var(--sora-border);
+        border-color: var(--sora-border);
+    }
+    .custom-switch-purple .form-check-input:checked {
+        background-color: #4f46e5;
+        border-color: var(--sora-primary);
+    }
+    .custom-switch-purple .form-check-input:focus {
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        border-color: var(--sora-primary);
+    }
+    
+    .icon-status {
+        width: 40px; 
+        height: 40px; 
+        border-radius: 10px; 
+        background: var(--sora-card);
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        color: var(--sora-primary);
+        border: 1px solid var(--sora-border);
+    }
+
+    /* Buttons */
+    .btn-purple-lg {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white; 
+        border: none;
+        padding: 14px 30px; 
+        border-radius: 14px; 
+        font-weight: 600; 
+        transition: 0.3s;
+    }
+    .btn-purple-lg:hover { 
+        transform: translateY(-2px); 
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3); 
+        color: white; 
+    }
+    
+    .btn-outline-light-custom {
+        background: var(--sora-bg);
+        border: 2px solid var(--sora-border);
+        color: var(--sora-text);
+        padding: 14px 30px; 
+        border-radius: 14px; 
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-outline-light-custom:hover { 
+        background: var(--sora-card); 
+        border-color: var(--sora-primary);
+        color: var(--sora-primary);
+        transform: translateY(-2px);
+    }
+
+    /* Card Styling */
+    .card {
+        background: var(--sora-card);
+        border: 1px solid var(--sora-border);
+        border-radius: 24px !important;
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    [data-bs-theme="dark"] .card {
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    .card-body {
+        background: var(--sora-card);
+    }
+    
+    /* Form Label */
+    .form-label {
+        color: var(--sora-text);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-label .text-danger {
+        color: #ef4444 !important;
+    }
+    
+    /* Form Text */
+    .form-text {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    /* Publish Switch Container */
+    .bg-light {
+        background: var(--sora-bg) !important;
+        border: 1px solid var(--sora-border);
+        border-radius: 16px;
+    }
+    
+    .bg-light .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    .bg-light .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    /* Text colors */
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    /* Animation */
+    .animate-fade-in { 
+        animation: fadeIn 0.4s ease-in-out; 
+    }
+    
+    @keyframes fadeIn { 
+        from { opacity: 0; transform: translateY(10px); } 
+        to { opacity: 1; transform: translateY(0); } 
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.25rem !important;
+        }
+        .btn-purple-lg, .btn-outline-light-custom {
+            padding: 10px 20px;
+        }
+        .icon-square-purple {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+        .input-group-sora {
+            padding: 2px 12px;
+        }
+        .input-group-sora i {
+            margin-right: 8px;
+        }
+        .upload-zone {
+            padding: 1rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-lg-8 col-xl-7">
+        
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="icon-square-purple">
+                <i class="bi bi-file-earmark-plus"></i>
+            </div>
+            <div>
+                <h3 class="fw-bold mb-0" style="color: var(--sora-text);">{{ action }} Materi</h3>
+                <p class="text-muted mb-0 small">
+                    {{ module.course.title }} <i class="bi bi-chevron-right mx-1"></i> {{ module.title }}
+                </p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+            <div class="card-body p-4 p-md-5">
+                <form method="post" enctype="multipart/form-data" id="material-form">
+                    {% csrf_token %}
+                    
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label class="form-label fw-600">Judul Materi <span class="text-danger">*</span></label>
+                            <div class="input-group-sora">
+                                <i class="bi bi-pencil-square"></i>
+                                {{ form.title }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Tipe Materi</label>
+                            <div class="input-group-sora">
+                                <i class="bi bi-layers"></i>
+                                {{ form.material_type }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-600">Urutan Tampil</label>
+                            <div class="input-group-sora">
+                                <i class="bi bi-sort-numeric-down"></i>
+                                {{ form.order }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-600">Deskripsi Singkat</label>
+                            <div class="input-group-sora align-items-start">
+                                <i class="bi bi-info-circle mt-2"></i>
+                                {{ form.description }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 animate-fade-in" id="file-section">
+                            <div class="upload-zone p-4 text-center rounded-4">
+                                <i class="bi bi-cloud-arrow-up display-6 mb-2" style="color: var(--sora-primary);"></i>
+                                <h6 class="fw-600 mb-1" style="color: var(--sora-text);">Unggah Dokumen</h6>
+                                <p class="text-muted small mb-3">Maks. 50MB (PDF, DOCX, PPTX)</p>
+                                <div class="d-inline-block mx-auto">
+                                    {{ form.file }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 animate-fade-in" id="url-section">
+                            <label class="form-label fw-600">Tautan Luar (URL)</label>
+                            <div class="input-group-sora">
+                                <i class="bi bi-link-45deg"></i>
+                                {{ form.url }}
+                            </div>
+                            <div class="form-text mt-2 px-2">
+                                <i class="bi bi-lightbulb me-1"></i> Rekomendasi: Gunakan link YouTube atau Google Drive.
+                            </div>
+                        </div>
+
+                        <div class="col-12 animate-fade-in" id="content-section">
+                            <label class="form-label fw-600">Isi Materi (Teks)</label>
+                            <div class="input-group-sora align-items-start">
+                                <i class="bi bi-body-text mt-2"></i>
+                                {{ form.content }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="p-3 rounded-3 d-flex align-items-center justify-content-between bg-light flex-wrap gap-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="icon-status shadow-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-600" style="color: var(--sora-text);">Publikasi</div>
+                                        <div class="text-muted small">Dapat dilihat oleh siswa jika dicentang.</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch custom-switch-purple mb-0">
+                                    {{ form.is_published }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row gap-3 mt-5">
+                        <button type="submit" class="btn-purple-lg px-5 order-last order-md-first">
+                            <i class="bi bi-check2-circle me-2"></i> Simpan Materi
+                        </button>
+                        <a href="{% url 'courses:course_detail' slug=module.course.slug %}" class="btn-outline-light-custom px-4">
+                            <i class="bi bi-x-lg me-2"></i>Batal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('id_material_type');
+    
+    function toggleSections() {
+        const type = typeSelect ? typeSelect.value : '';
+        const fileSec = document.getElementById('file-section');
+        const urlSec = document.getElementById('url-section');
+        const contentSec = document.getElementById('content-section');
+
+        if (fileSec) fileSec.style.display = ['document','presentation'].includes(type) ? 'block' : 'none';
+        if (urlSec) urlSec.style.display = ['video','link'].includes(type) ? 'block' : 'none';
+        if (contentSec) contentSec.style.display = type === 'text' ? 'block' : 'none';
+    }
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', toggleSections);
+        toggleSections(); // Initial call
+    }
+    
+    // Add error styling to form fields
+    const errorFields = document.querySelectorAll('.errorlist');
+    errorFields.forEach(error => {
+        const parent = error.closest('.col-12, .col-md-6');
+        if (parent) {
+            const input = parent.querySelector('input, textarea, select');
+            if (input) {
+                input.style.borderColor = '#ef4444';
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

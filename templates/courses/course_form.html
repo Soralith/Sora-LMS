@@ -1,0 +1,595 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Kelas - Sora LMS{% endblock %}
+{% block page_title %}{{ action }} Kelas{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Form Styling - Dark Mode Support */
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    /* Form Card Premium */
+    .form-card {
+        background: var(--sora-card);
+        border-radius: 32px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.08);
+    }
+    
+    [data-bs-theme="dark"] .form-card {
+        box-shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Form Header */
+    .form-header {
+        background: var(--sora-card);
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    .form-header h6 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--sora-text);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .form-header h6 i {
+        font-size: 1.3rem;
+        color: var(--sora-primary);
+    }
+    .form-header p {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-top: 0.5rem;
+        margin-bottom: 0;
+    }
+    
+    /* Form Body */
+    .form-body {
+        padding: 2rem;
+    }
+    
+    /* Form Fields */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .form-label-modern {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--sora-text);
+        opacity: 0.8;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .form-label-modern i {
+        font-size: 0.85rem;
+        color: var(--sora-primary);
+    }
+    .form-label-modern .required-star {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+    .form-label-modern .optional-badge {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        font-size: 0.6rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 30px;
+        font-weight: 500;
+        text-transform: none;
+        letter-spacing: normal;
+        border: 1px solid var(--sora-border);
+        opacity: 0.7;
+    }
+    
+    /* Input Fields */
+    .input-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 14px;
+        transition: all 0.2s;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .input-modern:focus {
+        outline: none;
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .input-modern:hover:not(:focus) {
+        border-color: var(--sora-border);
+        opacity: 0.9;
+    }
+    .input-modern::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    /* Textarea */
+    .textarea-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 14px;
+        transition: all 0.2s;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+    }
+    .textarea-modern:focus {
+        outline: none;
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    .textarea-modern:hover:not(:focus) {
+        border-color: var(--sora-border);
+    }
+    .textarea-modern::placeholder {
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    
+    /* Select */
+    .select-modern {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        border: 1.5px solid var(--sora-border);
+        border-radius: 14px;
+        transition: all 0.2s;
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+    .select-modern:focus {
+        outline: none;
+        border-color: var(--sora-primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    
+    /* File Upload */
+    .file-upload-wrapper {
+        position: relative;
+        margin-top: 0.25rem;
+    }
+    .file-upload-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.2rem;
+        background: var(--sora-bg);
+        border: 1.5px dashed var(--sora-border);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+    .file-upload-label:hover {
+        border-color: var(--sora-primary);
+        background: var(--sora-card);
+        color: var(--sora-primary);
+        opacity: 1;
+    }
+    .file-upload-label i {
+        font-size: 1.1rem;
+    }
+    .file-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .file-name {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        display: inline-block;
+        margin-left: 0.5rem;
+    }
+    .current-file {
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 10px;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .current-file i {
+        color: #10b981;
+    }
+    
+    /* Two Column Layout */
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    /* Help Text */
+    .help-text {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+    .help-text i {
+        font-size: 0.7rem;
+    }
+    
+    /* Error Styling */
+    .errorlist {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0 0;
+    }
+    .errorlist li {
+        font-size: 0.7rem;
+        color: #ef4444;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    .errorlist li::before {
+        content: "⚠";
+        font-size: 0.65rem;
+    }
+    .input-modern.error,
+    .textarea-modern.error,
+    .select-modern.error {
+        border-color: #ef4444;
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--sora-border);
+    }
+    .btn-submit {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        color: white;
+    }
+    .btn-cancel {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        border-radius: 40px;
+        padding: 0.75rem 2rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-cancel:hover {
+        background: var(--sora-border);
+        color: var(--sora-text);
+        transform: translateY(-2px);
+        opacity: 0.8;
+    }
+    
+    /* Preview Image */
+    .image-preview {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--sora-bg);
+        border-radius: 16px;
+        display: none;
+        border: 1px solid var(--sora-border);
+    }
+    .image-preview img {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .form-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-body {
+            padding: 1.5rem;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+        .action-buttons {
+            flex-direction: column;
+        }
+        .btn-submit, .btn-cancel {
+            justify-content: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h6>
+                <i class="bi bi-{% if action == 'Buat' %}plus-circle{% else %}pencil-square{% endif %}"></i>
+                {{ action }} Kelas
+            </h6>
+            <p>
+                <i class="bi bi-info-circle me-1"></i>
+                {% if action == 'Buat' %}
+                    Buat kelas baru untuk memulai pembelajaran. Isi informasi kelas dengan lengkap.
+                {% else %}
+                    Perbarui informasi kelas Anda. Field bertanda * wajib diisi.
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="form-body">
+            <form method="post" enctype="multipart/form-data" id="courseForm">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <!-- Title (Full width in row) -->
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label-modern">
+                            <i class="bi bi-book"></i>
+                            Judul Kelas
+                            <span class="required-star">*</span>
+                        </label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            {{ form.title.errors }}
+                        {% endif %}
+                        <div class="help-text">
+                            <i class="bi bi-info-circle"></i>
+                            Masukkan judul yang jelas dan menarik
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-text-paragraph"></i>
+                        Deskripsi
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        {{ form.description.errors }}
+                    {% endif %}
+                    <div class="help-text">
+                        <i class="bi bi-info-circle"></i>
+                        Jelaskan tentang kelas ini, materi yang akan dipelajari, dan target pembelajaran
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label class="form-label-modern">
+                            <i class="bi bi-tag"></i>
+                            Kategori
+                            <span class="optional-badge">Opsional</span>
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            {{ form.category.errors }}
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Status -->
+                    <div class="form-group">
+                        <label class="form-label-modern">
+                            <i class="bi bi-flag"></i>
+                            Status
+                            <span class="required-star">*</span>
+                        </label>
+                        {{ form.status }}
+                        {% if form.status.errors %}
+                            {{ form.status.errors }}
+                        {% endif %}
+                        <div class="help-text">
+                            <i class="bi bi-info-circle"></i>
+                            Aktif: Kelas dapat diakses | Draft: Masih dalam pengembangan | Arsip: Kelas selesai
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cover Image -->
+                <div class="form-group">
+                    <label class="form-label-modern">
+                        <i class="bi bi-image"></i>
+                        Cover Kelas
+                        <span class="optional-badge">Opsional</span>
+                    </label>
+                    <div class="file-upload-wrapper">
+                        <label for="id_cover_image" class="file-upload-label">
+                            <i class="bi bi-cloud-upload"></i>
+                            Pilih Gambar Cover
+                        </label>
+                        {{ form.cover_image }}
+                        <span id="file-name" class="file-name"></span>
+                    </div>
+                    
+                    <!-- Preview for current image -->
+                    {% if course and course.cover_image %}
+                    <div class="current-file">
+                        <i class="bi bi-image-fill"></i>
+                        Cover saat ini: {{ course.cover_image.name|cut:"covers/" }}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Image Preview -->
+                    <div id="image-preview" class="image-preview">
+                        <img id="preview-img" src="#" alt="Preview">
+                    </div>
+                    
+                    <div class="help-text">
+                        <i class="bi bi-info-circle"></i>
+                        Format: JPG, PNG, GIF. Ukuran maksimal 5MB. Direkomendasikan 1200x675px (16:9)
+                    </div>
+                    {% if form.cover_image.errors %}
+                        {{ form.cover_image.errors }}
+                    {% endif %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-{% if action == 'Buat' %}check-lg{% else %}save{% endif %}"></i>
+                        {{ action }} Kelas
+                    </button>
+                    <a href="{% url 'courses:course_list' %}" class="btn-cancel">
+                        <i class="bi bi-x-lg"></i>
+                        Batal
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // File upload preview
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('id_cover_image');
+        const fileNameSpan = document.getElementById('file-name');
+        const imagePreview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    const fileName = file.name;
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                    
+                    // Check file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        fileNameSpan.innerHTML = '<i class="bi bi-exclamation-triangle-fill" style="color: #ef4444;"></i> File terlalu besar (maks 5MB)';
+                        fileNameSpan.style.color = '#ef4444';
+                        this.value = '';
+                        imagePreview.style.display = 'none';
+                        return;
+                    }
+                    
+                    fileNameSpan.innerHTML = `<i class="bi bi-check-circle-fill" style="color: #10b981;"></i> ${fileName} (${fileSize} MB)`;
+                    fileNameSpan.style.color = '#10b981';
+                    
+                    // Show image preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    fileNameSpan.innerHTML = '';
+                    imagePreview.style.display = 'none';
+                }
+            });
+        }
+        
+        // Add error styling to form fields
+        const errorFields = document.querySelectorAll('.errorlist');
+        errorFields.forEach(error => {
+            const parent = error.closest('.form-group');
+            if (parent) {
+                const input = parent.querySelector('input, textarea, select');
+                if (input) {
+                    input.classList.add('error');
+                }
+            }
+        });
+        
+        // Auto-generate slug hint (optional enhancement)
+        const titleInput = document.querySelector('#id_title');
+        if (titleInput) {
+            titleInput.addEventListener('input', function() {
+                // Just a nice visual feedback, no actual slug generation needed
+                const value = this.value;
+                if (value.length > 0) {
+                    titleInput.style.borderColor = 'var(--sora-primary)';
+                } else {
+                    titleInput.style.borderColor = 'var(--sora-border)';
+                }
+            });
+        }
+    });
+    
+    // Optional: Keyboard shortcut (Ctrl+S to save)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            const form = document.getElementById('courseForm');
+            if (form) {
+                form.submit();
+            }
+        }
+    });
+</script>
+{% endblock %}

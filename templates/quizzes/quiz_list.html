@@ -1,0 +1,365 @@
+{% extends 'base.html' %}
+{% block title %}Kuis - {{ course.title }} - Sora LMS{% endblock %}
+{% block page_title %}Kuis & Ujian{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quiz List Premium Styling - Dark Mode Support */
+    .quiz-container {
+        background: var(--sora-bg);
+        min-height: 80vh;
+    }
+
+    /* Breadcrumb & Header */
+    .header-section {
+        margin-bottom: 2rem;
+    }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.2s;
+        text-decoration: none;
+        margin-bottom: 0.5rem;
+        opacity: 0.7;
+    }
+    .back-link:hover {
+        color: var(--sora-primary);
+        transform: translateX(-3px);
+        opacity: 1;
+    }
+
+    .header-section h3 {
+        color: var(--sora-text);
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+
+    /* Quiz Card Design */
+    .quiz-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+    .quiz-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        border-color: var(--sora-primary);
+    }
+    
+    [data-bs-theme="dark"] .quiz-card:hover {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .quiz-card-body {
+        padding: 1.5rem;
+        flex-grow: 1;
+    }
+
+    .quiz-icon-wrapper {
+        width: 45px;
+        height: 45px;
+        border-radius: 14px;
+        background: var(--sora-bg);
+        color: var(--sora-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid var(--sora-border);
+    }
+
+    .quiz-title {
+        font-weight: 800;
+        color: var(--sora-text);
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .quiz-desc {
+        font-size: 0.8rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-bottom: 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Info Badges */
+    .quiz-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+    .meta-item i {
+        font-size: 0.9rem;
+    }
+    .meta-item .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    .meta-item .text-warning {
+        color: #f59e0b !important;
+    }
+    .meta-item .text-success {
+        color: #10b981 !important;
+    }
+    .meta-item .text-info {
+        color: #06b6d4 !important;
+    }
+
+    /* Footer Card */
+    .quiz-footer {
+        padding: 1.25rem 1.5rem;
+        background: var(--sora-card);
+        border-top: 1px solid var(--sora-border);
+    }
+
+    /* Status Badge */
+    .status-badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .bg-success.bg-opacity-10 {
+        background: rgba(16, 185, 129, 0.15) !important;
+        color: #10b981 !important;
+    }
+    .bg-secondary.bg-opacity-10 {
+        background: rgba(100, 116, 139, 0.15) !important;
+        color: #94a3b8 !important;
+    }
+    .text-success {
+        color: #10b981 !important;
+    }
+    .text-secondary {
+        color: #94a3b8 !important;
+    }
+
+    /* Buttons */
+    .btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        color: var(--sora-primary);
+        border: 1.5px solid var(--sora-primary);
+        transition: all 0.2s;
+    }
+    .btn-outline-primary:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .rounded-pill {
+        border-radius: 40px !important;
+    }
+    
+    .fw-bold {
+        font-weight: 700;
+    }
+    
+    .fw-800 {
+        font-weight: 800;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: var(--sora-card);
+        border-radius: 32px;
+        border: 2px dashed var(--sora-border);
+    }
+    .empty-state .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header-section {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+        }
+        .quiz-card-body {
+            padding: 1rem;
+        }
+        .quiz-footer {
+            padding: 1rem;
+        }
+        .quiz-meta-grid {
+            gap: 0.5rem;
+        }
+        .meta-item {
+            font-size: 0.65rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-container">
+    
+    <div class="header-section d-flex justify-content-between align-items-end">
+        <div>
+            <a href="{% url 'courses:course_detail' slug=course.slug %}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Kembali ke Kelas
+            </a>
+            <h3 class="fw-800 mb-0">Kuis & Ujian 📝</h3>
+            <p class="text-muted small mb-0 mt-1">Uji pemahamanmu terhadap materi yang telah dipelajari.</p>
+        </div>
+        {% if user == course.teacher or user.is_admin %}
+        <a href="{% url 'quizzes:quiz_create' course_slug=course.slug %}" class="btn-sora-primary rounded-pill px-4">
+            <i class="bi bi-plus-lg me-2"></i>Buat Kuis Baru
+        </a>
+        {% endif %}
+    </div>
+
+    {% if quizzes %}
+    <div class="row g-4">
+        {% for quiz in quizzes %}
+        <div class="col-md-6 col-lg-4">
+            <div class="quiz-card">
+                <div class="quiz-card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="quiz-icon-wrapper">
+                            <i class="bi bi-journal-check"></i>
+                        </div>
+                        <span class="status-badge {% if quiz.is_published %}bg-success bg-opacity-10 text-success{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}">
+                            {% if quiz.is_published %}<i class="bi bi-check-circle-fill me-1"></i>Aktif{% else %}<i class="bi bi-eye-slash-fill me-1"></i>Draft{% endif %}
+                        </span>
+                    </div>
+
+                    <h5 class="quiz-title">{{ quiz.title }}</h5>
+                    <p class="quiz-desc">{{ quiz.description|default:"Kerjakan kuis ini untuk mengevaluasi pemahamanmu tentang materi ini." }}</p>
+                    
+                    <div class="quiz-meta-grid">
+                        <div class="meta-item">
+                            <i class="bi bi-question-circle text-primary"></i>
+                            <span>{{ quiz.get_question_count }} Soal</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-clock text-warning"></i>
+                            <span>{% if quiz.time_limit %}{{ quiz.time_limit }} Menit{% else %}Unlimited{% endif %}</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-trophy text-success"></i>
+                            <span>Min. {{ quiz.passing_score }}%</span>
+                        </div>
+                        {% if user.is_student %}
+                        <div class="meta-item">
+                            <i class="bi bi-person-check text-info"></i>
+                            <span>Dikerjakan</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="quiz-footer">
+                    <a href="{% url 'quizzes:quiz_detail' pk=quiz.pk %}" class="btn {% if user.is_student %}btn-sora-primary{% else %}btn-outline-primary{% endif %} w-100 rounded-pill fw-bold">
+                        {% if user.is_student %}
+                            Mulai Kuis Sekarang <i class="bi bi-arrow-right ms-1"></i>
+                        {% else %}
+                            Kelola Kuis <i class="bi bi-gear ms-1"></i>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="mb-4">
+            <i class="bi bi-clipboard-x" style="font-size: 4rem; opacity: 0.3; color: var(--sora-text);"></i>
+        </div>
+        <h5 class="fw-bold text-dark-purple">Belum Ada Kuis</h5>
+        <p class="text-muted mx-auto" style="max-width: 400px;">Sepertinya pengajar belum merilis kuis atau ujian untuk kelas ini. Silakan cek kembali nanti!</p>
+        {% if user == course.teacher or user.is_admin %}
+        <a href="{% url 'quizzes:quiz_create' course_slug=course.slug %}" class="btn-sora-primary mt-3 px-4 rounded-pill">
+            <i class="bi bi-plus-lg me-2"></i>Buat Kuis Pertama
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animasi muncul kartu satu per satu
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.quiz-card');
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, i * 100);
+        });
+    });
+</script>
+{% endblock %}

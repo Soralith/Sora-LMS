@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Guru - Sora LMS{% endblock %}
+{% block page_title %}Pusat Pengajar{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Teacher Premium Theme - Dark Mode Support */
+    .dashboard-container { 
+        background: var(--sora-bg); 
+        min-height: 100vh; 
+        padding-bottom: 2rem;
+    }
+
+    /* Hero Guru Section */
+    .teacher-hero-siswa-style {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+        border-radius: 30px;
+        padding: 2.5rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+        box-shadow: 0 15px 30px rgba(30, 27, 75, 0.2);
+    }
+    
+    [data-bs-theme="dark"] .teacher-hero-siswa-style {
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+    
+    .teacher-hero-siswa-style::after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+
+    /* Foto Profil */
+    .teacher-photo-container {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .teacher-photo-big {
+        height: 160px; 
+        width: 160px; 
+        object-fit: cover; 
+        border-radius: 24px; 
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        transform: rotate(3deg); 
+        transition: transform 0.3s ease;
+    }
+
+    .teacher-photo-big:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .teacher-initial-big {
+        height: 160px;
+        width: 160px;
+        background: linear-gradient(135deg, #6366f1, #a855f7);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 4rem;
+        font-weight: 800;
+        color: white;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        transform: rotate(3deg);
+        transition: transform 0.3s ease;
+    }
+
+    .teacher-initial-big:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    /* Stat Cards - Dark Mode Support */
+    .stat-premium {
+        background: var(--sora-card);
+        border-radius: 24px;
+        padding: 1.5rem;
+        border: 1px solid var(--sora-border);
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .stat-premium:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+    }
+    [data-bs-theme="dark"] .stat-premium:hover {
+        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+    }
+    
+    .stat-icon-circle {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stat-premium .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .stat-premium .h2 {
+        color: var(--sora-text);
+    }
+
+    /* Course Management Card - Dark Mode Support */
+    .teacher-course-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        transition: 0.3s;
+    }
+    .teacher-course-card:hover {
+        border-color: var(--sora-primary);
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.1);
+    }
+    [data-bs-theme="dark"] .teacher-course-card:hover {
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+    }
+    
+    .t-course-cover {
+        height: 140px;
+        width: 100%;
+        object-fit: cover;
+    }
+    .t-course-placeholder {
+        height: 140px;
+        background: var(--sora-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--sora-text);
+        opacity: 0.6;
+        font-size: 2.5rem;
+    }
+    
+    .teacher-course-card h6 {
+        color: var(--sora-text);
+    }
+    
+    .teacher-course-card .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+
+    /* Side List Card - Dark Mode Support */
+    .glass-list-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        padding: 1.5rem;
+    }
+    
+    .glass-list-card h6 {
+        color: var(--sora-text);
+    }
+    
+    .submission-item {
+        padding: 1rem;
+        border-radius: 16px;
+        background: var(--sora-bg);
+        margin-bottom: 0.8rem;
+        border: 1px solid transparent;
+        transition: 0.2s;
+    }
+    .submission-item:hover {
+        background: var(--sora-card);
+        border-color: var(--sora-border);
+        transform: scale(1.02);
+    }
+    
+    .submission-item .fw-bold {
+        color: var(--sora-text);
+    }
+    
+    .submission-item .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+
+    /* Button Styles - Dark Mode Support */
+    .btn-hero-action {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 0.6rem 1.2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-hero-action:hover {
+        background: white;
+        color: #1e1b4b;
+    }
+    
+.btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    /* Badge styles for dark mode */
+    [data-bs-theme="dark"] .bg-white.bg-opacity-20 {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-success {
+        background-color: rgba(16, 185, 129, 0.15) !important;
+        color: #34d399 !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-secondary {
+        background-color: rgba(100, 116, 139, 0.15) !important;
+        color: #94a3b8 !important;
+    }
+    
+    [data-bs-theme="dark"] .text-danger {
+        color: #f87171 !important;
+    }
+    
+    [data-bs-theme="dark"] .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    [data-bs-theme="dark"] .btn-warning {
+        background: #d97706;
+        border-color: #d97706;
+        color: white;
+    }
+    
+    [data-bs-theme="dark"] .btn-warning:hover {
+        background: #f59e0b;
+        border-color: #f59e0b;
+    }
+    
+    /* Text colors */
+    .text-dark-purple {
+        color: var(--sora-text);
+    }
+    
+    [data-bs-theme="dark"] .text-dark-purple {
+        color: var(--sora-text);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .teacher-hero-siswa-style {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    
+    <div class="teacher-hero-siswa-style">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-white bg-opacity-20 rounded-pill px-3 py-2 mb-3">
+                    <i class="bi bi-person-badge me-1"></i> Semangat ya ngajar nya! 🎓
+                </span>
+                <h1 class="fw-bold mb-2">Selamat Mengajar, {{ user.first_name|default:user.username }}! 🍎</h1>
+                <p class="opacity-75 mb-4">Ada <strong>{{ stats.pending_grades }}</strong> tugas siswa yang perlu dinilai hari ini.</p>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'courses:course_create' %}" class="btn-hero-action">
+                        <i class="bi bi-plus-lg"></i> Buat Kelas Baru
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 text-lg-end d-none d-lg-block">
+                <a href="{% url 'accounts:profile' %}" class="text-decoration-none">
+                    <div class="teacher-photo-container">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Teacher" class="teacher-photo-big" style="cursor: pointer;">
+                        {% else %}
+                            <div class="teacher-initial-big">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-circle" style="background: rgba(37, 99, 235, 0.1); color: #3b82f6;">
+                    <i class="bi bi-collection-play"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Total Kelas</div>
+                <div class="h2 fw-800 mb-0">{{ stats.total_courses }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-circle" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Kelas Aktif</div>
+                <div class="h2 fw-800 mb-0">{{ stats.active_courses }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-circle" style="background: rgba(124, 58, 237, 0.1); color: #8b5cf6;">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Total Siswa</div>
+                <div class="h2 fw-800 mb-0">{{ stats.total_students }}</div>
+            </div>
+        </div>
+        <div class="col-6 col-xl-3">
+            <div class="stat-premium">
+                <div class="stat-icon-circle" style="background: rgba(217, 119, 6, 0.1); color: #f59e0b;">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+                <div class="text-muted small fw-600 text-uppercase">Perlu Dinilai</div>
+                <div class="h2 fw-800 mb-0" style="color: #ef4444;">{{ stats.pending_grades }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold mb-0" style="color: var(--sora-text);">Manajemen Kelas</h5>
+                <a href="{% url 'courses:course_list' %}" class="fw-600 text-decoration-none small" style="color: var(--sora-primary);">Lihat Semua</a>
+            </div>
+
+            {% if courses %}
+            <div class="row g-3">
+                {% for course in courses %}
+                <div class="col-md-6">
+                    <div class="teacher-course-card p-3">
+                        {% if course.cover_image %}
+                            <img src="{{ course.cover_image.url }}" class="t-course-cover rounded-4 mb-3">
+                        {% else %}
+                            <div class="t-course-placeholder rounded-4 mb-3"><i class="bi bi-journal-text"></i></div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-0 text-truncate" style="max-width: 70%;">{{ course.title }}</h6>
+                            <span class="badge {% if course.status == 'active' %}bg-success{% else %}bg-secondary{% endif %} bg-opacity-10 text-{% if course.status == 'active' %}success{% else %}secondary{% endif %}" style="font-size: 0.65rem;">
+                                {{ course.get_status_display }}
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-3"><i class="bi bi-people me-1"></i> {{ course.get_student_count }} Siswa</p>
+                        <a href="{% url 'courses:course_detail' slug=course.slug %}" class="btn btn-sora-primary w-100 rounded-3">
+                            Kelola Kelas <i class="bi bi-gear-fill ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="stat-premium text-center py-5">
+                <p class="text-muted">Belum ada kelas yang dibuat.</p>
+                <a href="{% url 'courses:course_create' %}" class="btn btn-sora-primary">Buat Kelas Baru</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="glass-list-card">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h6 class="fw-bold mb-0" style="color: var(--sora-text);">Tugas Masuk Baru</h6>
+                    <span class="badge bg-danger rounded-pill">{{ recent_submissions|length }}</span>
+                </div>
+
+                {% for sub in recent_submissions %}
+                <div class="submission-item">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                        <div style="width:38px; height:38px; border-radius:12px; overflow: hidden;">
+                            {% if sub.student.avatar %}
+                                <img src="{{ sub.student.avatar.url }}" alt="{{ sub.student.username }}" style="width:100%; height:100%; object-fit:cover;">
+                            {% else %}
+                                <div style="width:100%; height:100%; background: var(--sora-primary); color: white; display:flex; align-items:center; justify-content:center; font-weight:700;">
+                                    {{ sub.student.username|slice:":1"|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="fw-bold small" style="color: var(--sora-text);">{{ sub.student.get_full_name|default:sub.student.username }}</div>
+                            <div class="text-muted" style="font-size: 0.65rem;">{{ sub.assignment.title|truncatechars:25 }}</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'assignments:grade_submission' pk=sub.pk %}" class="btn btn-sm btn-warning w-100 rounded-3 fw-bold" style="font-size: 0.75rem;">
+                        Nilai Tugas
+                    </a>
+                </div>
+                {% empty %}
+                <div class="text-center py-4">
+                    <i class="bi bi-emoji-smile text-muted fs-1"></i>
+                    <p class="text-muted small mt-2">Semua tugas sudah dinilai!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const elements = document.querySelectorAll('.stat-premium, .teacher-course-card, .glass-list-card');
+        elements.forEach((el, i) => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(15px)';
+            setTimeout(() => {
+                el.style.transition = 'all 0.4s ease-out';
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, i * 50);
+        });
+    });
+</script>
+{% endblock %}

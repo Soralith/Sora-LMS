@@ -1,0 +1,379 @@
+{% extends 'base.html' %}
+{% block title %}Tugas Saya - Sora LMS{% endblock %}
+{% block page_title %}Tugas Saya{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    .page-header h5 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.02em;
+    }
+    [data-bs-theme="dark"] .page-header h5 {
+        background: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c084fc 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .page-header p {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+    }
+    [data-bs-theme="dark"] .page-header p {
+        color: #94a3b8;
+    }
+
+    .summary-card-custom {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        padding: 1.5rem 2rem;
+        text-align: center;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .summary-card-custom:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+    .summary-number-custom {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+    .summary-label-custom {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.7;
+    }
+    .summary-pending .summary-number-custom { color: #f59e0b; }
+    .summary-submitted .summary-number-custom { color: #3b82f6; }
+    .summary-graded .summary-number-custom { color: #10b981; }
+
+    .section-section {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .section-header-custom {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .task-card {
+        background: var(--sora-bg);
+        border-radius: 20px;
+        padding: 1.25rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+    }
+    .task-card:hover {
+        transform: translateX(8px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+    }
+    [data-bs-theme="dark"] .task-card:hover {
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .task-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+    .task-icon-pending {
+        background: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+    }
+    .task-icon-submitted {
+        background: rgba(59, 130, 246, 0.12);
+        color: #3b82f6;
+    }
+    .task-icon-graded {
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+    }
+    .task-icon-overdue {
+        background: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+    }
+
+    .task-details {
+        flex: 1;
+        min-width: 0;
+    }
+    .task-title-custom {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--sora-text);
+        margin-bottom: 0.25rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .task-course-custom {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+    }
+    .task-right-custom {
+        text-align: right;
+        flex-shrink: 0;
+    }
+    .task-deadline-custom {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .task-deadline-normal { color: #f59e0b; }
+    .task-deadline-overdue { color: #ef4444; }
+    .task-score-custom {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #10b981;
+    }
+
+    .status-badge-section {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.65rem;
+        font-weight: 700;
+    }
+    .status-pending-custom {
+        background: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+    }
+    .status-submitted-custom {
+        background: rgba(59, 130, 246, 0.12);
+        color: #3b82f6;
+    }
+    .status-graded-custom {
+        background: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+    }
+    .status-late-custom {
+        background: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+    }
+
+    .empty-state-wrapper {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+    }
+    .empty-state-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--sora-bg);
+        border-radius: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+    }
+    .empty-state-icon i {
+        font-size: 2rem;
+        color: var(--sora-text);
+        opacity: 0.4;
+    }
+    .empty-state-wrapper h6 {
+        font-weight: 800;
+        color: var(--sora-text);
+    }
+    .empty-state-wrapper p {
+        color: var(--sora-text);
+        opacity: 0.6;
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+        .task-card {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .task-right-custom {
+            text-align: left;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes countUp {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .summary-card-custom {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+        animation-delay: var(--delay, 0.1s);
+    }
+    .section-section {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+        animation-delay: var(--delay, 0.4s);
+    }
+    .task-card {
+        animation: fadeInUp 0.4s ease forwards;
+        opacity: 0;
+        animation-delay: var(--delay, 0s);
+    }
+    .summary-number-custom {
+        animation: countUp 0.8s ease forwards;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h5>
+        <i class="bi bi-journal-check me-2" style="color: #6366f1;"></i>
+        Tugas Saya
+    </h5>
+    <p>Kammu semua tugas dari kelas yang Anda ikuti.</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="summary-card-custom summary-pending" style="--delay: 0.1s">
+            <div class="summary-number-custom">{{ pending_assignments|length }}</div>
+            <div class="summary-label-custom">Menunggu</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card-custom summary-submitted" style="--delay: 0.2s">
+            <div class="summary-number-custom">{{ submitted_assignments|length }}</div>
+            <div class="summary-label-custom">Dikumpulkan</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="summary-card-custom summary-graded" style="--delay: 0.3s">
+            <div class="summary-number-custom">{{ graded_assignments|length }}</div>
+            <div class="summary-label-custom">Dinilai</div>
+        </div>
+    </div>
+</div>
+
+{% if pending_assignments %}
+<div class="section-section">
+    <h3 class="section-header-custom">
+        <i class="bi bi-hourglass-split" style="color: #f59e0b;"></i>
+        Menunggu Pengumpulan
+    </h3>
+    {% for item in pending_assignments %}
+    <a href="{% url 'assignments:assignment_detail' pk=item.assignment.pk %}" class="task-card" style="--delay: {{ forloop.counter0 }}0.1s">
+        <div class="task-icon-wrapper {% if item.is_overdue %}task-icon-overdue{% else %}task-icon-pending{% endif %}">
+            <i class="bi {% if item.is_overdue %}bi-exclamation-triangle-fill{% else %}bi-journal-text{% endif %}"></i>
+        </div>
+        <div class="task-details">
+            <div class="task-title-custom">{{ item.assignment.title }}</div>
+            <div class="task-course-custom">{{ item.assignment.course.title }}</div>
+        </div>
+        <div class="task-right-custom">
+            <div class="task-deadline-custom {% if item.is_overdue %}task-deadline-overdue{% else %}task-deadline-normal{% endif %}">
+                {{ item.due_date|date:"d M, H:i" }}
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if submitted_assignments %}
+<div class="section-section">
+    <h3 class="section-header-custom">
+        <i class="bi bi-clock-history" style="color: #3b82f6;"></i>
+        Sudah Dikumpulkan
+    </h3>
+    {% for item in submitted_assignments %}
+    <a href="{% url 'assignments:assignment_detail' pk=item.assignment.pk %}" class="task-card" style="--delay: {{ forloop.counter0 }}0.1s">
+        <div class="task-icon-wrapper task-icon-submitted">
+            <i class="bi bi-check2-all"></i>
+        </div>
+        <div class="task-details">
+            <div class="task-title-custom">{{ item.assignment.title }}</div>
+            <div class="task-course-custom">{{ item.assignment.course.title }}</div>
+        </div>
+        <div class="task-right-custom">
+            <span class="status-badge-section 
+                {% if item.submission.status == 'late' %}status-late-custom{% else %}status-submitted-custom{% endif %}">
+                {{ item.submission.get_status_display }}
+            </span>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if graded_assignments %}
+<div class="section-section">
+    <h3 class="section-header-custom">
+        <i class="bi bi-patch-check-fill" style="color: #10b981;"></i>
+        Sudah Dinilai
+    </h3>
+    {% for item in graded_assignments %}
+    <a href="{% url 'assignments:assignment_detail' pk=item.assignment.pk %}" class="task-card" style="--delay: {{ forloop.counter0 }}0.1s">
+        <div class="task-icon-wrapper task-icon-graded">
+            <i class="bi bi-award-fill"></i>
+        </div>
+        <div class="task-details">
+            <div class="task-title-custom">{{ item.assignment.title }}</div>
+            <div class="task-course-custom">{{ item.assignment.course.title }}</div>
+        </div>
+        <div class="task-right-custom">
+            <div class="task-score-custom">{{ item.submission.get_score_display_value }}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if not pending_assignments and not submitted_assignments and not graded_assignments %}
+<div class="empty-state-wrapper">
+    <div class="empty-state-icon">
+        <i class="bi bi-journal-x"></i>
+    </div>
+    <h6 class="mb-2">Belum Ada Tugas</h6>
+    <p class="mb-3">Anda belum memiliki tugas dari kelas manapun.</p>
+    <a href="{% url 'courses:course_list' %}" class="btn btn-primary" style="border-radius: 100px; padding: 0.5rem 1.5rem; font-weight: 600;">
+        <i class="bi bi-collection me-1"></i>
+        Lihat Kelas
+    </a>
+</div>
+{% endif %}
+{% endblock %}

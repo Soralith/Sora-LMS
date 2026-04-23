@@ -1,0 +1,388 @@
+{% extends 'base.html' %}
+{% block title %}Tugas - {{ course.title }}{% endblock %}
+{% block page_title %}Tugas - {{ course.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header-modern {
+        margin-bottom: 2rem;
+    }
+    .back-link-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--sora-text);
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.5rem 0;
+        transition: all 0.2s;
+        opacity: 0.7;
+    }
+    .back-link-modern:hover {
+        color: #6366f1;
+        transform: translateX(-3px);
+        opacity: 1;
+    }
+    .page-title-modern {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--sora-text);
+        margin: 0.5rem 0 0 0;
+        letter-spacing: -0.5px;
+    }
+    
+    .assignment-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        position: relative;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .assignment-card:hover {
+        transform: translateY(-6px);
+        border-color: #6366f1;
+        box-shadow: 0 20px 30px -12px rgba(99, 102, 241, 0.15);
+    }
+    
+    [data-bs-theme="dark"] .assignment-card:hover {
+        box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.4);
+    }
+    
+    .assignment-body {
+        padding: 1.25rem;
+    }
+    
+    .assignment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    .assignment-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--sora-text);
+        line-height: 1.4;
+        flex: 1;
+    }
+    
+    .status-badge-modern {
+        padding: 0.25rem 0.8rem;
+        border-radius: 100px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        letter-spacing: 0.3px;
+    }
+    .status-graded {
+        background: rgba(16, 185, 129, 0.15);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .status-submitted {
+        background: rgba(59, 130, 246, 0.15);
+        color: #3b82f6;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    .status-late {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .status-pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    [data-bs-theme="dark"] .status-graded {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+    }
+    [data-bs-theme="dark"] .status-submitted {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+    }
+    [data-bs-theme="dark"] .status-late {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+    [data-bs-theme="dark"] .status-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fbbf24;
+    }
+    
+    .assignment-description {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+    }
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.8;
+    }
+    .info-item i {
+        width: 18px;
+        font-size: 0.85rem;
+    }
+    .deadline-normal {
+        color: #f59e0b;
+    }
+    .deadline-overdue {
+        color: #ef4444;
+    }
+    .max-score {
+        color: #6366f1;
+    }
+    .submission-count {
+        color: #a78bfa;
+    }
+    .info-item strong {
+        color: var(--sora-text);
+    }
+    
+    .btn-assignment {
+        width: 100%;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        border: none;
+        border-radius: 14px;
+        padding: 0.65rem;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: white;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+    .btn-assignment:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+        color: white;
+    }
+    
+.btn-sora-primary {
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .btn-sora-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        color: white;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    }
+    
+    .empty-state-modern {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
+    }
+    .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--sora-bg);
+        border-radius: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    .empty-icon i {
+        font-size: 2.5rem;
+        color: var(--sora-text);
+        opacity: 0.5;
+    }
+    .empty-state-modern h6 {
+        color: var(--sora-text);
+        font-weight: 800;
+    }
+    .empty-state-modern p {
+        color: var(--sora-text);
+        opacity: 0.7;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .assignment-card {
+        animation: fadeInUp 0.4s ease forwards;
+        animation-delay: calc(var(--delay, 0) * 0.05s);
+        opacity: 0;
+    }
+    
+    .text-danger {
+        color: #ef4444 !important;
+    }
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    @media (max-width: 768px) {
+        .page-title-modern {
+            font-size: 1.2rem;
+        }
+        .assignment-header {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-modern">
+    <a href="{% url 'courses:course_detail' slug=course.slug %}" class="back-link-modern">
+        <i class="bi bi-arrow-left"></i>
+        Kembali ke {{ course.title }}
+    </a>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <h1 class="page-title-modern">
+            <i class="bi bi-journal-check me-2" style="color: #6366f1;"></i>
+            Daftar Tugas
+        </h1>
+        {% if user == course.teacher or user.is_admin %}
+        <a href="{% url 'assignments:assignment_create' course_slug=course.slug %}" class="btn-sora-primary">
+            <i class="bi bi-plus-lg me-1"></i>
+            Buat Tugas Baru
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{% if assignments %}
+<div class="row g-4">
+    {% for assignment in assignments %}
+    <div class="col-md-6 col-lg-4" style="--delay: {{ forloop.counter0 }}">
+        <div class="assignment-card">
+            <div class="assignment-body">
+                <div class="assignment-header">
+                    <div class="assignment-title">{{ assignment.title }}</div>
+                    {% if user.is_student %}
+                        {% for sub_id, submission in submission_map.items %}
+                            {% if sub_id == assignment.pk %}
+                                <span class="status-badge-modern 
+                                    {% if submission.status == 'graded' %}status-graded
+                                    {% elif submission.status == 'submitted' %}status-submitted
+                                    {% elif submission.status == 'late' %}status-late
+                                    {% else %}status-pending{% endif %}">
+                                    <i class="bi 
+                                        {% if submission.status == 'graded' %}bi-check-circle-fill
+                                        {% elif submission.status == 'submitted' %}bi-clock-history
+                                        {% elif submission.status == 'late' %}bi-exclamation-triangle-fill
+                                        {% else %}bi-hourglass-split{% endif %}"></i>
+                                    {{ submission.get_status_display }}
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                
+                <p class="assignment-description">{{ assignment.description|default:"Tidak ada deskripsi"|truncatechars:90 }}</p>
+                
+                <div class="info-list">
+                    <div class="info-item">
+                        <i class="bi bi-calendar3 
+                            {% if assignment.is_overdue %}deadline-overdue
+                            {% else %}deadline-normal{% endif %}"></i>
+                        <span>Deadline: {{ assignment.due_date|date:"d M Y, H:i" }}</span>
+                        {% if assignment.is_overdue %}
+                            <span class="text-danger ms-1">(Terlambat)</span>
+                        {% endif %}
+                    </div>
+                    <div class="info-item">
+                        <i class="bi bi-award max-score"></i>
+                        <span>Nilai Maksimal: <strong>{{ assignment.max_score }}</strong></span>
+                    </div>
+                    {% if not user.is_student %}
+                    <div class="info-item">
+                        <i class="bi bi-people submission-count"></i>
+                        <span>Pengumpulan: <strong>{{ assignment.get_submission_count }}</strong> siswa</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <a href="{% url 'assignments:assignment_detail' pk=assignment.pk %}" class="btn-assignment">
+                    <i class="bi bi-arrow-right-circle me-1"></i>
+                    {% if user.is_student %}
+                        Lihat Tugas
+                    {% else %}
+                        Kelola Tugas
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state-modern">
+    <div class="empty-icon">
+        <i class="bi bi-journal-text"></i>
+    </div>
+    <h6 class="fw-bold mb-2">Belum Ada Tugas</h6>
+    <p class="text-muted small mb-3">Belum ada tugas yang dibuat di kelas ini.</p>
+    {% if user == course.teacher or user.is_admin %}
+    <a href="{% url 'assignments:assignment_create' course_slug=course.slug %}" class="btn-sora-primary" style="display: inline-block; text-decoration: none; padding: 0.6rem 1.5rem;">
+        <i class="bi bi-plus-lg me-1"></i>
+        Buat Tugas Pertama
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.assignment-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity = '1';
+            }, index * 100);
+        });
+    });
+</script>
+{% endblock %}

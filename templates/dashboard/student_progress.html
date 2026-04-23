@@ -1,0 +1,409 @@
+{% extends 'base.html' %}
+{% block title %}Progress Belajar - Sora LMS{% endblock %}
+{% block page_title %}Progress Belajar{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Dark Mode Support for Progress Detail Page */
+    
+    /* Card Styles */
+    .sora-card {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-body-sora {
+        padding: 1.5rem;
+    }
+    
+    .card-header-sora {
+        padding: 1rem 1.5rem;
+        background: var(--sora-card);
+        border-bottom: 1px solid var(--sora-border);
+    }
+    
+    .card-header-sora h6 {
+        color: var(--sora-text);
+    }
+    
+    /* Progress Bar */
+    .progress-bar-sora {
+        background: var(--sora-bg);
+        border-radius: 6px;
+        height: 12px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .progress-fill {
+        background: linear-gradient(90deg, #4f46e5 0%, #3730a3 100%));
+        border-radius: 6px;
+        height: 100%;
+        transition: width 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.2) 50%, 
+            rgba(255,255,255,0) 100%);
+        animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    /* Table Styles */
+    .sora-table {
+        width: 100%;
+        color: var(--sora-text);
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .sora-table thead th {
+        background: var(--sora-card);
+        color: var(--sora-text);
+        opacity: 0.8;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 1rem 1.2rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    
+    .sora-table tbody td {
+        padding: 1rem 1.2rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--sora-border);
+        color: var(--sora-text);
+    }
+    
+    .sora-table tbody tr:hover td {
+        background: var(--sora-bg);
+    }
+    
+    .sora-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Text Styles */
+    .fw-500 {
+        font-weight: 500;
+    }
+    
+    .fw-600 {
+        font-weight: 600;
+    }
+    
+    .fw-700 {
+        font-weight: 700;
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    /* Badge Styles */
+    .badge {
+        font-weight: 600;
+        padding: 0.35rem 0.9rem;
+    }
+    
+    .badge.bg-success {
+        background: rgba(16, 185, 129, 0.15) !important;
+        color: #10b981 !important;
+    }
+    
+    .badge.bg-danger {
+        background: rgba(239, 68, 68, 0.15) !important;
+        color: #ef4444 !important;
+    }
+    
+    .badge.bg-primary {
+        background: rgba(99, 102, 241, 0.15) !important;
+        color: var(--sora-primary) !important;
+    }
+    
+    .badge.bg-secondary {
+        background: rgba(100, 116, 139, 0.15) !important;
+        color: #94a3b8 !important;
+    }
+    
+    .badge.text-success {
+        color: #10b981 !important;
+    }
+    
+    .badge.text-danger {
+        color: #ef4444 !important;
+    }
+    
+    .badge.text-secondary {
+        color: #94a3b8 !important;
+    }
+    
+    /* Dark mode specific badge adjustments */
+    [data-bs-theme="dark"] .badge.bg-success {
+        background: rgba(16, 185, 129, 0.2) !important;
+        color: #34d399 !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-danger {
+        background: rgba(239, 68, 68, 0.2) !important;
+        color: #f87171 !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-primary {
+        background: rgba(99, 102, 241, 0.2) !important;
+        color: #a78bfa !important;
+    }
+    
+    [data-bs-theme="dark"] .badge.bg-secondary {
+        background: rgba(100, 116, 139, 0.2) !important;
+        color: #cbd5e1 !important;
+    }
+    
+    /* Color overrides for specific elements */
+    .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    .text-success {
+        color: #10b981 !important;
+    }
+    
+    .text-warning {
+        color: #f59e0b !important;
+    }
+    
+    /* Stat numbers */
+    .stat-number {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .stat-number.text-primary {
+        color: var(--sora-primary) !important;
+    }
+    
+    /* Back link */
+    .back-link {
+        color: var(--sora-text);
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+        opacity: 0.7;
+    }
+    
+    .back-link:hover {
+        color: var(--sora-primary);
+        opacity: 1;
+        transform: translateX(-3px);
+        display: inline-block;
+    }
+    
+    /* Module info */
+    .module-info {
+        font-size: 0.75rem;
+        color: var(--sora-text);
+        opacity: 0.6;
+    }
+    
+    /* Score column */
+    .score-value {
+        font-weight: 700;
+        color: var(--sora-primary);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .sora-table thead th {
+            font-size: 0.65rem;
+            padding: 0.75rem 0.5rem;
+        }
+        
+        .sora-table tbody td {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .card-body-sora {
+            padding: 1rem;
+        }
+        
+        .stat-number {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+    <a href="{% url 'courses:course_detail' slug=course.slug %}" class="back-link">
+        <i class="bi bi-arrow-left me-1"></i> {{ course.title }}
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Overall Progress -->
+        <div class="sora-card mb-4">
+            <div class="card-body-sora">
+                <h5 class="fw-700 mb-1" style="color: var(--sora-text);">{{ course.title }}</h5>
+                <p class="text-muted small mb-3">Progress keseluruhan belajar Anda</p>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-600" style="color: var(--sora-text);">Progres Keseluruhan</span>
+                    <span class="fw-700 stat-number text-primary">{{ enrollment.progress|floatformat:0 }}%</span>
+                </div>
+                <div class="progress-bar-sora mb-4" style="height:12px; border-radius:6px;">
+                    <div class="progress-fill" style="width:{{ enrollment.progress }}%;"></div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-4 text-center">
+                        <div class="fw-700 stat-number text-primary">{{ completed_materials|length }}</div>
+                        <div class="text-muted small">Materi Selesai</div>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="fw-700 stat-number" style="color: #10b981;">{{ quiz_attempts.count }}</div>
+                        <div class="text-muted small">Kuis Dikerjakan</div>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="fw-700 stat-number" style="color: #f59e0b;">{{ submissions.count }}</div>
+                        <div class="text-muted small">Tugas Dikumpulkan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Materials Progress -->
+        <div class="sora-card mb-4">
+            <div class="card-header-sora">
+                <h6 class="fw-600 mb-0"><i class="bi bi-book me-2" style="color: var(--sora-primary);"></i> Progress Materi</h6>
+            </div>
+            <div class="card-body-sora p-0">
+                <table class="table sora-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Materi</th>
+                            <th>Tipe</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for material in materials %}
+                    <tr>
+                        <td>
+                            <div class="fw-500" style="font-size:0.85rem; color: var(--sora-text);">{{ material.title }}</div>
+                            <div class="module-info">{{ material.module.title }}</div>
+                        </td>
+                        <td class="text-muted" style="font-size:0.8rem;">{{ material.get_material_type_display }}</td>
+                        <td>
+                            {% if material.pk in completed_materials %}
+                            <span class="badge bg-success rounded-pill">
+                                <i class="bi bi-check2 me-1"></i>Selesai
+                            </span>
+                            {% else %}
+                            <span class="badge bg-secondary rounded-pill">Belum</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quiz Attempts -->
+        {% if quiz_attempts %}
+        <div class="sora-card mb-4">
+            <div class="card-header-sora">
+                <h6 class="fw-600 mb-0"><i class="bi bi-question-circle me-2" style="color: #10b981;"></i> Hasil Kuis</h6>
+            </div>
+            <div class="card-body-sora p-0">
+                <table class="table sora-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Kuis</th>
+                            <th>Skor</th>
+                            <th>Status</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for attempt in quiz_attempts %}
+                    <tr>
+                        <td class="fw-500" style="font-size:0.85rem; color: var(--sora-text);">{{ attempt.quiz.title }}</td>
+                        <td class="score-value">{{ attempt.percentage|floatformat:0 }}%</td>
+                        <td>
+                            <span class="badge rounded-pill {% if attempt.is_passed %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if attempt.is_passed %}✓ Lulus{% else %}✗ Tidak Lulus{% endif %}
+                            </span>
+                        </td>
+                        <td class="text-muted" style="font-size:0.8rem;">{{ attempt.completed_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Submissions -->
+        {% if submissions %}
+        <div class="sora-card">
+            <div class="card-header-sora">
+                <h6 class="fw-600 mb-0"><i class="bi bi-journal-check me-2" style="color: #f59e0b;"></i> Tugas Dikumpulkan</h6>
+            </div>
+            <div class="card-body-sora p-0">
+                <table class="table sora-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tugas</th>
+                            <th>Status</th>
+                            <th>Nilai</th>
+                            <th>Tanggal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td class="fw-500" style="font-size:0.85rem; color: var(--sora-text);">{{ sub.assignment.title }}</td>
+                        <td>
+                            <span class="badge rounded-pill 
+                                {% if sub.status == 'graded' %}bg-success
+                                {% elif sub.status == 'late' %}bg-danger
+                                {% else %}bg-primary{% endif %}">
+                                {{ sub.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="score-value">
+                            {% if sub.score is not None %}{{ sub.score }}/{{ sub.assignment.max_score }}{% else %}-{% endif %}
+                        </td>
+                        <td class="text-muted" style="font-size:0.8rem;">{{ sub.submitted_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

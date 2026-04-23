@@ -1,0 +1,441 @@
+{% extends 'base.html' %}
+{% block title %}Analisis Hasil: {{ quiz.title }} - Sora LMS{% endblock %}
+{% block page_title %}Analisis Hasil Kuis{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Stats Card Styling - Dark Mode Support */
+    .overview-container {
+        padding-bottom: 3rem;
+    }
+    
+    .stat-card-premium {
+        background: var(--sora-card);
+        border-radius: 20px;
+        padding: 1.5rem;
+        border: 1px solid var(--sora-border);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+    .stat-card-premium:hover {
+        transform: translateY(-5px);
+        border-color: var(--sora-primary);
+    }
+    
+    [data-bs-theme="dark"] .stat-card-premium {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-icon-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .bg-primary.bg-opacity-10 {
+        background: rgba(99, 102, 241, 0.1) !important;
+    }
+    .bg-success.bg-opacity-10 {
+        background: rgba(16, 185, 129, 0.1) !important;
+    }
+    .bg-danger.bg-opacity-10 {
+        background: rgba(239, 68, 68, 0.1) !important;
+    }
+    .bg-indigo.bg-opacity-10 {
+        background: rgba(99, 102, 241, 0.1) !important;
+    }
+    .bg-warning.bg-opacity-10 {
+        background: rgba(245, 158, 11, 0.1) !important;
+    }
+    .bg-secondary.bg-opacity-10 {
+        background: rgba(100, 116, 139, 0.1) !important;
+    }
+    
+    .text-primary {
+        color: var(--sora-primary) !important;
+    }
+    .text-success {
+        color: #10b981 !important;
+    }
+    .text-danger {
+        color: var(--sora-danger) !important;
+    }
+    .text-warning {
+        color: var(--sora-warning) !important;
+    }
+    .text-secondary {
+        color: #94a3b8 !important;
+    }
+
+    /* Table Styling */
+    .sora-table-container {
+        background: var(--sora-card);
+        border-radius: 24px;
+        border: 1px solid var(--sora-border);
+        overflow: hidden;
+    }
+    .sora-table thead th {
+        background: var(--sora-card);
+        color: var(--sora-text);
+        opacity: 0.7;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    .sora-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--sora-border);
+        color: var(--sora-text);
+    }
+    .sora-table tbody tr:hover td {
+        background: var(--sora-bg);
+    }
+
+    /* Progress Bar */
+    .progress-minimal {
+        height: 6px;
+        background: var(--sora-border);
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+    }
+    .progress-fill-minimal {
+        height: 100%;
+        border-radius: 10px;
+        transition: width 1s ease-in-out;
+    }
+
+    /* Avatar Minimal */
+    .avatar-sm-sora {
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.75rem;
+        color: white;
+        background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+    }
+    .avatar-sm-sora.gray {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+    }
+
+    /* Sidebar List */
+    .list-item-minimal {
+        padding: 0.75rem 1.25rem;
+        transition: 0.2s;
+        border-bottom: 1px solid var(--sora-border);
+    }
+    .list-item-minimal:hover {
+        background: var(--sora-bg);
+    }
+    
+    .text-dark {
+        color: var(--sora-text) !important;
+    }
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.6;
+    }
+    
+    .fw-700 {
+        font-weight: 700;
+    }
+    .fw-800 {
+        font-weight: 800;
+    }
+    
+    .border-bottom {
+        border-bottom-color: var(--sora-border) !important;
+    }
+    
+    /* Badge styling */
+    .badge.bg-light {
+        background: var(--sora-bg) !important;
+        color: var(--sora-text) !important;
+        border: 1px solid var(--sora-border);
+    }
+    
+    .badge.bg-success.bg-opacity-10 {
+        background: rgba(16, 185, 129, 0.15) !important;
+        color: #10b981 !important;
+    }
+    .badge.bg-danger.bg-opacity-10 {
+        background: rgba(239, 68, 68, 0.15) !important;
+        color: #ef4444 !important;
+    }
+    
+    .btn-light {
+        background: var(--sora-bg);
+        color: var(--sora-text);
+        border: 1px solid var(--sora-border);
+        transition: all 0.2s;
+    }
+    .btn-light:hover {
+        background: var(--sora-card);
+        color: var(--sora-primary);
+        border-color: var(--sora-primary);
+        transform: translateY(-2px);
+    }
+    
+    .btn-outline-primary {
+        background: transparent;
+        color: var(--sora-primary);
+        border: 1px solid var(--sora-primary);
+        transition: all 0.2s;
+    }
+    .btn-outline-primary:hover {
+        background: #4f46e5;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .text-dark-purple {
+        color: var(--sora-text) !important;
+    }
+    
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .stat-card-premium, .sora-table-container {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    
+    /* Scrollbar */
+    div[style*="max-height"]::-webkit-scrollbar {
+        width: 6px;
+    }
+    div[style*="max-height"]::-webkit-scrollbar-track {
+        background: var(--sora-border);
+        border-radius: 10px;
+    }
+    div[style*="max-height"]::-webkit-scrollbar-thumb {
+        background: #4f46e5;
+        opacity: 0.5;
+        border-radius: 10px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .stat-card-premium {
+            padding: 1rem;
+        }
+        .sora-table thead th,
+        .sora-table tbody td {
+            padding: 0.75rem 1rem;
+        }
+        .d-flex.justify-content-between.align-items-center.mb-4 {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="overview-container">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <a href="{% url 'quizzes:quiz_detail' pk=quiz.pk %}" class="text-muted text-decoration-none small fw-600">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Detail Kuis
+            </a>
+            <h4 class="fw-800 text-dark-purple mt-2 mb-0">{{ quiz.title }}</h4>
+            <p class="text-muted small mb-0"><i class="bi bi-mortarboard me-1"></i> Laporan performa siswa dalam kuis ini.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn-outline-primary btn-sm rounded-pill px-3" onclick="alert('Fitur export CSV akan segera tersedia')">
+                <i class="bi bi-download me-1"></i> Export CSV
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-primary bg-opacity-10 text-primary"><i class="bi bi-people"></i></div>
+                <div class="h3 fw-800 mb-0">{{ stats.total_students }}</div>
+                <div class="text-muted small fw-600">Partisipan</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-success bg-opacity-10 text-success"><i class="bi bi-check-circle"></i></div>
+                <div class="h3 fw-800 mb-0" style="color: #10b981;">{{ stats.passed }}</div>
+                <div class="text-muted small fw-600">Siswa Lulus</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-danger bg-opacity-10 text-danger"><i class="bi bi-x-circle"></i></div>
+                <div class="h3 fw-800 mb-0" style="color: #ef4444;">{{ stats.failed }}</div>
+                <div class="text-muted small fw-600">Gagal</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-indigo bg-opacity-10" style="color: var(--sora-primary);"><i class="bi bi-graph-up"></i></div>
+                <div class="h3 fw-800 mb-0">{{ stats.avg_score }}%</div>
+                <div class="text-muted small fw-600">Rata-rata</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-warning bg-opacity-10 text-warning"><i class="bi bi-trophy"></i></div>
+                <div class="h3 fw-800 mb-0">{{ stats.highest }}%</div>
+                <div class="text-muted small fw-600">Tertinggi</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-lg-2">
+            <div class="stat-card-premium">
+                <div class="stat-icon-circle bg-secondary bg-opacity-10 text-secondary"><i class="bi bi-arrow-down"></i></div>
+                <div class="h3 fw-800 mb-0">{{ stats.lowest }}%</div>
+                <div class="text-muted small fw-600">Terendah</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="sora-table-container">
+                <div class="p-4 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-800 mb-0" style="color: var(--sora-text);">Peringkat & Nilai Terbaik</h6>
+                    <span class="badge bg-light fw-normal">Data berdasarkan percobaan terbaik</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table sora-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Siswa</th>
+                                <th>Skor Akhir</th>
+                                <th width="150">Progress Nilai</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attempt in best_attempts %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="avatar-sm-sora" style="overflow: hidden;">
+                                            {% if attempt.student.avatar %}
+                                                <img src="{{ attempt.student.avatar.url }}" alt="{{ attempt.student.username }}" style="width:100%; height:100%; object-fit:cover;">
+                                            {% else %}
+                                                {{ attempt.student.username|first|upper }}
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <div class="fw-700" style="font-size: 0.85rem; color: var(--sora-text);">{{ attempt.student.get_full_name|default:attempt.student.username }}</div>
+                                            <div class="text-muted" style="font-size: 0.7rem;">{{ attempt.student.email|truncatechars:20 }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-800 mb-0" style="color: var(--sora-primary);">{{ attempt.score }} <span class="text-muted fw-normal" style="font-size: 0.7rem;">/ {{ quiz.get_total_points }}</span></div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress-minimal">
+                                            <div class="progress-fill-minimal" style="width: {{ attempt.percentage }}%; background: {% if attempt.is_passed %}#10b981{% else %}#ef4444{% endif %};"></div>
+                                        </div>
+                                        <span class="fw-700 small {% if attempt.is_passed %}text-success{% else %}text-danger{% endif %}">{{ attempt.percentage|floatformat:0 }}%</span>
+                                    </div>
+                                </div>
+                                <td>
+                                    {% if attempt.is_passed %}
+                                    <span class="badge bg-success bg-opacity-10 rounded-pill fw-700" style="font-size: 0.65rem;">PASSED</span>
+                                    {% else %}
+                                    <span class="badge bg-danger bg-opacity-10 rounded-pill fw-700" style="font-size: 0.65rem;">FAILED</span>
+                                    {% endif %}
+                                </div>
+                                <td>
+                                    <a href="{% url 'quizzes:quiz_result' attempt_pk=attempt.pk %}" class="btn-light btn-sm rounded-pill fw-700" style="font-size: 0.7rem;">Review</a>
+                                 </div>
+                             </tr>
+                            {% empty %}
+                             <tr>
+                                <td colspan="5" class="text-center py-5 text-muted small">Belum ada data nilai yang masuk.</td>
+                             </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            
+            <div class="sora-table-container mb-4">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-opacity-50">
+                    <h6 class="fw-800 mb-0 small" style="color: #ef4444;"><i class="bi bi-exclamation-triangle me-1"></i> Belum Mengerjakan</h6>
+                    <span class="badge bg-danger rounded-pill">{{ not_attempted|length }}</span>
+                </div>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    {% for student in not_attempted %}
+                    <div class="list-item-minimal d-flex align-items-center gap-3">
+                        <div class="avatar-sm-sora gray" style="overflow: hidden;">
+                            {% if student.avatar %}
+                                <img src="{{ student.avatar.url }}" alt="{{ student.username }}" style="width:100%; height:100%; object-fit:cover;">
+                            {% else %}
+                                {{ student.username|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <div class="fw-700" style="font-size: 0.8rem; color: var(--sora-text);">{{ student.get_full_name|default:student.username }}</div>
+                            <div class="text-muted" style="font-size: 0.65rem;">No activity yet</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="p-4 text-center">
+                        <i class="bi bi-check2-circle text-success h2"></i>
+                        <p class="text-muted small mb-0">Semua siswa sudah berpartisipasi!</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="sora-table-container">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-opacity-50">
+                    <h6 class="fw-800 mb-0 small" style="color: var(--sora-primary);"><i class="bi bi-clock-history me-1"></i> Aktivitas Terakhir</h6>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    {% for attempt in all_completed %}
+                    <div class="list-item-minimal">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="fw-700" style="font-size: 0.8rem; color: var(--sora-text);">{{ attempt.student.username|truncatechars:15 }}</div>
+                            <span class="fw-800 {% if attempt.is_passed %}text-success{% else %}text-danger{% endif %}" style="font-size: 0.8rem;">{{ attempt.percentage|floatformat:0 }}%</span>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.65rem;">{{ attempt.completed_at|date:"d M, H:i" }} WIB</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
