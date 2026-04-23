@@ -2,11 +2,11 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-sora-lms-change-this-in-production-2024')
+SECRET_KEY = os.getenv('SECRET_KEY', 'Sora-LMS-Fallback-Help')
 
 DEBUG = True
 
