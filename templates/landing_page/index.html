@@ -390,22 +390,22 @@
     <div class="container">
       <div class="stats__grid">
         <div class="stat-item reveal">
-          <div class="stat-num" data-target="10000">0</div>
+          <div class="stat-num" data-target="{{ stats.total_users|default:0 }}">0</div>
           <div class="stat-plus">+</div>
           <div class="stat-label">Pengguna Aktif</div>
         </div>
         <div class="stat-item reveal reveal--delay-1">
-          <div class="stat-num" data-target="500">0</div>
+          <div class="stat-num" data-target="{{ stats.total_courses|default:0 }}">0</div>
           <div class="stat-plus">+</div>
           <div class="stat-label">Kelas Tersedia</div>
         </div>
         <div class="stat-item reveal reveal--delay-2">
-          <div class="stat-num" data-target="98">0</div>
-          <div class="stat-plus">%</div>
-          <div class="stat-label">Tingkat Kepuasan</div>
+          <div class="stat-num" data-target="{{ stats.total_students|default:0 }}">0</div>
+          <div class="stat-plus">+</div>
+          <div class="stat-label">Siswa Aktif</div>
         </div>
         <div class="stat-item reveal reveal--delay-3">
-          <div class="stat-num" data-target="100">0</div>
+          <div class="stat-num" data-target="{{ stats.total_teachers|default:0 }}">0</div>
           <div class="stat-plus">+</div>
           <div class="stat-label">Guru Expert</div>
         </div>
