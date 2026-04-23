@@ -396,11 +396,14 @@ h3 { font-size: 1.25rem; font-weight: 700; }
 .dc__stat-info { text-align: left; }
 .dc__stat-num { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); }
 .dc__stat-label { font-size: .65rem; color: var(--text-3); }
+.dc__welcome { margin-bottom: 1rem; }
+.dc__stats-row { margin-top: 1rem; }
 .dc__course-item {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px;
+  margin-top: 8px;
   border-radius: var(--radius);
   border: 1px solid transparent;
   transition: var(--transition);
@@ -462,13 +465,13 @@ h3 { font-size: 1.25rem; font-weight: 700; }
 }
 .float-badge i { font-size: .9rem; }
 .float-badge--1 {
-  top: -18px;
-  right: -20px;
+  top: -15px;
+  right: -15px;
   animation: floatY 4s ease-in-out infinite;
 }
 .float-badge--2 {
   bottom: 20px;
-  left: -30px;
+  left: -40px;
   animation: floatY 5s ease-in-out infinite reverse;
 }
 @keyframes floatY {

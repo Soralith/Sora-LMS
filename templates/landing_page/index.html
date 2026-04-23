@@ -76,7 +76,7 @@
         </div>
         <div class="trust__text">
           <div class="trust__stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
-          <span>Dipercaya oleh <strong>10.000+</strong> pengguna aktif</span>
+          <span>Dipercayaan oleh <strong>{{ stats.total_users|default:0 }}+</strong> pengguna aktif</span>
         </div>
       </div>
     </div>
@@ -92,8 +92,109 @@
         <div class="dc__body">
           <div class="dc__welcome">
             <div class="dc__welcome-text">Selamat Datang,</div>
-            <div class="dc__welcome-name" id="dashboard-username">Nama Siswa</div>
+            <div class="dc__welcome-name" id="dashboard-username">{% if dashboard %}{{ dashboard.name }}{% else %}Kamu~{% endif %}</div>
           </div>
+          {% if dashboard.kelas_diikuti %}
+          <div class="dc__stats-row">
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-book-half"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.kelas_diikuti }}</div>
+                <div class="dc__stat-label">Kelas Diikuti</div>
+              </div>
+            </div>
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-check2-circle"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.tugas_selesai }}</div>
+                <div class="dc__stat-label">Tugas Selesai</div>
+              </div>
+            </div>
+          </div>
+          {% if dashboard.courses %}{% for c in dashboard.courses %}<div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-journal-bookmark"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num" style="font-size:0.9rem;">{{ c.name }}</div>
+              {% if c.progress %}<div class="dc__stat-label">{{ c.progress }}% selesai</div>{% else %}<div class="dc__stat-label">Belum dimulai</div>{% endif %}
+            </div>
+          </div>{% endfor %}{% endif %}
+          {% elif dashboard.kelas_diajar %}
+          <div class="dc__stats-row">
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-book-half"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.kelas_diajar }}</div>
+                <div class="dc__stat-label">Kelas Diajar</div>
+              </div>
+            </div>
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-check2-circle"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.tugas_dinilai }}</div>
+                <div class="dc__stat-label">Tugas Dinilai</div>
+              </div>
+            </div>
+          </div>
+          {% if dashboard.courses %}{% for c in dashboard.courses %}<div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-journal-bookmark"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num" style="font-size:0.9rem;">{{ c.name }}</div>
+              <div class="dc__stat-label">{{ c.students }} siswa</div>
+            </div>
+          </div>{% endfor %}{% endif %}
+          {% elif dashboard.total_users %}
+          <div class="dc__stats-row">
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-people"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.total_users }}</div>
+                <div class="dc__stat-label">Total Pengguna</div>
+              </div>
+            </div>
+            <div class="dc__stat">
+              <div class="dc__stat-icon"><i class="bi bi-book-half"></i></div>
+              <div class="dc__stat-info">
+                <div class="dc__stat-num">{{ dashboard.total_courses }}</div>
+                <div class="dc__stat-label">Total Kelas</div>
+              </div>
+            </div>
+          </div>
+          <div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-person-plus"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num">{{ dashboard.recent_users }}</div>
+              <div class="dc__stat-label">User Baru (7hr)</div>
+            </div>
+          </div>
+          <div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-collection"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num">{{ dashboard.recent_courses }}</div>
+              <div class="dc__stat-label">Kelas Baru (7hr)</div>
+            </div>
+          </div>
+          <div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-clock"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num">{{ dashboard.pending_score }}</div>
+              <div class="dc__stat-label">Menunggu Nilai</div>
+            </div>
+          </div>
+          <div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-person-badge"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num">{{ dashboard.total_teachers }}</div>
+              <div class="dc__stat-label">Total Guru</div>
+            </div>
+          </div>
+          <div class="dc__stat">
+            <div class="dc__stat-icon"><i class="bi bi-mortarboard"></i></div>
+            <div class="dc__stat-info">
+              <div class="dc__stat-num">{{ dashboard.total_students }}</div>
+              <div class="dc__stat-label">Total Siswa</div>
+            </div>
+          </div>
+          {% else %}
           <div class="dc__stats-row">
             <div class="dc__stat">
               <div class="dc__stat-icon"><i class="bi bi-book-half"></i></div>
@@ -117,6 +218,8 @@
               </div>
             </div>
           </div>
+          {% endif %}
+          {% if not dashboard %}
           <div class="dc__course-item dc__course-item--active">
             <div class="dc__thumb thumb--blue"></div>
             <div class="dc__info">
@@ -133,18 +236,19 @@
               <div class="dc__meta">45% selesai · 6 modul</div>
             </div>
           </div>
+          {% endif %}
         </div>
       </div>
-
-      <!-- Floating badges -->
+      {% if not dashboard %}
       <div class="float-badge float-badge--1">
-        <i class="bi bi-award-fill"></i>
-        Sertifikat Resmi
+        <i class="bi bi-gift"></i>
+        Gratis Join
       </div>
       <div class="float-badge float-badge--2">
         <i class="bi bi-robot"></i>
         AI Tutor 24/7
       </div>
+      {% endif %}
     </div>
   </section>
 
