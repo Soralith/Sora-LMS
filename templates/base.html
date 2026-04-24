@@ -421,18 +421,17 @@
         <a href="{% url 'ai_chat:chat' %}" class="sidebar-link {% if request.resolver_match.namespace == 'ai_chat' %}active{% endif %}">
             <i class="bi bi-stars"></i> Chat AI
         </a>
+        {% if user.is_student %}
+        <a href="{% url 'assignments:tugas_saya' %}" class="sidebar-link {% if request.resolver_match.namespace == 'assignments' and 'my' in request.path %}active{% endif %}" hx-boost="false">
+            <i class="bi bi-patch-check-fill"></i> Tugas Saya
+        </a>
+        {% endif %}
         <div class="sidebar-section-title">Mode Tampilan</div>
         <a href="javascript:void(0)" class="sidebar-link" id="darkModeToggle">
             <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
             <span id="themeText">Mode Gelap</span>
         </a>
         
-        {% if user.is_student %}
-        <a href="{% url 'assignments:tugas_saya' %}" class="sidebar-link {% if request.resolver_match.namespace == 'assignments' and 'my' in request.path %}active{% endif %}" hx-boost="false">
-            <i class="bi bi-patch-check-fill"></i> Tugas Saya
-        </a>
-        {% endif %}
-
         {% if user.is_teacher or user.is_admin %}
         <div class="sidebar-section-title">Pengajaran</div>
         <a href="{% url 'courses:course_create' %}" class="sidebar-link" hx-boost="true">
