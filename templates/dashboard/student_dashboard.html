@@ -5,6 +5,8 @@
 {% load static %}
 {% block extra_css %}
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
     /* Student Premium Theme - Dark Mode Support */
     .dashboard-container {
         background: var(--sora-bg);
@@ -39,41 +41,76 @@
         border-radius: 50%;
     }
 
-    /* Stat Cards - Dark Mode Support */
-    .stat-premium {
+.stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+    @media (max-width: 992px) { .stat-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .stat-card {
         background: var(--sora-card);
-        border-radius: 24px;
-        padding: 1.5rem;
         border: 1px solid var(--sora-border);
-        transition: all 0.3s ease;
-        height: 100%;
+        border-radius: 24px;
+        padding: 1.4rem 1.5rem 1.2rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform .35s cubic-bezier(.2,.9,.4,1.1), box-shadow .35s ease, border-color .35s ease;
     }
-    .stat-premium:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0;
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        filter: blur(28px);
+        opacity: 0;
+        transition: opacity .35s;
+        pointer-events: none;
     }
-    [data-bs-theme="dark"] .stat-premium:hover {
-        box-shadow: 0 12px 25px rgba(0,0,0,0.3);
-    }
-    
-    .stat-icon-box {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
+
+    .stat-card:hover { transform: translateY(-5px); }
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-card.c-blue:hover  { border-color: #3b82f6; box-shadow: 0 20px 40px -10px rgba(59,130,246,.22); }
+    .stat-card.c-blue::before  { background: #3b82f6; }
+    .stat-card.c-emerald:hover { border-color: #10b981; box-shadow: 0 20px 40px -10px rgba(16,185,129,.22); }
+    .stat-card.c-emerald::before { background: #10b981; }
+    .stat-card.c-amber:hover  { border-color: #f59e0b; box-shadow: 0 20px 40px -10px rgba(245,158,11,.22); }
+    .stat-card.c-amber::before  { background: #f59e0b; }
+    .stat-card.c-violet:hover  { border-color: #8b5cf6; box-shadow: 0 20px 40px -10px rgba(139,92,246,.22); }
+    .stat-card.c-violet::before  { background: #8b5cf6; }
+
+    .stat-icon-ring {
+        width: 48px; height: 48px;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.3rem;
         margin-bottom: 1rem;
     }
-    
-    .stat-premium .text-muted {
-        color: var(--sora-text) !important;
-        opacity: 0.7;
-    }
-    
-    .stat-premium .h2 {
+    .stat-icon-ring.bg-blue   { background: rgba(59,130,246,.1);  color: #60a5fa; }
+    .stat-icon-ring.bg-emerald { background: rgba(16,185,129,.1);  color: #34d399; }
+    .stat-icon-ring.bg-amber  { background: rgba(245,158,11,.1);  color: #fbbf24; }
+    .stat-icon-ring.bg-violet { background: rgba(139,92,246,.1);  color: #a78bfa; }
+
+    .stat-num {
+        font-size: 2.4rem;
+        font-weight: 800;
+        letter-spacing: -2px;
         color: var(--sora-text);
+        line-height: 1;
+        margin-bottom: .3rem;
+        font-family: 'DM Mono', monospace;
+    }
+    .stat-lbl {
+        font-size: .68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .09em;
+        color: var(--sora-text);
+        opacity: .5;
     }
 
     /* Course Card Dashboard - Dark Mode Support */
@@ -328,42 +365,26 @@
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-6 col-xl-3">
-            <div class="stat-premium">
-                <div class="stat-icon-box" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
-                    <i class="bi bi-journal-bookmark"></i>
-                </div>
-                <div class="text-muted small fw-600 text-uppercase">Kelas Aktif</div>
-                <div class="h2 fw-800 mb-0">{{ stats.enrolled_courses }}</div>
-            </div>
+    <div class="stat-grid">
+        <div class="stat-card c-blue">
+            <div class="stat-icon-ring bg-blue"><i class="bi bi-journal-bookmark"></i></div>
+            <div class="stat-num">{{ stats.enrolled_courses }}</div>
+            <div class="stat-lbl">Kelas Aktif</div>
         </div>
-        <div class="col-6 col-xl-3">
-            <div class="stat-premium">
-                <div class="stat-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
-                    <i class="bi bi-award"></i>
-                </div>
-                <div class="text-muted small fw-600 text-uppercase">Selesai</div>
-                <div class="h2 fw-800 mb-0">{{ stats.completed_courses }}</div>
-            </div>
+        <div class="stat-card c-emerald">
+            <div class="stat-icon-ring bg-emerald"><i class="bi bi-award"></i></div>
+            <div class="stat-num">{{ stats.completed_courses }}</div>
+            <div class="stat-lbl">Selesai</div>
         </div>
-        <div class="col-6 col-xl-3">
-            <div class="stat-premium">
-                <div class="stat-icon-box" style="background: var(--sora-warning-bg); color: var(--sora-warning);">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <div class="text-muted small fw-600 text-uppercase">Tugas</div>
-                <div class="h2 fw-800 mb-0">{{ stats.pending_assignments }}</div>
-            </div>
+        <div class="stat-card c-amber">
+            <div class="stat-icon-ring bg-amber"><i class="bi bi-clock-history"></i></div>
+            <div class="stat-num">{{ stats.pending_assignments }}</div>
+            <div class="stat-lbl">Tugas</div>
         </div>
-        <div class="col-6 col-xl-3">
-            <div class="stat-premium">
-                <div class="stat-icon-box" style="background: rgba(124, 58, 237, 0.1); color: #8b5cf6;">
-                    <i class="bi bi-graph-up-arrow"></i>
-                </div>
-                <div class="text-muted small fw-600 text-uppercase">Rata-rata</div>
-                <div class="h2 fw-800 mb-0">{{ stats.avg_score|floatformat:0 }}%</div>
-            </div>
+        <div class="stat-card c-violet">
+            <div class="stat-icon-ring bg-violet"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="stat-num">{{ stats.avg_score|floatformat:0 }}%</div>
+            <div class="stat-lbl">Rata-rata</div>
         </div>
     </div>
 
@@ -475,7 +496,7 @@
 <script>
     // Animasi muncul pelan-pelan
     document.addEventListener('DOMContentLoaded', function() {
-        const elements = document.querySelectorAll('.stat-premium, .student-course-card, .glass-list-card');
+        const elements = document.querySelectorAll('.stat-card, .student-course-card, .glass-list-card');
         elements.forEach((el, i) => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(15px)';
