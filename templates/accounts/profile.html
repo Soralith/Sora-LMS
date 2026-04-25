@@ -446,6 +446,20 @@
                 </div>
             </div>
             
+            {% if user_profile.jurusan %}
+            <h6 class="fw-bold mb-3 mt-4" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
+                <i class="bi bi-bookmark me-2" style="color: #6366f1;"></i>Jurusan
+            </h6>
+            <div class="bio-section">
+                <div class="d-flex gap-3">
+                    <div class="bio-icon">
+                        <i class="bi bi-bookmark-fill"></i>
+                    </div>
+                    <p class="bio-text">{{ user_profile.jurusan.nama }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
             {% if user_profile.bio %}
             <h6 class="fw-bold mb-3 mt-4" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
                 <i class="bi bi-chat-quote me-2" style="color: #6366f1;"></i>Tentang Saya
