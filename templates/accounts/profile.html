@@ -591,7 +591,7 @@
                             <i class="bi
                                 {% if user_profile.is_admin %}bi-shield-lock
                                 {% elif user_profile.is_teacher %}bi-person-workspace
-                                {% else %}bi-person-graduate{% endif %}"
+                                {% else %}bi-mortarboard-fill{% endif %}"
                                style="font-size:10px;"></i>
                             {{ user_profile.get_role_display }}
                         </span>
@@ -637,9 +637,9 @@
             <div class="stat-cell">
                 <div class="stat-icon">
                     <i class="bi
-                        {% if user_profile.is_admin %}bi-shield-lock
-                        {% elif user_profile.is_teacher %}bi-person-workspace
-                        {% else %}bi-person-graduate{% endif %}"></i>
+                            {% if user_profile.is_admin %}bi-shield-lock
+                            {% elif user_profile.is_teacher %}bi-person-workspace
+                            {% else %}bi-mortarboard-fill{% endif %}"></i>
                 </div>
                 <div>
                     <div class="stat-val">
