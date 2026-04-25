@@ -488,10 +488,10 @@
         <div class="d-flex align-items-center gap-3">
             {% block topbar_right %}
             {% if request.resolver_match.namespace == 'ai_chat' %}
-            <button class="btn btn-sm btn-outline-secondary d-none d-lg-inline-flex" onclick="showHistoryModal()" style="border-radius: 20px;">
+            <button class="btn btn-sm btn-outline-secondary" onclick="showHistoryModal()" style="border-radius: 20px;">
                 <i class="bi bi-list me-1"></i> Riwayat
             </button>
-            <button class="btn btn-sm btn-primary d-none d-lg-inline-flex" onclick="newSession()" style="border-radius: 20px;">
+            <button class="btn btn-sm btn-primary" onclick="newSession()" style="border-radius: 20px;">
                 <i class="bi bi-plus-lg me-1"></i> Chat Baru
             </button>
             {% endif %}
