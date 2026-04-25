@@ -4,777 +4,496 @@
 
 {% block extra_css %}
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap');
-
-    .pg {
-        font-family: 'Sora', sans-serif;
-        padding: 1.5rem 1rem;
-    }
-
-    .layout {
-        max-width: 860px;
+    .profile-container {
+        max-width: 900px;
         margin: 0 auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
     }
-
-    /* ── HERO ── */
-    .hero {
-        grid-column: 1 / -1;
-        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 55%, #581c87 100%);
-        border-radius: 24px;
+    
+    .profile-card {
+        background: var(--sora-card);
+        border-radius: 28px;
+        border: 1px solid var(--sora-border);
         overflow: hidden;
-        position: relative;
-        display: flex;
-        align-items: stretch;
-        min-height: 190px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .hero-left {
-        flex: 1;
-        padding: 2rem 2rem 2rem 2.25rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: relative;
-        z-index: 2;
-    }
-
-    .hero-right {
-        width: 220px;
-        flex-shrink: 0;
+    
+    .profile-header {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
+        padding: 2rem 2rem 3rem 2rem;
         position: relative;
         overflow: hidden;
     }
-
-    .deco-ring {
+    
+    .profile-header::before {
+        content: '';
         position: absolute;
+        top: -30%;
+        right: -10%;
+        width: 250px;
+        height: 250px;
+        background: rgba(255,255,255,0.03);
         border-radius: 50%;
-        border: 1px solid rgba(255,255,255,0.07);
         pointer-events: none;
     }
-    .ring1 { width: 260px; height: 260px; top: -80px; right: -80px; }
-    .ring2 { width: 180px; height: 180px; top: -20px; right: -30px; }
-    .ring3 { width: 100px; height: 100px; top: 50px; right: 40px; }
-
-    .avatar-wrap {
+    .profile-header::after {
+        content: '';
         position: absolute;
-        bottom: 0;
-        right: 1.5rem;
-        z-index: 2;
+        bottom: -20%;
+        left: -5%;
+        width: 200px;
+        height: 200px;
+        background: rgba(99,102,241,0.1);
+        border-radius: 50%;
+        pointer-events: none;
     }
-
-    .avatar-big {
-        width: 110px;
-        height: 130px;
-        background: linear-gradient(160deg, #4f46e5 0%, #818cf8 100%);
-        border-radius: 22px 22px 0 0;
+    
+    .avatar-premium-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.8rem;
-        font-weight: 800;
         color: white;
-        border: 3px solid rgba(255,255,255,0.2);
-        border-bottom: none;
+        font-weight: 700;
+        font-size: 3rem;
         overflow: hidden;
+        flex-shrink: 0;
+        box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.3);
+        border: 4px solid rgba(255,255,255,0.2);
+        transition: transform 0.3s;
     }
-    .avatar-big img {
+    .avatar-premium-large:hover {
+        transform: scale(1.02);
+    }
+    .avatar-premium-large img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-
-    .hero-name {
-        font-size: 1.7rem;
+    
+    .profile-name {
+        font-size: 1.75rem;
         font-weight: 800;
         color: white;
+        margin-bottom: 0.5rem;
         letter-spacing: -0.5px;
-        line-height: 1.15;
-        margin-bottom: 0.35rem;
     }
-
-    .hero-sub {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-    }
-
-    .hero-username {
-        font-family: 'DM Mono', monospace;
-        font-size: 0.78rem;
-        color: rgba(255,255,255,0.55);
-        letter-spacing: 0.5px;
-    }
-
-    .dot-sep {
-        width: 3px;
-        height: 3px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.3);
-        display: inline-block;
-    }
-
-    .role-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        padding: 0.3rem 0.85rem;
-        border-radius: 100px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        backdrop-filter: blur(10px);
-    }
-    .chip-admin    { background: rgba(254,243,199,0.9); color: #92400e; }
-    .chip-teacher  { background: rgba(224,231,255,0.9); color: #3730a3; }
-    .chip-student  { background: rgba(209,250,229,0.9); color: #065f46; }
-
-    [data-bs-theme="dark"] .chip-admin   { background: rgba(251,191,36,0.15);  color: #fde68a; }
-    [data-bs-theme="dark"] .chip-teacher { background: rgba(99,102,241,0.15);  color: #c7d2fe; }
-    [data-bs-theme="dark"] .chip-student { background: rgba(16,185,129,0.15);  color: #a7f3d0; }
-
-    .hero-actions {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .btn-edit-profile {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.25);
-        color: white;
-        border-radius: 100px;
-        padding: 0.45rem 1.1rem;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.2s, transform 0.2s;
-    }
-    .btn-edit-profile:hover {
-        background: rgba(255,255,255,0.22);
-        color: white;
-        transform: translateY(-1px);
-    }
-
-    .join-tag {
-        font-size: 0.72rem;
-        color: rgba(255,255,255,0.45);
-        font-family: 'DM Mono', monospace;
-    }
-
-    /* ── STAT STRIP ── */
-    .stat-strip {
-        grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-    }
-
-    .stat-cell {
-        background: var(--sora-card, white);
-        border-radius: 18px;
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        padding: 1rem 1.25rem;
-        display: flex;
-        align-items: center;
-        gap: 0.85rem;
-        transition: border-color 0.2s, transform 0.2s;
-    }
-    .stat-cell:hover {
-        border-color: #6366f1;
-        transform: translateY(-2px);
-    }
-
-    .stat-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        background: var(--sora-bg, #f0effe);
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 1rem;
-        color: #6366f1;
-    }
-
-    .stat-val { font-size: 1rem; font-weight: 700; color: var(--sora-text, #1e1b4b); }
-    .stat-lbl {
-        font-size: 0.68rem;
-        color: var(--sora-text, #4b5563);
-        opacity: 0.7;
-        margin-top: 1px;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    /* ── INFO CARDS ── */
-    .card-contact,
-    .card-timeline {
-        background: var(--sora-card, white);
-        border-radius: 20px;
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        padding: 1.5rem;
-        transition: border-color 0.2s, transform 0.2s;
-    }
-    .card-contact:hover,
-    .card-timeline:hover {
-        border-color: #6366f1;
-        transform: translateY(-2px);
-    }
-
-    .sec-label {
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        font-weight: 800;
-        color: #6366f1;
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-    .sec-label::before {
-        content: '';
-        display: inline-block;
-        width: 14px;
-        height: 2px;
-        background: #6366f1;
-        border-radius: 2px;
-    }
-
-    /* Contact rows */
-    .contact-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.75rem;
-        padding: 0.65rem 0;
-        border-bottom: 1px solid rgba(99,102,241,0.07);
-    }
-    .contact-row:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .cicon {
-        width: 32px;
-        height: 32px;
-        border-radius: 10px;
-        background: var(--sora-bg, #f0effe);
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
+    .profile-username {
+        color: rgba(255,255,255,0.7);
         font-size: 0.85rem;
-        color: #6366f1;
-        margin-top: 1px;
-    }
-
-    .clabel {
-        font-size: 0.68rem;
-        color: var(--sora-text, #4b5563);
-        opacity: 0.7;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-    .cval {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: var(--sora-text, #1e1b4b);
-        margin-top: 1px;
-        word-break: break-word;
-    }
-    .cval-empty {
-        font-style: italic;
-        font-weight: 400;
-        opacity: 0.5;
-    }
-
-    /* Timeline rows */
-    .tl-item {
-        display: flex;
-        gap: 0.85rem;
-        padding: 0.55rem 0;
-        position: relative;
-    }
-    .tl-item + .tl-item::before {
-        content: '';
-        position: absolute;
-        left: 15px;
-        top: -8px;
-        height: 10px;
-        width: 1px;
-        background: var(--sora-border, rgba(99,102,241,0.15));
-    }
-
-    .tl-dot {
-        width: 30px;
-        height: 30px;
-        border-radius: 10px;
-        background: var(--sora-bg, #f0effe);
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        font-size: 0.8rem;
-        color: #6366f1;
-    }
-
-    .tl-lbl {
-        font-size: 0.68rem;
-        color: var(--sora-text, #4b5563);
-        opacity: 0.7;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-    }
-    .tl-val {
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: var(--sora-text, #1e1b4b);
-        margin-top: 2px;
-    }
-    .tl-sub {
-        font-size: 0.72rem;
-        color: var(--sora-text, #4b5563);
-        opacity: 0.6;
-        margin-top: 1px;
-    }
-
-    /* ── BIO ── */
-    .card-bio {
-        grid-column: 1 / -1;
-        background: linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%);
-        border-radius: 20px;
-        border: 1px solid rgba(99,102,241,0.18);
-        padding: 1.5rem 1.75rem;
-        position: relative;
-        overflow: hidden;
-    }
-
-
-
-
-    .jurusan-chip {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgba(99,102,241,0.1);
-        border: 1px solid rgba(99,102,241,0.2);
-        color: #4f46e5;
+    }
+    
+    .badge-role-premium {
+        padding: 0.35rem 1rem;
         border-radius: 100px;
-        padding: 0.45rem 1rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 0;
-    }
-    .jurusan-chip i { font-size: 0.8rem; }
-
-    .bio-divider {
-        border: none;
-        border-top: 1px solid rgba(99,102,241,0.12);
-        margin: 1.25rem 0;
-    }
-
-    .bio-quote-mark {
-        font-size: 3rem;
-        line-height: 1;
-        color: #6366f1;
-        opacity: 0.25;
-        font-family: Georgia, serif;
-        margin-bottom: -0.5rem;
-    }
-
-    .bio-text {
-        font-size: 0.9rem;
-        line-height: 1.75;
-        color: var(--sora-text, #1e1b4b);
-        opacity: 0.85;
-        margin: 0;
-    }
-
-    /* ── FOOTER STRIP ── */
-    .footer-strip {
-        grid-column: 1 / -1;
-        background: var(--sora-card, white);
-        border-radius: 16px;
-        border: 1px solid var(--sora-border, rgba(99,102,241,0.15));
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        flex-wrap: wrap;
-    }
-
-    .fitem { display: flex; align-items: center; gap: 0.5rem; }
-    .fdot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; flex-shrink: 0; }
-    .fdot-purple { background: #6366f1; }
-    .ftxt { font-size: 0.78rem; color: var(--sora-text, #4b5563); opacity: 0.9; }
-    .ftxt strong { color: var(--sora-text, #1e1b4b); font-weight: 600; opacity: 1; }
-
-    .active-badge {
+        font-weight: 700;
+        font-size: 0.7rem;
+        letter-spacing: 0.3px;
         display: inline-flex;
         align-items: center;
-        gap: 0.35rem;
-        background: rgba(16,185,129,0.1);
-        border: 1px solid rgba(16,185,129,0.2);
-        color: #059669;
-        border-radius: 100px;
-        padding: 0.25rem 0.75rem;
+        gap: 0.5rem;
+        backdrop-filter: blur(10px);
+    }
+    .badge-role-admin-premium {
+        background: rgba(254, 243, 199, 0.95);
+        color: #92400e;
+        border: 1px solid rgba(217, 119, 6, 0.2);
+    }
+    .badge-role-teacher-premium {
+        background: rgba(224, 231, 255, 0.95);
+        color: #3730a3;
+        border: 1px solid rgba(79, 70, 229, 0.2);
+    }
+    .badge-role-student-premium {
+        background: rgba(209, 250, 229, 0.95);
+        color: #065f46;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    
+    [data-bs-theme="dark"] .badge-role-admin-premium {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fde68a;
+        border-color: rgba(251, 191, 36, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-teacher-premium {
+        background: rgba(99, 102, 241, 0.15);
+        color: #c7d2fe;
+        border-color: rgba(99, 102, 241, 0.3);
+    }
+    [data-bs-theme="dark"] .badge-role-student-premium {
+        background: rgba(16, 185, 129, 0.15);
+        color: #a7f3d0;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-edit-profile {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        border-radius: 40px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .btn-edit-profile:hover {
+        background: rgba(255,255,255,0.25);
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .info-card {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        padding: 1.25rem;
+        transition: all 0.2s;
+    }
+    .info-card:hover {
+        border-color: #6366f1;
+        background: var(--sora-card);
+        transform: translateY(-2px);
+    }
+    .info-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--sora-card);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        border: 1px solid var(--sora-border);
+    }
+    .info-icon i {
+        font-size: 1.2rem;
+        color: #6366f1;
+    }
+    .info-label {
         font-size: 0.7rem;
-        font-weight: 700;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-bottom: 0.5rem;
     }
-    .inactive-badge {
-        background: rgba(239,68,68,0.1);
-        border-color: rgba(239,68,68,0.2);
-        color: #dc2626;
+    .info-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--sora-text);
+        word-break: break-word;
     }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to   { opacity: 1; transform: translateY(0); }
+    .info-value-empty {
+        color: var(--sora-text);
+        opacity: 0.5;
+        font-weight: 400;
+        font-style: italic;
     }
-
-    .hero         { animation: fadeSlideUp 0.35s ease both; }
-    .stat-strip   { animation: fadeSlideUp 0.4s ease 0.06s both; }
-    .card-contact { animation: fadeSlideUp 0.4s ease 0.12s both; }
-    .card-timeline{ animation: fadeSlideUp 0.4s ease 0.18s both; }
-    .card-bio     { animation: fadeSlideUp 0.4s ease 0.24s both; }
-    .card-bio + .card-bio { animation-delay: 0.30s; }
-    .footer-strip { animation: fadeSlideUp 0.4s ease 0.36s both; }
-
-    /* ── RESPONSIVE: tablet ── */
+    
+    .bio-section {
+        background: var(--sora-bg);
+        border: 1px solid var(--sora-border);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+    .bio-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--sora-card);
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--sora-border);
+    }
+    .bio-icon i {
+        color: #6366f1;
+    }
+    .bio-text {
+        font-size: 0.9rem;
+        line-height: 1.7;
+        color: var(--sora-text);
+        margin: 0;
+    }
+    
+    .stat-mini {
+        text-align: center;
+        padding: 0.75rem;
+        background: var(--sora-bg);
+        border-radius: 16px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+    .stat-mini:hover {
+        background: var(--sora-card);
+        border-color: var(--sora-border);
+    }
+    .stat-mini-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--sora-text);
+    }
+    .stat-mini-label {
+        font-size: 0.7rem;
+        color: var(--sora-text);
+        opacity: 0.7;
+        margin-top: 0.25rem;
+    }
+    
+    .text-muted {
+        color: var(--sora-text) !important;
+        opacity: 0.7;
+    }
+    
+    .text-dark {
+        color: var(--sora-text) !important;
+    }
+    
+    hr {
+        border-color: var(--sora-border) !important;
+    }
+    
+    h6.fw-bold {
+        color: var(--sora-text) !important;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .profile-card {
+        animation: fadeInUp 0.4s ease forwards;
+    }
+    .info-card {
+        animation: fadeInUp 0.4s ease forwards;
+        animation-delay: calc(var(--delay, 0) * 0.1s);
+        opacity: 0;
+    }
+    
     @media (max-width: 768px) {
-        .layout {
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
+        .profile-header {
+            padding: 1.5rem;
         }
-        .card-contact,
-        .card-timeline {
-            grid-column: 1 / -1;
+        .profile-name {
+            font-size: 1.3rem;
         }
-    }
-
-    /* ── RESPONSIVE: mobile ── */
-    @media (max-width: 540px) {
-        .pg {
-            padding: 0.75rem 0.75rem 2rem;
-        }
-
-        /* Hero: jadi vertikal, avatar di atas centered */
-        .hero {
-            border-radius: 20px;
-            min-height: unset;
-            flex-direction: column;
-            align-items: center;
-        }
-        .hero-left {
-            padding: 1.5rem 1.25rem 1.25rem;
-            width: 100%;
-            align-items: center;
-            text-align: center;
-        }
-        .hero-right {
-            display: flex;
-            width: 100%;
-            justify-content: center;
-            position: relative;
-            padding-top: 1.5rem;
-            order: -1; /* avatar naik ke atas */
-            height: auto;
-        }
-
-        /* Rings ikut di sekitar avatar */
-        .ring1 { width: 180px; height: 180px; top: -20px; right: 50%; transform: translateX(50%); left: unset; }
-        .ring2 { width: 130px; height: 130px; top: 0px;   right: 50%; transform: translateX(50%); }
-        .ring3 { display: none; }
-
-        /* Avatar jadi lingkaran besar di tengah */
-        .avatar-wrap {
-            position: relative;
-            bottom: unset;
-            right: unset;
-            display: flex;
-            justify-content: center;
-            padding-bottom: 0;
-        }
-        .avatar-big {
-            width: 86px;
-            height: 86px;
-            border-radius: 50%;
+        .avatar-premium-large {
+            width: 80px;
+            height: 80px;
             font-size: 2rem;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-bottom: 3px solid rgba(255,255,255,0.3);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            border-radius: 20px;
         }
-
-        .hero-name {
-            font-size: 1.25rem;
-            padding-right: 0;
-            text-align: center;
-        }
-        .hero-sub {
-            justify-content: center;
-            margin-bottom: 0.75rem;
-        }
-        .hero-actions {
-            justify-content: center;
-        }
-        .join-tag { display: none; }
-
-        /* Stat strip: 3 columns, more compact */
-        .stat-strip {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-        }
-        .stat-cell {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.4rem;
-            padding: 0.85rem 0.75rem;
-            border-radius: 14px;
-        }
-        .stat-icon {
-            width: 30px;
-            height: 30px;
-            border-radius: 9px;
-            font-size: 0.85rem;
-        }
-        .stat-val { font-size: 0.85rem; }
-        .stat-lbl { font-size: 0.6rem; }
-
-        /* Cards */
-        .card-contact,
-        .card-timeline,
-        .card-bio {
-            border-radius: 16px;
-            padding: 1.1rem;
-        }
-
-        /* Footer strip: stack vertically */
-        .footer-strip {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.6rem;
-            border-radius: 14px;
-            padding: 0.9rem 1rem;
-        }
-
-        /* Bio quote mark smaller */
-        .bio-quote-mark { font-size: 2.2rem; }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="pg">
-    <div class="layout">
-
-        <!-- ── HERO ── -->
-        <div class="hero">
-            <div class="hero-left">
-                <div>
-                    <h1 class="hero-name">{{ user_profile.get_full_name|default:user_profile.username }}</h1>
-                    <div class="hero-sub">
-                        <span class="role-chip
-                            {% if user_profile.is_admin %}chip-admin
-                            {% elif user_profile.is_teacher %}chip-teacher
-                            {% else %}chip-student{% endif %}">
-                            <i class="bi
-                                {% if user_profile.is_admin %}bi-shield-lock
-                                {% elif user_profile.is_teacher %}bi-person-workspace
-{% else %}bi-mortarboard-fill{% endif %}"
-                               style="font-size:10px;"></i>
-                            {{ user_profile.get_role_display }}
-                        </span>
-                        <span class="dot-sep"></span>
-                        <span class="hero-username">@{{ user_profile.username }}</span>
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="d-flex align-items-center gap-4 flex-wrap">
+                        <div class="avatar-premium-large">
+                            {% if user_profile.avatar %}
+                                <img src="{{ user_profile.avatar.url }}" alt="{{ user_profile.username }}">
+                            {% else %}
+                                {{ user_profile.first_name|first|upper|default:user_profile.username|first|upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h1 class="profile-name">{{ user_profile.get_full_name|default:user_profile.username }}</h1>
+                            <div class="d-flex gap-3 align-items-center flex-wrap mt-2">
+                                <span class="badge-role-premium 
+                                    {% if user_profile.is_admin %}badge-role-admin-premium
+                                    {% elif user_profile.is_teacher %}badge-role-teacher-premium
+                                    {% else %}badge-role-student-premium{% endif %}">
+                                    <i class="bi 
+                                        {% if user_profile.is_admin %}bi-shield-lock
+                                        {% elif user_profile.is_teacher %}bi-person-workspace
+                                        {% else %}bi-mortarboard-fill{% endif %}"></i>
+                                    {{ user_profile.get_role_display }}
+                                </span>
+                                <span class="profile-username">
+                                    <i class="bi bi-at"></i>{{ user_profile.username }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="hero-actions">
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
                     <a href="{% url 'accounts:profile_edit' %}" class="btn-edit-profile">
                         <i class="bi bi-pencil-square"></i>
                         Edit Profil
                     </a>
-                    <span class="join-tag">Bergabung {{ user_profile.date_joined|date:"Y" }}</span>
-                </div>
-            </div>
-            <div class="hero-right">
-                <div class="deco-ring ring1"></div>
-                <div class="deco-ring ring2"></div>
-                <div class="deco-ring ring3"></div>
-                <div class="avatar-wrap">
-                    <div class="avatar-big">
-                        {% if user_profile.avatar %}
-                            <img src="{{ user_profile.avatar.url }}" alt="{{ user_profile.username }}">
-                        {% else %}
-                            {{ user_profile.first_name|first|upper|default:user_profile.username|first|upper }}
-                        {% endif %}
-                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- ── STAT STRIP ── -->
-        <div class="stat-strip">
-            <div class="stat-cell">
-                <div class="stat-icon">
-                    <i class="bi bi-calendar3"></i>
-                </div>
-                <div>
-                    <div class="stat-val">{{ user_profile.date_joined|date:"Y" }}</div>
-                    <div class="stat-lbl">Bergabung</div>
-                </div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-icon">
-                    <i class="bi
-                        {% if user_profile.is_admin %}bi-shield-lock
-                        {% elif user_profile.is_teacher %}bi-person-workspace
-                        {% else %}bi-mortarboard-fill{% endif %}"></i>
-                </div>
-                <div>
-                    <div class="stat-val">
-                        {% if user_profile.is_admin %}Admin
-                        {% elif user_profile.is_teacher %}Guru
-                        {% else %}Siswa{% endif %}
+        
+        <div class="p-4 p-md-5">
+            <div class="row g-3 mb-5">
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">{{ user_profile.date_joined|date:"Y"|default:"2024" }}</div>
+                        <div class="stat-mini-label">Bergabung</div>
                     </div>
-                    <div class="stat-lbl">Peran</div>
                 </div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-icon" style="color: {% if user_profile.is_active %}#10b981{% else %}#ef4444{% endif %};">
-                    <i class="bi {% if user_profile.is_active %}bi-check-circle-fill{% else %}bi-x-circle-fill{% endif %}"></i>
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">
+                            {% if user_profile.is_admin %}Admin
+                            {% elif user_profile.is_teacher %}Guru
+                            {% else %}Siswa{% endif %}
+                        </div>
+                        <div class="stat-mini-label">Peran</div>
+                    </div>
                 </div>
-                <div>
-                    <div class="stat-val">{% if user_profile.is_active %}Aktif{% else %}Nonaktif{% endif %}</div>
-                    <div class="stat-lbl">Status</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ── CONTACT CARD ── -->
-        <div class="card-contact">
-            <div class="sec-label">Kontak</div>
-
-            <div class="contact-row">
-                <div class="cicon"><i class="bi bi-envelope-fill"></i></div>
-                <div>
-                    <div class="clabel">Alamat Email</div>
-                    <div class="cval {% if not user_profile.email %}cval-empty{% endif %}">
-                        {% if user_profile.email %}{{ user_profile.email }}{% else %}Belum diisi{% endif %}
+                <div class="col-4">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">
+                            {% if user_profile.is_active %}✓{% else %}✗{% endif %}
+                        </div>
+                        <div class="stat-mini-label">Status</div>
                     </div>
                 </div>
             </div>
-
-            <div class="contact-row">
-                <div class="cicon"><i class="bi bi-telephone-fill"></i></div>
-                <div>
-                    <div class="clabel">Nomor Telepon</div>
-                    <div class="cval {% if not user_profile.phone %}cval-empty{% endif %}">
-                        {% if user_profile.phone %}{{ user_profile.phone }}{% else %}Belum diisi{% endif %}
+            
+            <h6 class="fw-bold mb-3" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
+                <i class="bi bi-info-circle me-2" style="color: #6366f1;"></i>Informasi Kontak
+            </h6>
+            <div class="row g-4 mb-5">
+                <div class="col-md-6" style="--delay: 1">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div class="info-label">Alamat Email</div>
+                        <div class="info-value {% if not user_profile.email %}info-value-empty{% endif %}">
+                            {% if user_profile.email %}
+                                <i class="bi bi-envelope me-1"></i>{{ user_profile.email }}
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="--delay: 2">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div class="info-label">Nomor Telepon</div>
+                        <div class="info-value {% if not user_profile.phone %}info-value-empty{% endif %}">
+                            {% if user_profile.phone %}
+                                <i class="bi bi-whatsapp me-1"></i>{{ user_profile.phone }}
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- ── TIMELINE CARD ── -->
-        <div class="card-timeline">
-            <div class="sec-label">Aktivitas</div>
-
-            {% if user_profile.date_of_birth %}
-            <div class="tl-item">
-                <div class="tl-dot"><i class="bi bi-calendar-heart-fill"></i></div>
-                <div>
-                    <div class="tl-lbl">Tanggal Lahir</div>
-                    <div class="tl-val">{{ user_profile.date_of_birth|date:"d F Y" }}</div>
-                    <div class="tl-sub">{{ user_profile.date_of_birth|timesince }} yang lalu</div>
+            
+            <div class="row g-4 mb-5">
+                <div class="col-md-6" style="--delay: 3">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-heart-fill"></i>
+                        </div>
+                        <div class="info-label">Tanggal Lahir</div>
+                        <div class="info-value {% if not user_profile.date_of_birth %}info-value-empty{% endif %}">
+                            {% if user_profile.date_of_birth %}
+                                <i class="bi bi-calendar me-1"></i>{{ user_profile.date_of_birth|date:"d F Y" }}
+                                <span class="text-muted small ms-2">
+                                    ({{ user_profile.date_of_birth|timesince }})
+                                </span>
+                            {% else %}
+                                <i class="bi bi-dash-circle me-1"></i>Belum diisi
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" style="--delay: 4">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-check-fill"></i>
+                        </div>
+                        <div class="info-label">Bergabung Sejak</div>
+                        <div class="info-value">
+                            <i class="bi bi-calendar3 me-1"></i>{{ user_profile.date_joined|date:"d F Y" }}
+                            <span class="text-muted small ms-2">({{ user_profile.date_joined|timesince }} lalu)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if user_profile.bio %}
+            <h6 class="fw-bold mb-3 mt-4" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.05em;">
+                <i class="bi bi-chat-quote me-2" style="color: #6366f1;"></i>Tentang Saya
+            </h6>
+            <div class="bio-section">
+                <div class="d-flex gap-3">
+                    <div class="bio-icon">
+                        <i class="bi bi-quote"></i>
+                    </div>
+                    <p class="bio-text">{{ user_profile.bio }}</p>
                 </div>
             </div>
             {% endif %}
-
-            <div class="tl-item">
-                <div class="tl-dot"><i class="bi bi-calendar-check-fill"></i></div>
-                <div>
-                    <div class="tl-lbl">Bergabung Sejak</div>
-                    <div class="tl-val">{{ user_profile.date_joined|date:"d F Y" }}</div>
-                    <div class="tl-sub">{{ user_profile.date_joined|timesince }} lalu</div>
-                </div>
-            </div>
-
-            <div class="tl-item">
-                <div class="tl-dot"><i class="bi bi-clock-fill"></i></div>
-                <div>
-                    <div class="tl-lbl">Terakhir Login</div>
-                    <div class="tl-val">
-                        {% if user_profile.last_login %}
-                            {{ user_profile.last_login|date:"d F Y" }}
-                        {% else %}
-                            Belum pernah login
-                        {% endif %}
+            
+            <div class="mt-5 pt-3 text-center">
+                <hr class="my-4">
+                <div class="d-flex justify-content-center gap-4 flex-wrap">
+                    <div class="text-center">
+                        <div class="small text-muted">Akun Terdaftar</div>
+                        <div class="fw-semibold" style="color: var(--sora-text);">{{ user_profile.date_joined|date:"d M Y" }}</div>
                     </div>
-                    {% if user_profile.last_login %}
-                    <div class="tl-sub">{{ user_profile.last_login|date:"H:i" }} WIB</div>
-                    {% endif %}
+                    <div class="text-center">
+                        <div class="small text-muted">Terakhir Login</div>
+                        <div class="fw-semibold" style="color: var(--sora-text);">{{ user_profile.last_login|date:"d M Y H:i"|default:"Belum pernah login" }}</div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <!-- ── JURUSAN ── -->
-        {% if user_profile.jurusan %}
-        <div style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%); border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); padding: 1.5rem 1.75rem;">
-            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; color: #6366f1; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span style="display:inline-block; width:14px; height:2px; background:#6366f1; border-radius:2px;"></span>
-                Jurusan
-            </div>
-            <span style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.2); color: #4f46e5; border-radius: 100px; padding: 0.45rem 1rem; font-size: 0.85rem; font-weight: 600;">
-                <i class="bi bi-bookmark-fill" style="font-size: 0.8rem;"></i>
-                {{ user_profile.jurusan.nama }}
-            </span>
-        </div>
-        {% endif %}
-
-        <!-- ── BIO ── -->
-        {% if user_profile.bio %}
-        <div style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(79,70,229,0.06) 0%, rgba(99,102,241,0.03) 100%); border-radius: 20px; border: 1px solid rgba(99,102,241,0.18); padding: 1.5rem 1.75rem;">
-            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 800; color: #6366f1; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
-                <span style="display:inline-block; width:14px; height:2px; background:#6366f1; border-radius:2px;"></span>
-                Tentang Saya
-            </div>
-            <div style="font-size: 3rem; line-height: 1; color: #6366f1; opacity: 0.25; font-family: Georgia, serif; margin-bottom: -0.5rem;">"</div>
-            <p style="font-size: 0.9rem; line-height: 1.75; color: var(--sora-text, #1e1b4b); opacity: 0.85; margin: 0;">{{ user_profile.bio }}</p>
-        </div>
-        {% endif %}
-
-        <!-- ── FOOTER STRIP ── -->
-        <div class="footer-strip">
-            <div class="fitem">
-                <div class="fdot"></div>
-                <span class="ftxt">Akun dibuat <strong>{{ user_profile.date_joined|date:"d M Y" }}</strong></span>
-            </div>
-            {% if user_profile.jurusan %}
-            <div class="fitem">
-                <div class="fdot fdot-purple"></div>
-                <span class="ftxt">Jurusan <strong>{{ user_profile.jurusan.nama }}</strong></span>
-            </div>
-            {% endif %}
-            <div>
-                <span class="active-badge {% if not user_profile.is_active %}inactive-badge{% endif %}">
-                    <i class="bi {% if user_profile.is_active %}bi-circle-fill{% else %}bi-x-circle-fill{% endif %}"
-                       style="font-size: 7px;"></i>
-                    {% if user_profile.is_active %}Akun Aktif{% else %}Akun Nonaktif{% endif %}
-                </span>
-            </div>
-        </div>
-
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const infoCards = document.querySelectorAll('.info-card');
+        infoCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            setTimeout(() => {
+                card.style.transition = 'all 0.4s ease';
+                card.style.opacity = '1';
+            }, index * 100);
+        });
+        
+        const statMinis = document.querySelectorAll('.stat-mini');
+        statMinis.forEach(stat => {
+            stat.style.transition = 'all 0.2s ease';
+        });
+    });
+</script>
 {% endblock %}
