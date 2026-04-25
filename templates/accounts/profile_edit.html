@@ -418,6 +418,23 @@
                         {% endif %}
                         <small class="text-muted" style="font-size:0.7rem;">Format: YYYY-MM-DD</small>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label-modern">
+                            <i class="bi bi-bookmark"></i>
+                            Jurusan
+                        </label>
+                        {% if user.jurusan %}
+                        <input type="hidden" name="jurusan" value="{{ user.jurusan.id }}">
+                        <div class="input-modern" style="opacity: 0.7; cursor: not-allowed; pointer-events: none;">
+                            {{ user.jurusan.nama }}
+                        </div>
+                        {% else %}
+                        <input type="hidden" name="jurusan" value="">
+                        <div class="input-modern" style="opacity: 0.7; cursor: not-allowed;">Belum dipilih</div>
+                        {% endif %}
+                        <small class="text-muted" style="font-size:0.7rem;">Hubungi admin untuk mengubah jurisdiction</small>
+                    </div>
                 </div>
                 
                 <div class="form-group">
