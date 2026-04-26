@@ -386,8 +386,7 @@
 {% if request.resolver_match.namespace == 'dashboard' %}
 <div class="splash-loader" id="splashLoader">
     <div class="splash-video">
-        <video id="splashVideo" autoplay muted playsinline>
-            <source src="{% static 'images/splash.mp4' %}" type="video/mp4">
+        <video id="splashVideo" autoplay muted playsinline data-landscape="{% static 'videos/splash_landscape.mp4' %}" data-portrait="{% static 'videos/splash_potrait.mp4' %}">
         </video>
     </div>
 </div>
@@ -557,6 +556,12 @@
             if (!window.location.pathname.startsWith('/dashboard')) {
                 splash.style.display = 'none';
                 return;
+            }
+            
+            // Set video source based on screen orientation
+            if (video) {
+                const isPortrait = window.innerHeight > window.innerWidth;
+                video.src = isPortrait ? video.dataset.portrait : video.dataset.landscape;
             }
             
             const hasSeenSplash = sessionStorage.getItem('sora_splash_shown');
