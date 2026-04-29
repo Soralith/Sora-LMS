@@ -403,6 +403,10 @@
                 <i class="bi bi-send-fill"></i>
             </button>
         </div>
+        <div style="margin-top: 0.5rem; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+            <input type="checkbox" id="liveDataCheck" style="cursor: pointer;">
+            <label for="liveDataCheck" style="cursor: pointer; opacity: 0.7;">Sertakan data terbaru dari database</label>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -513,11 +517,37 @@ async function sendMessage() {
     box.appendChild(typing);
     box.scrollTop = box.scrollHeight;
 
+    let finalMessages = sess.messages;
+
+    if (document.getElementById('liveDataCheck').checked) {
+        try {
+            const liveRes = await fetch('{% url "ai_chat:live_data_api" %}?type=all', {
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            });
+            const liveData = await liveRes.json();
+            const dataContext = `
+Catatan DATA TERBARU dari database (untuk menjawab pertanyaan pengguna secara akurat):
+- Enrollment & Progres: ${JSON.stringify(liveData.data.enrollments || [])}
+- Materi Selesai: ${JSON.stringify(liveData.data.completed_materials || [])}
+- Pengumuman: ${JSON.stringify(liveData.data.announcements || [])}
+- Quiz Scores: ${JSON.stringify(liveData.data.quiz_attempts || [])}
+- Tugas: ${JSON.stringify(liveData.data.assignments || [])}
+- Kursus Tersedia: ${JSON.stringify(liveData.data.available_courses || [])}
+`;
+            finalMessages = [
+                { role: 'user', content: dataContext },
+                ...sess.messages
+            ];
+        } catch (e) {
+            console.error('Failed to fetch live data:', e);
+        }
+    }
+
     try {
         const response = await fetch('{% url "ai_chat:chat_api" %}', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-            body: JSON.stringify({ messages: sess.messages })
+            body: JSON.stringify({ messages: finalMessages })
         });
         const data = await response.json();
         typing.remove();

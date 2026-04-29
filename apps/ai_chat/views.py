@@ -1,12 +1,17 @@
 import json
 import urllib.request
 import urllib.error
+from datetime import datetime
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.conf import settings
 from .models import AISettings
+from apps.courses.models import Course, Enrollment, MaterialProgress, Announcement, Material, Module
+from apps.quizzes.models import Quiz, QuizAttempt
+from apps.assignments.models import Assignment, Submission
+from apps.accounts.models import User
 
 
 @login_required
@@ -74,3 +79,93 @@ def chat_api(request):
         return JsonResponse({'error': err.get('error', {}).get('message', 'Gagal menghubungi Gemini.')}, status=502)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def live_data_api(request):
+    data_type = request.GET.get('type', '')
+    user = request.user
+
+    result = {'timestamp': datetime.now().isoformat(), 'data': {}}
+
+    if data_type in ('all', 'enrollments'):
+        enrollments = Enrollment.objects.filter(student=user, is_active=True).select_related('course')
+        result['data']['enrollments'] = [
+            {
+                'course_id': e.course.id,
+                'course_title': e.course.title,
+                'progress': e.progress,
+                'enrolled_at': e.enrolled_at.isoformat() if e.enrolled_at else None,
+            }
+            for e in enrollments
+        ]
+
+    if data_type in ('all', 'progress'):
+        material_progress = MaterialProgress.objects.filter(student=user, is_completed=True)
+        result['data']['completed_materials'] = [
+            {
+                'material_id': mp.material.id,
+                'material_title': mp.material.title,
+                'completed_at': mp.completed_at.isoformat() if mp.completed_at else None,
+            }
+            for mp in material_progress.select_related('material', 'material__module', 'material__module__course')[:50]
+        ]
+
+    if data_type in ('all', 'announcements'):
+        course_ids = Enrollment.objects.filter(student=user, is_active=True).values_list('course_id', flat=True)
+        announcements = Announcement.objects.filter(course_id__in=course_ids).select_related('course', 'author')[:20]
+        result['data']['announcements'] = [
+            {
+                'id': a.id,
+                'course_title': a.course.title,
+                'title': a.title,
+                'content': a.content[:200],
+                'created_at': a.created_at.isoformat() if a.created_at else None,
+            }
+            for a in announcements
+        ]
+
+    if data_type in ('all', 'quiz_scores'):
+        attempts = QuizAttempt.objects.filter(student=user, status='completed').select_related('quiz', 'quiz__course')
+        result['data']['quiz_attempts'] = [
+            {
+                'quiz_title': a.quiz.title,
+                'course_title': a.quiz.course.title,
+                'score': float(a.score) if a.score else None,
+                'percentage': float(a.percentage) if a.percentage else None,
+                'passed': a.is_passed(),
+                'completed_at': a.completed_at.isoformat() if a.completed_at else None,
+            }
+            for a in attempts[:20]
+        ]
+
+    if data_type in ('all', 'assignments'):
+        submissions = Submission.objects.filter(student=user).select_related('assignment', 'assignment__course')
+        result['data']['assignments'] = [
+            {
+                'assignment_title': s.assignment.title,
+                'course_title': s.assignment.course.title,
+                'due_date': s.assignment.due_date.isoformat() if s.assignment.due_date else None,
+                'is_overdue': s.assignment.is_overdue(),
+                'status': s.status,
+                'score': float(s.score) if s.score else None,
+                'submitted_at': s.submitted_at.isoformat() if s.submitted_at else None,
+            }
+            for s in submissions[:20]
+        ]
+
+    if data_type in ('all', 'courses'):
+        courses = Course.objects.filter(status='active').only('id', 'title', 'description', 'category__name')[:50]
+        course_enroll_ids = set(Enrollment.objects.filter(student=user, is_active=True).values_list('course_id', flat=True))
+        result['data']['available_courses'] = [
+            {
+                'id': c.id,
+                'title': c.title,
+                'description': c.description[:150],
+                'category': c.category.name if c.category else None,
+                'is_enrolled': c.id in course_enroll_ids,
+            }
+            for c in courses.select_related('category')
+        ]
+
+    return JsonResponse(result)
