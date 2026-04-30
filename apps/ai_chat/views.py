@@ -86,7 +86,7 @@ def live_data_api(request):
     data_type = request.GET.get('type', '')
     user = request.user
 
-    result = {'timestamp': datetime.now().isoformat(), 'data': {}}
+    result = {'timestamp': datetime.now().isoformat(), 'user': {'username': user.username}, 'data': {}}
 
     if data_type in ('all', 'enrollments'):
         enrollments = Enrollment.objects.filter(student=user, is_active=True).select_related('course')
