@@ -4,6 +4,7 @@ from apps.accounts.models import User
 
 class KomunitasMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='komunitas_messages')
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE, related_name='komunitas_messages', null=True, blank=True)
     content = models.TextField(blank=True)
     image = models.ImageField(upload_to='komunitas/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

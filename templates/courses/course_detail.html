@@ -569,6 +569,10 @@
             </div>
             <div class="sidebar-body">
                 <div class="quick-action-grid">
+                    <a href="{% url 'courses:course_community' course.slug %}" class="quick-action-btn">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Komunitas Kelas</span>
+                    </a>
                     <a href="{% url 'assignments:assignment_list' course_slug=course.slug %}" class="quick-action-btn">
                         <i class="bi bi-journal-check"></i>
                         <span>Lihat Tugas</span>
