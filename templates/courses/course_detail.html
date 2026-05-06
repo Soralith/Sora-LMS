@@ -263,6 +263,35 @@
         display: grid;
         gap: 0.6rem;
     }
+    .quick-action-section {
+        margin-bottom: 1.2rem;
+    }
+    .quick-action-section:last-child {
+        margin-bottom: 0;
+    }
+    .quick-action-section-label {
+        font-size: 0.65rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .quick-action-section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--sora-border);
+    }
+    .quick-action-section-desc {
+        font-size: 0.7rem;
+        color: #9ca3af;
+        margin-top: -0.25rem;
+        margin-bottom: 0.5rem;
+    }
     .quick-action-btn {
         display: flex;
         align-items: center;
@@ -565,49 +594,64 @@
         {% if is_enrolled or is_teacher or user.is_admin %}
         <div class="sidebar-card">
             <div class="sidebar-header">
-                <h6><i class="bi bi-lightning-charge-fill" style="color: #f59e0b;"></i>Aksi Cepat</h6>
+                <h6><i class="bi bi-lightning-charge-fill" style="color: #f59e0b;"></i>Tindakan Utama</h6>
             </div>
             <div class="sidebar-body">
                 <div class="quick-action-grid">
-                    <a href="{% url 'courses:course_community' course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Komunitas Kelas</span>
-                    </a>
-                    <a href="{% url 'assignments:assignment_list' course_slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-journal-check"></i>
-                        <span>Lihat Tugas</span>
-                    </a>
-                    <a href="{% url 'quizzes:quiz_list' course_slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-question-circle"></i>
-                        <span>Kuis & Ujian</span>
-                    </a>
+                    <!-- Akses Cepat (Navigational) - Always visible for enrolled users -->
+                    <div class="quick-action-section">
+                        <div class="quick-action-section-label">Akses Cepat</div>
+                        <div class="quick-action-section-desc">Monitoring & navigasi kelas</div>
+                        <a href="{% url 'courses:course_community' course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Komunitas Kelas</span>
+                        </a>
+                        <a href="{% url 'assignments:assignment_list' course_slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-journal-check"></i>
+                            <span>Lihat Tugas & Ujian</span>
+                        </a>
+                    </div>
+
+                    <!-- Manajemen Konten (Primary) - Teacher/Admin only -->
                     {% if is_teacher or user.is_admin %}
-                    <a href="{% url 'assignments:assignment_create' course_slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-plus-circle"></i>
-                        <span>Buat Tugas Baru</span>
-                    </a>
-                    <a href="{% url 'quizzes:quiz_create' course_slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-plus-circle"></i>
-                        <span>Buat Kuis Baru</span>
-                    </a>
-                    <a href="{% url 'courses:manage_enrollments' slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-people"></i>
-                        <span>Kelola Siswa</span>
-                    </a>
-                    {% if user.is_admin %}
-                    <a href="{% url 'courses:assign_teachers' slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-person-badge"></i>
-                        <span>Assign Guru</span>
-                    </a>
+                    <div class="quick-action-section">
+                        <div class="quick-action-section-label">Manajemen Konten</div>
+                        <div class="quick-action-section-desc">Pembuatan materi & konten</div>
+                        <a href="{% url 'assignments:assignment_create' course_slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>Buat Tugas Baru</span>
+                        </a>
+                        <a href="{% url 'quizzes:quiz_create' course_slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-plus-circle"></i>
+                            <span>Buat Kuis Baru</span>
+                        </a>
+                        <a href="{% url 'courses:announcement_create' slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-megaphone"></i>
+                            <span>Buat Pengumuman</span>
+                        </a>
+                    </div>
                     {% endif %}
-                    <a href="{% url 'courses:announcement_create' slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-megaphone"></i>
-                        <span>Buat Pengumuman</span>
-                    </a>
-                    <a href="{% url 'dashboard:progress_report' course_slug=course.slug %}" class="quick-action-btn">
-                        <i class="bi bi-bar-chart-steps"></i>
-                        <span>Laporan Progres</span>
-                    </a>
+
+                    <!-- Administrasi & Siswa (Secondary) - Teacher/Admin only -->
+                    {% if is_teacher or user.is_admin %}
+                    <div class="quick-action-section">
+                        <div class="quick-action-section-label">Administrasi & Siswa</div>
+                        <div class="quick-action-section-desc">Pengelolaan orang & progres</div>
+                        <a href="{% url 'courses:manage_enrollments' slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-people"></i>
+                            <span>Kelola Siswa</span>
+                        </a>
+                        {% if user.is_admin %}
+                        <a href="{% url 'courses:assign_teachers' slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Assign Guru</span>
+                        </a>
+                        {% endif %}
+                        <a href="{% url 'dashboard:progress_report' course_slug=course.slug %}" class="quick-action-btn">
+                            <i class="bi bi-bar-chart-steps"></i>
+                            <span>Laporan Progres</span>
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
             </div>
